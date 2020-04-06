@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 require_once("inc/config.inc.php");
@@ -101,7 +102,7 @@ if(isset($_POST['university'])) {
 				</tr>
 				<tr>
 					<td>				
-						<select type="text" size="1" name="home_locationid" class="form-control" required>
+						<select onchange="onHomeUniversityChange()" type="text" size="1" name="home_locationid" class="form-control" required>
 							<?php 
 							$statement = $pdo->prepare("SELECT location, locationid FROM university ORDER BY locationid");
 							$result = $statement->execute();
@@ -129,6 +130,13 @@ if(isset($_POST['university'])) {
 		</div><br>
 </div>
 
+
+<?php 
+echo "<script  type=\"text/javascript\"> 
+		function onHomeUniversityChange(){
+			document.getElementById(\"auswahl\").disabled = true;
+		}
+	</script>"?> 
 <!-- ########## Anzeige der Äquivalenzlisten für ausgewählte Universitäten ############ --> 
 <!-- nachdem abgefragt wurde, welche Universitäten geladen werden sollen, können die Fächer aus der Datenbank gelesen werden:-->
 
@@ -226,7 +234,7 @@ if($showFormular) {
 	
 	<br>
 	<div class="registration-form">
-		<button type="submit" name="auswahl" class="btn btn-lg btn-primary btn-block">Fächerwahl übernehmen</button>
+		<button type="submit" name="auswahl" id = "auswahl" class="btn btn-lg btn-primary btn-block">Fächerwahl übernehmen</button>
 	</div>
 </form>
 
