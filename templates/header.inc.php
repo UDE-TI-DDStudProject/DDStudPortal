@@ -80,6 +80,7 @@
          <ul class="nav navbar-nav navbar-right navi" >
 			<li><a href="application.php"><i class="glyphicon glyphicon-file"></i> NEW</a></li>
 			<li><a href="internalCourses.php"><i class="glyphicon glyphicon-file"></i> Fächerwahlliste</a></li>
+			<li><a href="test_auswahl.php"><i class="glyphicon glyphicon-file"></i> Fächerwahlliste Test</a></li>
 			<li><a href="upload.php"><i class="glyphicon glyphicon-paperclip"></i> Dateiupload</a></li>
 			<li><a href="internal.php"><i class="glyphicon glyphicon-send"></i> Bewerbung</a></li>       
             <li><a href="settings.php"><i class="glyphicon glyphicon-cog"></i> Setup</a></li>
