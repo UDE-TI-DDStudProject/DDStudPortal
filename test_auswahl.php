@@ -102,7 +102,7 @@ if(isset($_POST['university'])) {
 				</tr>
 				<tr>
 					<td>				
-						<select onchange="onHomeUniversityChange()" type="text" size="1" name="home_locationid" class="form-control" required>
+						<select type="text" size="1" name="home_locationid" class="form-control" required>
 							<?php 
 							$statement = $pdo->prepare("SELECT location, locationid FROM university ORDER BY locationid");
 							$result = $statement->execute();
@@ -131,12 +131,6 @@ if(isset($_POST['university'])) {
 </div>
 
 
-<?php 
-echo "<script  type=\"text/javascript\"> 
-		function onHomeUniversityChange(){
-			document.getElementById(\"auswahl\").disabled = true;
-		}
-	</script>"?> 
 <!-- ########## Anzeige der Äquivalenzlisten für ausgewählte Universitäten ############ --> 
 <!-- nachdem abgefragt wurde, welche Universitäten geladen werden sollen, können die Fächer aus der Datenbank gelesen werden:-->
 
@@ -146,7 +140,7 @@ if($showFormular) {
 <div class="container main-container">
 
 
-	<table border="1" rules="row" cellspacing="10">
+	<table id = "courses" border="1" rules="row" cellspacing="10">
 		<tr style="background-color: #003D76; color: white; align: middle">
 			<td width="8%" align="center"><b>Auswahl</b><br>(Selection)</th>
 			<td width="15%" align="center"><b>Kurs-Nr. Heim-Uni</b><br>(Home-Subject-No.)</th>
@@ -248,6 +242,18 @@ if($showFormular) {
 
 
 </div>
+
+<script>
+//if drop down selection changed, hide table and button
+$(document).ready(function(){
+	$("select").change(function(){
+		//$("#auswahl").attr("disabled", true);
+		$(".registration-form").hide();
+		$("#courses").hide();
+	});
+});
+</script>
+
 <?php 
 include("templates/footer.inc.php")
 ?>
