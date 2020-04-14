@@ -25,6 +25,24 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `student_selectedsubjects`
+--
+
+CREATE TABLE `student_selectedsubjects`
+(
+  `equivalence_id` int
+(15) NOT NULL,
+  `personalid` int
+(11) NOT NULL,
+`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON
+UPDATE CURRENT_TIMESTAMP,
+   UNIQUE KEY `UNIQUE_ROW`
+(`equivalence_id`, `personalid`)
+) ENGINE
+=InnoDB DEFAULT CHARSET=utf8;
+
+--
 -- Tabellenstruktur für Tabelle `countries`
 --
 
