@@ -32,9 +32,9 @@ $showFormular = false; //Variable ob das Registrierungsformular angezeigt werden
 if(isset($_POST['auswahl'])) {
 	if(!empty($_POST['kurse'])) {
 
-        /*DELETE all old entries of students in database table 'test_auswahl' then INSERT newly checked equivalent-courses into database*/	
-        $stmtDelete = $pdo->prepare("DELETE FROM test_auswahl WHERE personalid = $userid");
-        $stmtInsert = $pdo->prepare("INSERT INTO test_auswahl (equivalence_id, personalid) VALUES (?, $userid)");
+    /*DELETE all old entries of students in database table 'student_selectedsubjects' then INSERT newly checked equivalent-courses into database*/	
+        $stmtDelete = $pdo->prepare("DELETE FROM student_selectedsubjects WHERE personalid = $userid");
+        $stmtInsert = $pdo->prepare("INSERT INTO student_selectedsubjects (equivalence_id, personalid) VALUES (?, $userid)");
 
         /*Begin transaction*/
         try {
@@ -192,7 +192,7 @@ if($showFormular) {
             $row3 = $statement1 ->fetch();
             
             /*Query previously selected equivalence-courses' id of the user*/
-            $statement1 = $pdo->prepare("SELECT equivalence_id FROM test_auswahl WHERE personalid = $userid");
+            $statement1 = $pdo->prepare("SELECT equivalence_id FROM student_selectedsubjects WHERE personalid = $userid");
             $result = $statement1->execute();
             $selectedCourses = array();
             while($selectedCourse = $statement1 ->fetch())
