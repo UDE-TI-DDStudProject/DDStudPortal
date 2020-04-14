@@ -198,7 +198,7 @@ endif;
 
 				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-10">
-						<a href="#homeaddress" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary">Weiter</button></a>
+						<a href="#homeaddress" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary" id="weiter1">Weiter</button></a>
 					</div>
 				</div>
 			</div>
@@ -263,8 +263,8 @@ endif;
 			
 				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-10">
-						<a href="#personaldata" role="tab" data-toggle="tab1"><button type="button" class="btn btn-primary">Zurück</button></a>
-						<a href="#homestudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary">Weiter</button></a>
+						<a href="#personaldata" role="tab" data-toggle="tab1"><button type="button" class="btn btn-primary" id="zurück2">Zurück</button></a>
+						<a href="#homestudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary" id="weiter2">Weiter</button></a>
 					</div>
 				</div>
 			</div>
@@ -348,8 +348,8 @@ endif;
 				
 				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-10">
-						<a href="#homeaddress" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary">Zurück</button></a>
-						<a href="#foreignstudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary">Weiter</button></a>
+						<a href="#homeaddress" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary" id="zurück3">Zurück</button></a>
+						<a href="#foreignstudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary" id="weiter3">Weiter</button></a>
 					</div>
 				</div>
 			</div>
@@ -432,8 +432,8 @@ endif;
 				
 				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-10">
-						<a href="#homestudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary">Zurück</button></a>
-						<a href="#attachments" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary">Weiter</button></a>
+						<a href="#homestudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary" id="zurück4">Zurück</button></a>
+						<a href="#attachments" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary" id="weiter4">Weiter</button></a>
 					</div>
 				</div>
 				
@@ -475,7 +475,7 @@ endif;
 				
 				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-10">
-						<a href="#foreignstudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary">Zurück</button></a>
+						<a href="#foreignstudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary" id="zurück5">Zurück</button></a>
 						<button type="submit" class="btn btn-success" style="width: 340px">Bewerbung abschicken</button>
 					</div>
 				</div>
@@ -534,7 +534,42 @@ endif;
 	
 </div>
 </div>
+<script>
+$(document).ready(function(){
+    $("#weiter1").click(function(){
+		$('.nav-tabs a[href="#homeaddress"]').tab('show');
+	});
 
+	$("#weiter2").click(function(){
+		$('.nav-tabs a[href="#homestudy"]').tab('show');
+	});
+
+	$("#weiter3").click(function(){
+		$('.nav-tabs a[href="#foreignstudy"]').tab('show');
+	});
+
+	$("#weiter4").click(function(){
+		$('.nav-tabs a[href="#attachments"]').tab('show');
+	});
+
+	$("#zurück2").click(function(){
+		$('.nav-tabs a[href="#personaldata"]').tab('show');
+	});
+
+	$("#zurück3").click(function(){
+		$('.nav-tabs a[href="#homeaddress"]').tab('show');
+	});
+
+	$("#zurück4").click(function(){
+		$('.nav-tabs a[href="#homestudy"]').tab('show');
+	});
+
+	$("#zurück5").click(function(){
+		$('.nav-tabs a[href="#foreignstudy"]').tab('show');
+	});
+});
+
+</script>
 <?php 
 include("templates/footer.inc.php")
 ?>
