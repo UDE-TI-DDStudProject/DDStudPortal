@@ -9,7 +9,13 @@ $user = check_user();
 
 include("templates/header.inc.php");
 
+//bewerbung abgeschickt
+if(isset($_POST['abschicken']))
+{
 
+}
+
+/*
 // ab hier anpassen 
 if(isset($_GET['save'])) {
 	$save = $_GET['save'];
@@ -84,7 +90,7 @@ if(isset($_GET['save'])) {
 		}
 		
 	}
-}
+}*/
 
 $user = check_user();
 
@@ -154,7 +160,7 @@ endif;
 				<div class="form-group">
 					<label for="inputFirstName" class="col-sm-3 control-label">Vorname (first name):</label>
 					<div class="col-sm-7">
-						<input type="text" id="inputFirstName" name="firstname" class="form-control" value=<?php echo htmlentities($user['vorname']); ?>>
+						<input type="text" id="inputFirstName" name="firstname" class="form-control" value=<?php echo htmlentities($user['vorname']); ?> required>
 					</div>
 				</div>
 				
@@ -476,7 +482,7 @@ endif;
 				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-10">
 						<a href="#foreignstudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary" id="zurück5">Zurück</button></a>
-						<button type="submit" class="btn btn-success" style="width: 340px">Bewerbung abschicken</button>
+						<button type="submit" name="abschicken" class="btn btn-success" style="width: 340px">Bewerbung abschicken</button>
 					</div>
 				</div>
 			</div>
@@ -536,6 +542,7 @@ endif;
 </div>
 <script>
 $(document).ready(function(){
+	//Button 'Weiter' clicked: To next tab based on buttonid
     $("#weiter1").click(function(){
 		$('.nav-tabs a[href="#homeaddress"]').tab('show');
 	});
@@ -552,6 +559,7 @@ $(document).ready(function(){
 		$('.nav-tabs a[href="#attachments"]').tab('show');
 	});
 
+	//Button 'Zurück' clicked: To previous tab based on buttonid
 	$("#zurück2").click(function(){
 		$('.nav-tabs a[href="#personaldata"]').tab('show');
 	});
