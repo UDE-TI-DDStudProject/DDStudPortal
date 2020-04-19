@@ -30,44 +30,57 @@ $showFormular = false; //Variable ob das Registrierungsformular angezeigt werden
 
 /* Ergebnis der vom Studenten ausgewählten Kurse */
 if(isset($_POST['auswahl'])) {
-	if(!empty($_POST['kurse'])) {
 
-    /*DELETE all old entries of students in database table 'student_selectedsubjects' then INSERT newly checked equivalent-courses into database*/	
-        $stmtDelete = $pdo->prepare("DELETE FROM student_selectedsubjects WHERE personalid = $userid");
-        $stmtInsert = $pdo->prepare("INSERT INTO student_selectedsubjects (equivalence_id, personalid) VALUES (?, $userid)");
+	//check whether if student has registered already
+	$statement = $pdo->prepare("SELECT personalid FROM student_new WHERE user_id = $userid");
+	$result = $statement->execute();
+	$row = $statement->fetch();
+	$studentid = $row['personalid'];
 
-        /*Begin transaction*/
-        try {
-            $pdo->beginTransaction();
-            $stmtDelete->execute();
-            foreach ($_POST['kurse'] as $value)
-            {
-                $stmtInsert->execute(array($value));
-            }
-            $pdo->commit();
-            
-            /*Alert successful message after transaction committed */
-            ?><div class="alert alert-success"><?php
-            echo 'Auswahl gespeichert'."<br>";
-            ?></div><?php
+	if(isset($studentid)){
+		if(!empty($_POST['kurse'])) {
 
-        }catch (Exception $e){
-            $pdo->rollback();
-            throw $e;
-            
-            /*Alert Error message after transaction rollbacked (cancelled) */
-            ?><div class="alert alert-danger"><?php
-            echo $e->get_message();
-            ?></div><?php
-        }
-    }
-
-    /*Show previous universities selection and the course-selection form*/
-    if(isset($_POST['home_locationid']) AND isset($_POST['foreign_locationid']) AND ($_POST['home_locationid']>1) AND ($_POST['foreign_locationid']>1)) {
-		$home_locationid = $_POST['home_locationid'];
-        $foreign_locationid = $_POST['foreign_locationid'];
-
-        $showFormular = true;
+			/*DELETE all old entries of students in database table 'student_selectedsubjects' then INSERT newly checked equivalent-courses into database*/	
+				$stmtDelete = $pdo->prepare("DELETE FROM student_selectedsubjects WHERE personalid = $userid");
+				$stmtInsert = $pdo->prepare("INSERT INTO student_selectedsubjects (equivalence_id, personalid) VALUES (?, $userid)");
+		
+				/*Begin transaction*/
+				try {
+					$pdo->beginTransaction();
+					$stmtDelete->execute();
+					foreach ($_POST['kurse'] as $value)
+					{
+						$stmtInsert->execute(array($value));
+					}
+					$pdo->commit();
+					
+					/*Alert successful message after transaction committed */
+					?><div class="alert alert-success"><?php
+					echo 'Auswahl gespeichert'."<br>";
+					?></div><?php
+		
+				}catch (Exception $e){
+					$pdo->rollback();
+					throw $e;
+					
+					/*Alert Error message after transaction rollbacked (cancelled) */
+					?><div class="alert alert-danger"><?php
+					echo $e->get_message();
+					?></div><?php
+				}
+			}
+		
+			/*Show previous universities selection and the course-selection form*/
+			if(isset($_POST['home_locationid']) AND isset($_POST['foreign_locationid']) AND ($_POST['home_locationid']>1) AND ($_POST['foreign_locationid']>1)) {
+				$home_locationid = $_POST['home_locationid'];
+				$foreign_locationid = $_POST['foreign_locationid'];
+		
+				$showFormular = true;
+			}
+	}else{
+		?><div class="alert alert-danger"><?php
+		echo 'Sie haben sich noch nicht beworben. <br> Bitte erst <a href="application.php">Bewerbungformular</a> abschicken!';
+		?></div><?php
 	}
 }
 
