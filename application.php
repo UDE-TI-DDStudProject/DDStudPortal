@@ -82,10 +82,28 @@ if(isset($_POST['abschicken'])) {
 		}	
 	}
 
+	//Data validation
+	if(!$error){
+		//Check if all required fields are filled
+		if(!isset($salutation) or !isset($firstname) or !isset($surname) or !isset($email) or !isset($nationality) or !isset($birthday)
+		or !isset($home_street) or !isset($home_zip) or !isset($home_city) or !isset($home_state) or !isset($home_country) or !isset($home_phone)
+		or !isset($home_degree) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
+		or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) or !isset($second_uni) or !isset($third_uni)){
+			$error = true;
+			?><div class="alert alert-danger"><?php
+			echo 'Please fill in all require fields!';
+			?></div><?php
+			$error = true;
+		}
+	}
+
 	//if user hasn't applied yet
 	if(!$error){
 	
 		try {
+			//check error in qeuries and throw exception if error found
+			$pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    		$pdo->setAttribute( PDO::ATTR_EMULATE_PREPARES, FALSE );
 			$pdo->beginTransaction();
 
 			$statement1 = $pdo->prepare("INSERT INTO $studentDB (
@@ -186,100 +204,16 @@ if(isset($_POST['abschicken'])) {
 	
 		}catch (PDOException $e){
 			$pdo->rollback();
-			throw $e;
 			
 			/*Alert Error message after transaction rollbacked (cancelled) */
 			?><div class="alert alert-danger"><?php
-			echo 'Fehler'."<br>";
+			echo $e->get_message();
+			echo "<br>";
 			?></div><?php
 		}
 	}
 }	
-	
-
-
-/*
-// ab hier anpassen 
-if(isset($_GET['save'])) {
-	$save = $_GET['save'];
-	
-	
-	
-	
-	
-	// erster Reiter
-	if($save == 'personal_data') {
-		$vorname = trim($_POST['vorname']);
-		$nachname = trim($_POST['nachname']);
-		
-		if($vorname == "" || $nachname == "") {
-			$error_msg = "Bitte Vor- und Nachname ausfüllen.";
-		} else {
-			$statement = $pdo->prepare("UPDATE users SET vorname = :vorname, nachname = :nachname, updated_at=NOW() WHERE id = :userid");
-			$result = $statement->execute(array('vorname' => $vorname, 'nachname'=> $nachname, 'userid' => $user['id'] ));
-						
-			$success_msg = "Daten erfolgreich gespeichert.";
-		}
-	
-	
-	
-	
-	
-	
-	
-	// zweiter Reiter 
-	} else if($save == 'email') {
-		$passwort = $_POST['passwort'];
-		$email = trim($_POST['email']);
-		$email2 = trim($_POST['email2']);
-		
-		if($email != $email2) {
-			$error_msg = "Die eingegebenen E-Mail-Adressen stimmten nicht überein.";
-		} else if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			$error_msg = "Bitte eine gültige E-Mail-Adresse eingeben.";
-		} else if(!password_verify($passwort, $user['passwort'])) {
-			$error_msg = "Bitte korrektes Passwort eingeben.";
-		} else {
-			$statement = $pdo->prepare("UPDATE users SET email = :email WHERE id = :userid");
-			$result = $statement->execute(array('email' => $email, 'userid' => $user['id'] ));
-			
-			$success_msg = "E-Mail-Adresse erfolgreich gespeichert.";
-		}
-	
-
-
-
-
-
-	// dritter Reiter
-	} else if($save == 'passwort') {
-		$passwortAlt = $_POST['passwortAlt'];
-		$passwortNeu = trim($_POST['passwortNeu']);
-		$passwortNeu2 = trim($_POST['passwortNeu2']);
-		
-		if($passwortNeu != $passwortNeu2) {
-			$error_msg = "Die eingegebenen Passwörter stimmten nicht überein.";
-		} else if($passwortNeu == "") {
-			$error_msg = "Das Passwort darf nicht leer sein.";
-		} else if(!password_verify($passwortAlt, $user['passwort'])) {
-			$error_msg = "Bitte korrektes Passwort eingeben.";
-		} else {
-			$passwort_hash = password_hash($passwortNeu, PASSWORD_DEFAULT);
-				
-			$statement = $pdo->prepare("UPDATE users SET passwort = :passwort WHERE id = :userid");
-			$result = $statement->execute(array('passwort' => $passwort_hash, 'userid' => $user['id'] ));
-					
-			$success_msg = "Passwort erfolgreich gespeichert.";
-		}
-		
-	}
-}*/
-
-// $user = check_user();
-
 ?>
-
-
 
 <h1>Bewerbungsformular</h1>
 
@@ -293,18 +227,6 @@ if(isset($success_msg) && !empty($success_msg)):
 <?php 
 endif;
 ?>
-
-<?php 
-// if(isset($error_msg) && !empty($error_msg)):
-// ?>
-<!-- // 	<div class="alert alert-danger">
-// 		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
- 	  	<?php //echo $error_msg; ?>
-// 	</div> -->
- <?php 
-// endif;
-?>
-
 
 
   <!-- Nav tabs -->
@@ -397,10 +319,11 @@ endif;
 					</div>
 				</div>
 
+				<!-- input="date" is not supported by IE so additional regEx is added to validate the input text in IE to avoid data type error while inserting value to database -->
 				<div class="form-group row">
 					<label for="inputBday" class="col-sm-3 control-label">Geburtsdatum (birthday): </label>
 					<div class="col-sm-7">
-						<input data-error="Please input a your birth date in format YYYY-MM-DD!" type="date" pattern="\d{4}-\d{1,2}-\d{1,2}"  id="inputBday" size="40" maxlength="20" name="birthday" class="form-control" style="valign: middle; padding-top: 0px" placeholder="YYYY-MM-DD" required>
+						<input data-error="Please input your birth date in format YYYY-MM-DD!" type="date" pattern="\d{4}-\d{1,2}-\d{1,2}"  id = "inputBday" size="40" maxlength="20" name="birthday" class="form-control" style="valign: middle; padding-top: 0px" placeholder="YYYY-MM-DD" required>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -559,7 +482,7 @@ endif;
 				<div class="form-group"> <!-- existiert in ddstud noch nicht -->
 					<label for="inputEnrollment" class="col-sm-3 control-label">Monat/Jahr der Einschreibung in aktuellen Studiengang <br>(month/year of enrollment): </label>
 					<div class="col-sm-7">
-						<input data-error="Please enter your enrollment month/year!" type="text" id="inputEnrollment" maxlength="7" name="home_enrollment" class="form-control" placeholder="MM/YYYY" required>
+						<input data-error="Please enter your enrollment month/year!" type="text" id="inputEnrollment" pattern="\d{1,2}/\d{4}" maxlength="7" name="home_enrollment" class="form-control" placeholder="MM/YYYY" required>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
