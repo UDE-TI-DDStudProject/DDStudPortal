@@ -10,6 +10,12 @@ $user = check_user(); //zur Prüfung des users in der "user"-Datenbank
 $inputDB = 'student_new';
 $userid = $user['id'];
 
+//check whether if student has registered already
+$statement = $pdo->prepare("SELECT personalid FROM student_new WHERE user_id = $userid");
+$result = $statement->execute();
+$row = $statement->fetch();
+$studentid = $row['personalid'];
+
 $readonly = false;
 
 include("templates/header.inc.php");
@@ -32,13 +38,6 @@ $showFormular = false; //Variable ob das Registrierungsformular angezeigt werden
 
 /* Ergebnis der vom Studenten ausgewählten Kurse */
 if(isset($_POST['auswahl'])) {
-
-	//check whether if student has registered already
-	$statement = $pdo->prepare("SELECT personalid FROM student_new WHERE user_id = $userid");
-	$result = $statement->execute();
-	$row = $statement->fetch();
-	$studentid = $row['personalid'];
-
 	if(isset($studentid)){
 		if(!empty($_POST['kurse'])) {
 
@@ -161,9 +160,9 @@ if($showFormular) {
 	$result = $statement1->execute();
 	$row4 = $statement1 ->fetch();
 	if(isset($row4)){
-		if(((strtotime(date('Y-m-d h:i:sa')) - strtotime($row4['created_at']))/60/60/24) > 10){
+		if(((strtotime(date('Y-m-d h:i:sa')) - strtotime($row4['created_at']))/60/60/24) >= 0){
 			?><div class="alert alert-warning"><?php
-			echo "Not editable after deadline!";
+			echo "The selection is no longer available!";
 			?></div>
 			<script>
 			$(document).ready(function(){
@@ -176,10 +175,14 @@ if($showFormular) {
 	}
 ?>
 
+	<h2>Abgeschickte Fächerwahlliste</h2> 
 
 	<table id = "courses" border="1" rules="row" cellspacing="10">
 		<tr style="background-color: #003D76; color: white; align: middle">
-			<td width="8%" align="center"><b>Auswahl</b><br>(Selection)</th>
+			<?php if(!$readonly){
+				?><td width="8%" align="center"><b>Auswahl</b><br>(Selection)</th><?php
+			} 
+			?>
 			<td width="15%" align="center"><b>Kurs-Nr. Heim-Uni</b><br>(Home-Subject-No.)</th>
 			<td width="11%" align="center"><b>Credits Heim-Uni</b><br>(Home-Credits)</th>
 			<td width="25%" align="center"><b>Kurs Heim-Uni</b><br>(Home-subject)</th>
@@ -190,9 +193,17 @@ if($showFormular) {
 
 
 		<?php 
-		/*Abfrage der vorhandenen Äquivalenzen aus der "equivalent_subjects"-DB*/
-		$statement = $pdo->prepare("SELECT equivalence_id, home_subject_id, foreign_subject_id, status_id FROM equivalent_subjects ORDER BY status_id, equivalence_id");
-		$result = $statement->execute();
+
+		if($readonly){
+			/*Abfrage der vorhandenen Äquivalenzen aus der "equivalent_subjects"-DB*/
+			$statement = $pdo->prepare("SELECT equivalent_subjects.equivalence_id, equivalent_subjects.home_subject_id, equivalent_subjects.foreign_subject_id, equivalent_subjects.status_id FROM student_selectedsubjects LEFT JOIN equivalent_subjects ON student_selectedsubjects.equivalence_id =  equivalent_subjects.equivalence_id  WHERE student_selectedsubjects.personalid = $studentid");
+			$result = $statement->execute();
+		}else{
+			/*Abfrage der vorhandenen Äquivalenzen aus der "equivalent_subjects"-DB*/
+			$statement = $pdo->prepare("SELECT equivalence_id, home_subject_id, foreign_subject_id, status_id FROM equivalent_subjects ORDER BY status_id, equivalence_id");
+			$result = $statement->execute();
+		}
+	
 		while($row = $statement->fetch()) {
 			
 			/*Übergabe der Afrage aus "equivalent_subjects"-DB an Variablen*/
@@ -231,7 +242,7 @@ if($showFormular) {
 
             
             /*Query previously selected equivalence-courses' id of the user*/
-            $statement1 = $pdo->prepare("SELECT equivalence_id FROM student_selectedsubjects WHERE personalid = $userid");
+            $statement1 = $pdo->prepare("SELECT equivalence_id FROM student_selectedsubjects WHERE personalid = $studentid");
             $result = $statement1->execute();
             $selectedCourses = array();
             while($selectedCourse = $statement1 ->fetch())
@@ -252,7 +263,12 @@ if($showFormular) {
 			}?>
 			<tr style="background-color: <?php echo $backcolor; ?>">
             <!--check previously selected equivalence-courses and disable declined courses-->
-			<td align="center"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($status_id == "3") echo "disabled"; ?>></td>
+			<?php
+				if(!$readonly){
+					?><td align="center"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($status_id == "3") echo "disabled"; ?>></td>
+					<?php
+				}
+			?>
 			<td align="center" valign="middle"><?php echo $row1['subject_code'] ?></td>
 			<td align="center"><?php echo $row1['subject_credits'] ?></td>
 			<td align="center"><?php echo $row1['subject_title'] ?></td>
@@ -279,8 +295,24 @@ if($showFormular) {
 }
 ?>
 
-
 </div>
+
+<!-- hide sent button if readonly -->
+<?php
+if($readonly){
+	?>
+	<script>
+		var x = document.getElementById("auswahl");
+  		if (x.style.display === "none") {
+    		x.style.display = "block";
+  		} else {
+    		x.style.display = "none";
+  			}
+	</script>
+	<?php
+}
+
+?>
 
 <script>
 //if drop down selection changed, hide table and button
