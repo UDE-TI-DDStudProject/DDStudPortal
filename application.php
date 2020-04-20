@@ -115,6 +115,7 @@ if(isset($_POST['abschicken'])) {
 	
 	
 	//Überprüfe, dass die E-Mail-Adresse noch nicht registriert wurde
+	/*
 	if(!$error) { 
 		$statement = $pdo->prepare("SELECT * FROM $studentDB WHERE user_id = $user_id");
 		$result = $statement->execute(array('user_id' => $user_id));
@@ -127,7 +128,7 @@ if(isset($_POST['abschicken'])) {
 			$error = true;
 			?></div><?php
 		}	
-	}
+	}*/
 
 	//Data validation
 	if(!$error){
