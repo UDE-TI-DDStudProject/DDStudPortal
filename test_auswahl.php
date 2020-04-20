@@ -167,7 +167,7 @@ if($showFormular) {
 
 		<?php 
 		/*Abfrage der vorhandenen Äquivalenzen aus der "equivalent_subjects"-DB*/
-		$statement = $pdo->prepare("SELECT equivalence_id, home_subject_id, foreign_subject_id, status_id FROM equivalent_subjects ORDER BY equivalence_id");
+		$statement = $pdo->prepare("SELECT equivalence_id, home_subject_id, foreign_subject_id, status_id FROM equivalent_subjects ORDER BY status_id, equivalence_id");
 		$result = $statement->execute();
 		while($row = $statement->fetch()) {
 			
@@ -202,7 +202,15 @@ if($showFormular) {
 			/*Abfrage aus "equivalence_status"-DB der Infos für Foreign_Course*/ 
 			$statement1 = $pdo->prepare("SELECT status FROM equivalence_status WHERE status_id = $status_id");
 			$result = $statement1->execute();
-            $row3 = $statement1 ->fetch();
+			$row3 = $statement1 ->fetch();
+			
+			/*Check deadline for selecting equivalence-courses */ 
+			$statement1 = $pdo->prepare("SELECT created_when FROM student_new WHERE user_id = $userid");
+			$result = $statement1->execute();
+			$row4 = $statement1 ->fetch();
+			if(isset($row4)){
+				//chech how long since application, then set whether if user can edit selection
+			}
             
             /*Query previously selected equivalence-courses' id of the user*/
             $statement1 = $pdo->prepare("SELECT equivalence_id FROM student_selectedsubjects WHERE personalid = $userid");
