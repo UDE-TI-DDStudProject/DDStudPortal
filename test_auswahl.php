@@ -10,6 +10,8 @@ $user = check_user(); //zur Prüfung des users in der "user"-Datenbank
 $inputDB = 'student_new';
 $userid = $user['id'];
 
+$readonly = false;
+
 include("templates/header.inc.php");
 ?>
 
@@ -149,8 +151,30 @@ if(isset($_POST['university'])) {
 
 <?php
 if($showFormular) {
+
 ?>
 <div class="container main-container">
+
+<?php
+/*Check deadline for selecting equivalence-courses */ 
+	$statement1 = $pdo->prepare("SELECT created_at FROM student_new WHERE user_id = $userid");
+	$result = $statement1->execute();
+	$row4 = $statement1 ->fetch();
+	if(isset($row4)){
+		if(((strtotime(date('Y-m-d h:i:sa')) - strtotime($row4['created_at']))/60/60/24) > 10){
+			?><div class="alert alert-warning"><?php
+			echo "Not editable after deadline!";
+			?></div>
+			<script>
+			$(document).ready(function(){
+					$("#auswahl").hide();
+				});
+			</script>
+			<?php
+			$readonly = true;
+		}
+	}
+?>
 
 
 	<table id = "courses" border="1" rules="row" cellspacing="10">
@@ -204,13 +228,7 @@ if($showFormular) {
 			$result = $statement1->execute();
 			$row3 = $statement1 ->fetch();
 			
-			/*Check deadline for selecting equivalence-courses */ 
-			$statement1 = $pdo->prepare("SELECT created_when FROM student_new WHERE user_id = $userid");
-			$result = $statement1->execute();
-			$row4 = $statement1 ->fetch();
-			if(isset($row4)){
-				//chech how long since application, then set whether if user can edit selection
-			}
+
             
             /*Query previously selected equivalence-courses' id of the user*/
             $statement1 = $pdo->prepare("SELECT equivalence_id FROM student_selectedsubjects WHERE personalid = $userid");
@@ -234,7 +252,7 @@ if($showFormular) {
 			}?>
 			<tr style="background-color: <?php echo $backcolor; ?>">
             <!--check previously selected equivalence-courses and disable declined courses-->
-			<td align="center"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked"; if($status_id == "3") echo "disabled" ?>></td>
+			<td align="center"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($status_id == "3") echo "disabled"; ?>></td>
 			<td align="center" valign="middle"><?php echo $row1['subject_code'] ?></td>
 			<td align="center"><?php echo $row1['subject_credits'] ?></td>
 			<td align="center"><?php echo $row1['subject_title'] ?></td>
