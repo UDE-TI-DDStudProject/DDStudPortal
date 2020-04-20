@@ -6,6 +6,16 @@ require_once("inc/functions.inc.php");
 //Überprüfe, dass der User eingeloggt ist
 //Der Aufruf von check_user() muss in alle internen Seiten eingebaut sein
 $user = check_user();
+$user_id = $user['id'];
+
+//set database table variables
+$studentDB = "student_new";
+$homeaddressDB = "home_address";
+$homestudyDB = "study_home";
+$priorityDB = "priority";
+
+//set form readonly variable
+$readonly = false;
 
 include("templates/header.inc.php");
 ?>
@@ -14,11 +24,48 @@ include("templates/header.inc.php");
 <div class="container main-container">
 
 <?php
-//set database table variables
-$studentDB = "student_new";
-$homeaddressDB = "home_address";
-$homestudyDB = "study_home";
-$priorityDB = "priority";
+$statement = $pdo->prepare("SELECT * FROM $studentDB
+							LEFT JOIN $homeaddressDB ON $homeaddressDB.studentid = $studentDB.personalid 
+							LEFT JOIN $homestudyDB ON $homestudyDB.studentid = $studentDB.personalid 
+							LEFT JOIN $priorityDB ON $priorityDB.studentid = $studentDB.personalid 
+							WHERE $studentDB.user_id = $user_id ");
+$result = $statement->execute(array('user_id' => $user_id));
+$student = $statement->fetch();
+
+//
+if($student !== false) {
+	//set all data from query result
+	$salutation = $student['salutation'];
+	$firstname = $student['firstname'];
+	$surname =$student['surname'];
+	$email = $student['email'];
+	$nationality = $student['nationality'];
+	$birthday = $student['birthday'];
+	$overall_status = $student['overall_status'];
+	$intention = $student['intention'];
+	$starting_semester = $student['starting_semester'];
+
+	$home_street = $student['home_street'];
+	$home_zip = $student['home_zip'];
+	$home_city = $student['home_city'];
+	$home_state = $student['home_state'];
+	$home_country = $student['home_country'];
+	$home_phone = $student['home_phone'];
+
+	$home_degree =  $student['home_degree'];
+	$home_course =  $student['home_course'];
+	$home_matno =  $student['home_matno'];
+	$home_enrollment =  $student['home_enrollment'];
+	$home_semester =  $student['home_semester'];
+	$home_credits =  $student['home_credits'];
+	$home_cgpa =  $student['home_cgpa'];
+
+	$first_uni = $student['first_uni'];
+	$second_uni = $student['second_uni'];
+	$third_uni = $student['third_uni'];
+
+	$readonly = true;
+}	
 
 //bewerbung abgeschickt
 if(isset($_POST['abschicken'])) {
@@ -115,6 +162,7 @@ if(isset($_POST['abschicken'])) {
 				salutation, 
 				overall_status,
 				intention,
+				starting_semester,
 				user_id) 
 			VALUES (
 				'$surname', 
@@ -125,6 +173,7 @@ if(isset($_POST['abschicken'])) {
 				'$salutation',
 				'$overall_status',
 				'$intention',
+				'$starting_semester',
 				'$user_id'
 			)");
 		
@@ -217,7 +266,7 @@ if(isset($_POST['abschicken'])) {
 
 <h1>Bewerbungsformular</h1>
 
-<?php 
+<!-- <?php 
 if(isset($success_msg) && !empty($success_msg)):
 ?>
 	<div class="alert alert-success">
@@ -226,7 +275,7 @@ if(isset($success_msg) && !empty($success_msg)):
 	</div>
 <?php 
 endif;
-?>
+?> -->
 
 
   <!-- Nav tabs -->
@@ -240,7 +289,7 @@ endif;
 	<!-- <li role="presentation" id="tab6"><a href="#courselist" role="tab" data-toggle="tab">Fächerwahl</a></li> -->
   </ul>
 
-  <form role="form" data-toggle="validator" novalidate="true" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+  <form role="form" data-toggle="validator" novalidate="true" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
 
   <div class="tab-content">
   <!-- erster Reiter: Persönliche Daten-->		
@@ -252,10 +301,10 @@ endif;
 				<div class="form-group row">
 					<label for="inputSalutation" class="col-sm-3 control-label">Anrede (salutation):</label>
 					<div class="col-sm-7">
-					<select data-error="Please choose a salutation!" type="text" id="inputSalutation" size="1" name="salutation" class="form-control" required>
+					<select data-error="Please choose a salutation!" type="text" id="inputSalutation" size="1" name="salutation" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 						<option></option>
-						<option value="Mr">Herr (Mr)</option>
-						<option value="Ms">Frau (Ms)</option>
+						<option value="Mr" <?php if(isset($salutation) and $salutation == "Mr") echo "selected"; ?>>Herr (Mr)</option>
+						<option value="Ms" <?php if(isset($salutation) and $salutation == "Ms") echo "selected"; ?>>Frau (Ms)</option>
 					</select>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
@@ -267,7 +316,7 @@ endif;
 				<div class="form-group row">
 					<label for="inputFirstName" class="col-sm-3 control-label">Vorname (first name):</label>
 					<div class="col-sm-7">
-						<input data-error="Please fill in your first name!" type="text" id="inputFirstName" name="firstname" class="form-control" value=<?php echo htmlentities($user['vorname']); ?> readonly>
+						<input data-error="Please fill in your first name!" type="text" id="inputFirstName" name="firstname" class="form-control" value=<?php if(isset($firstname)) echo "$firstname"; else echo htmlentities($user['vorname']); ?> readonly>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -279,7 +328,7 @@ endif;
 				<div class="form-group row">
 					<label for="inputSurname" class="col-sm-3 control-label">Nachname (surname):</label>
 					<div class="col-sm-7">
-						<input data-error="Please fill in your surname!" type="text" id="inputSurname" name="surname" class="form-control" value=<?php echo htmlentities($user['nachname']); ?> readonly>
+						<input data-error="Please fill in your surname!" type="text" id="inputSurname" name="surname" class="form-control" value=<?php if(isset($surname)) echo "$surname"; else echo htmlentities($user['nachname']); ?> readonly>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -290,7 +339,7 @@ endif;
 				<div class="form-group row">
 					<label for="inputEmail" class="col-sm-3 control-label">E-Mail (only @stud.uni-due.de):</label>
 					<div class="col-sm-7">
-						<input type="email" id="inputEmail" name="email" class="form-control" value=<?php echo htmlentities($user['email']); ?> readonly>
+						<input type="email" id="inputEmail" name="email" class="form-control" value=<?php  if(isset($email)) echo "$email"; else echo htmlentities($user['email']); ?> readonly>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -301,14 +350,14 @@ endif;
 				<div class="form-group row">
 					<label for="inputNationality" class="col-sm-3 control-label">Nationalität (nationality): </label>
 					<div class="col-sm-7">
-						<select data-error="Please select your nationality!" type="text" id="inputNationality" size="1"  name="nationality" class="form-control" required>
+						<select data-error="Please select your nationality!" type="text" id="inputNationality" size="1"  name="nationality" class="form-control"  <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 						<!-- Eingefügt start-->
 							<?php 
 								$statement = $pdo->prepare("SELECT * FROM countries ORDER BY countryid");
 								$result = $statement->execute();
 								$count = 1;
 								while($row = $statement->fetch()) { ?>
-									<option><?php echo ($row['country']);?></option>
+									<option  <?php if(isset($nationality) and $nationality == $row['country']) echo "selected";?>><?php echo ($row['country']);?></option>
 							<?php } ?>		
 						<!--Eingefügt ende --> 
 						</select>
@@ -323,7 +372,7 @@ endif;
 				<div class="form-group row">
 					<label for="inputBday" class="col-sm-3 control-label">Geburtsdatum (birthday): </label>
 					<div class="col-sm-7">
-						<input data-error="Please input your birth date in format YYYY-MM-DD!" type="date" pattern="\d{4}-\d{1,2}-\d{1,2}"  id = "inputBday" size="40" maxlength="20" name="birthday" class="form-control" style="valign: middle; padding-top: 0px" placeholder="YYYY-MM-DD" required>
+						<input data-error="Please input your birth date in format YYYY-MM-DD!" type="date" pattern="\d{4}-\d{1,2}-\d{1,2}"  id = "inputBday" size="40" maxlength="20" name="birthday" class="form-control" style="valign: middle; padding-top: 0px" placeholder="YYYY-MM-DD" <?php if(isset($birthday)) echo "value=\"$birthday\""; ?>  <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -346,7 +395,7 @@ endif;
 				<div class="form-group">
 					<label for="inputStreet" class="col-sm-3 control-label">Straße und Haus-Nr. (street and no.): </label>
 					<div class="col-sm-7">
-						<input data-error="Street cannot be empty!" type="text" id="inputStreet" size="40" maxlength="40" name="home_street" class="form-control" required>
+						<input data-error="Street cannot be empty!" type="text" id="inputStreet" size="40" maxlength="40" name="home_street" class="form-control"  <?php if(isset($home_street)) echo "value=\"$home_street\"";?> <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -357,7 +406,7 @@ endif;
 				<div class="form-group">
 					<label for="inputZip" class="col-sm-3 control-label">PLZ (zip): </label>
 					<div class="col-sm-7">
-						<input data-error="Zipcode cannot be empty!" type="text" id="inputZip" size="40" maxlength="10" name="home_zip" class="form-control" required>
+						<input data-error="Zipcode cannot be empty!" type="text" id="inputZip" size="40" maxlength="10" name="home_zip" class="form-control" <?php if(isset($home_zip)) echo "value=\"$home_zip\"";?> <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -368,7 +417,7 @@ endif;
 				<div class="form-group">
 					<label for="inputCity" class="col-sm-3 control-label">Ort (city): </label>
 					<div class="col-sm-7">
-						<input data-error="City cannot be empty!" type="text" id="inputCity" size="40" maxlength="40" name="home_city" class="form-control" required>
+						<input data-error="City cannot be empty!" type="text" id="inputCity" size="40" maxlength="40" name="home_city" class="form-control" <?php if(isset($home_city)) echo "value=\"$home_city\""; ?>  <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -379,7 +428,7 @@ endif;
 				<div class="form-group">
 					<label for="inputState" class="col-sm-3 control-label">Bundesland (state): </label>
 					<div class="col-sm-7">
-						<input data-error="State cannot be empty!" type="text" id="inputState" size="40" maxlength="40" name="home_state" class="form-control" required>
+						<input data-error="State cannot be empty!" type="text" id="inputState" size="40" maxlength="40" name="home_state" class="form-control" <?php if(isset($home_state)) echo "value=\"$home_state\""; ?> <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -390,14 +439,14 @@ endif;
 				<div class="form-group">
 					<label for="inputCountry" class="col-sm-3 control-label">Land (country): </label>
 					<div class="col-sm-7">
-						<select data-error="Country cannot be empty!" type="text" id="inputCountry" size="1"  name="home_country" class="form-control" required>
+						<select data-error="Country cannot be empty!" type="text" id="inputCountry" size="1"  name="home_country" class="form-control"  <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<!-- Eingefügt start-->
 							<?php 
 								$statement = $pdo->prepare("SELECT * FROM countries ORDER BY countryid");
 								$result = $statement->execute();
 								$count = 1;
 								while($row = $statement->fetch()) { ?>
-									<option><?php echo ($row['country']);?></option>
+									<option <?php if(isset($home_country) and $home_country == $row['country']) echo "selected"; ?>><?php echo ($row['country']);?></option>
 							<?php } ?>		
 							<!--Eingefügt ende --> 
 						</select>
@@ -411,7 +460,7 @@ endif;
 				<div class="form-group">
 					<label for="inputPhone" class="col-sm-3 control-label">Telefonnummer (phone): </label>
 					<div class="col-sm-7">
-						<input data-error="Phone number cannot be empty!" type="text" id="inputPhone" size="40" maxlength="15" name="home_phone" class="form-control" required>
+						<input data-error="Phone number cannot be empty!" type="text" id="inputPhone" size="40" maxlength="15" name="home_phone" class="form-control" <?php if(isset($home_phone)) echo "value=\"$home_phone\""; ?> <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -436,10 +485,10 @@ endif;
 				<div class="form-group"> <!-- Tabelle in ddstud vorhanden -->
 					<label for="inputHomeDegree" class="col-sm-3 control-label">Derzeit angestrebter Abschluss <br>(home degree): </label>
 					<div class="col-sm-7">
-						<select data-error="Please select your home degree!" type="value" id="inputHomeDegree" size="1" maxlength="30" name="home_degree" class="form-control" required>
+						<select data-error="Please select your home degree!" type="value" id="inputHomeDegree" size="1" maxlength="30" name="home_degree" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option value="1">Bachelor of Science</option>
-							<option value="2">Master of Science</option>
+							<option value="1" <?php if(isset($home_degree) and $home_degree == "1") echo "selected"; ?>>Bachelor of Science</option>
+							<option value="2" <?php if(isset($home_degree) and $home_degree == "2") echo "selected"; ?>>Master of Science</option>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -451,13 +500,13 @@ endif;
 				<div class="form-group"> <!-- Tabelle in ddstud vorhanden -->
 					<label for="inputHomeCourse" class="col-sm-3 control-label">Aktueller Studiengang <br> (home program): </label>
 					<div class="col-sm-7">
-						<select data-error="Please select your home course!" type="value" id="inputHomeCourse" size="1"  name="home_course" class="form-control" required>
+						<select data-error="Please select your home course!" type="value" id="inputHomeCourse" size="1"  name="home_course" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 						<!-- Eingefügt start-->
 							<?php 
 								$statement = $pdo->prepare("SELECT * FROM courses ORDER BY course ASC");
 								$result = $statement->execute();
 								while($row = $statement->fetch()) { ?>
-									<option value="<?php echo ($row['courseid'])?>"><?php echo ($row['course']);?></option> <!-- value="<?php //echo $row['courseid']?>" -->
+									<option value="<?php echo ($row['courseid']);?>" <?php if(isset($home_course) and $home_course == $row['courseid']) echo "selected"; ?>><?php echo ($row['course']);?></option> <!-- value="<?php //echo $row['courseid']?>" -->
 							<?php } ?>		
 						<!--Eingefügt ende --> 
 						</select>
@@ -471,7 +520,7 @@ endif;
 				<div class="form-group">
 					<label for="inputMatrNo" class="col-sm-3 control-label">Matrikelnummer (matr.-no.): </label>
 						<div class="col-sm-7">
-						<input data-error="Please enter your matriculation number!" type="number" id="inputMatrNo" maxlength="10"  name="home_matno" class="form-control" required>
+						<input data-error="Please enter your matriculation number!" type="number" id="inputMatrNo" maxlength="10"  name="home_matno" class="form-control" <?php if(isset($home_matno)) echo "value=\"$home_matno\""; ?>  <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -482,7 +531,7 @@ endif;
 				<div class="form-group"> <!-- existiert in ddstud noch nicht -->
 					<label for="inputEnrollment" class="col-sm-3 control-label">Monat/Jahr der Einschreibung in aktuellen Studiengang <br>(month/year of enrollment): </label>
 					<div class="col-sm-7">
-						<input data-error="Please enter your enrollment month/year!" type="text" id="inputEnrollment" pattern="\d{1,2}/\d{4}" maxlength="7" name="home_enrollment" class="form-control" placeholder="MM/YYYY" required>
+						<input data-error="Please enter your enrollment month/year!" type="text" id="inputEnrollment" pattern="\d{1,2}/\d{4}" maxlength="7" name="home_enrollment" class="form-control" placeholder="MM/YYYY" <?php if(isset($home_enrollment)) echo "value=\"$home_enrollment\""; ?>  <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -493,16 +542,16 @@ endif;
 				<div class="form-group">
 					<label for="inputHomeSemester" class="col-sm-3 control-label">Fachsemester aktueller Studiengang (semester): </label>
 					<div class="col-sm-7">
-						<select data-error="Please select your current semester!" type="text" id="inputHomeSemester" size="1" maxlength="1" name="home_semester" class="form-control" required>
+						<select data-error="Please select your current semester!" type="text" id="inputHomeSemester" size="1" maxlength="1" name="home_semester" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option value="1">1. Semester</option>
-							<option value="2">2. Semester</option>
-							<option value="3">3. Semester</option>
-							<option value="4">4. Semester</option>
-							<option value="5">5. Semester</option>
-							<option value="6">6. Semester</option>
-							<option value="7">7. Semester</option>
-							<option value="8">8. Semester</option>
+							<option value="1" <?php if(isset($home_semester) and $home_semester == "1") echo "selected"; ?>>1. Semester</option>
+							<option value="2" <?php if(isset($home_semester) and $home_semester == "2") echo "selected"; ?>>2. Semester</option>
+							<option value="3" <?php if(isset($home_semester) and $home_semester == "3") echo "selected"; ?>>3. Semester</option>
+							<option value="4" <?php if(isset($home_semester) and $home_semester == "4") echo "selected"; ?>>4. Semester</option>
+							<option value="5" <?php if(isset($home_semester) and $home_semester == "5") echo "selected"; ?>>5. Semester</option>
+							<option value="6" <?php if(isset($home_semester) and $home_semester == "6") echo "selected"; ?>>6. Semester</option>
+							<option value="7" <?php if(isset($home_semester) and $home_semester == "7") echo "selected"; ?>>7. Semester</option>
+							<option value="8" <?php if(isset($home_semester) and $home_semester == "8") echo "selected"; ?>>8. Semester</option>
 						</select>	
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -514,7 +563,7 @@ endif;
 				<div class="form-group"> 
 					<label for="inputHomeCredits" class="col-sm-3 control-label">Summe bisher erworbener Kreditpunkte laut beigefügtem Transkript (Credits):</label>
 					<div class="col-sm-7">
-						<input data-error="Please enter your current credits!" type="number" id="inputHomeCredits" min="0" step="1" max="300" maxlength="3" name="home_credits" class="form-control" required>
+						<input data-error="Please enter your current credits!" type="number" id="inputHomeCredits" min="0" step="1" max="300" maxlength="3" name="home_credits" class="form-control" <?php if(isset($home_credits)) echo "value=\"$home_credits\""; ?> <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -525,7 +574,7 @@ endif;
 				<div class="form-group"> <!-- nochmal die "steps" checken und nur punkt- ODER komma-trennung erlauben -->
 					<label for="inputHomeCGPA" class="col-sm-3 control-label">Durchschnittsnote laut beigefügtem Transkript (CGPA/ Average Grade)):</label>
 					<div class="col-sm-7">
-						<input data-error="Please enter your current grade!" type="text" id="inputHomeCGPA" min="1" max="4" step="0.1" maxlength="3" name="home_cgpa" class="form-control" required>
+						<input data-error="Please enter your current grade!" type="text" id="inputHomeCGPA" min="1" max="4" step="0.1" maxlength="3" name="home_cgpa" class="form-control" <?php if(isset($home_cgpa)) echo "value=\"$home_cgpa\""; ?> <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -550,9 +599,9 @@ endif;
 				<div class="form-group">
 					<label for="inputIntention" class="col-sm-3 control-label">Programm (type of transfer):</label>
 					<div class="col-sm-7">
-						<select data-error="Please select a valid type of transfer!" type="text" id="inputIntention" size="1" maxlength="20" name="intention" class="form-control" required>
+						<select data-error="Please select a valid type of transfer!" type="text" id="inputIntention" size="1" maxlength="20" name="intention" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option>Exchange</option>
+							<option <?php if(isset($intention) and $intention == "Exchange") echo "selected"; ?>>Exchange</option>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -564,10 +613,10 @@ endif;
 				<div class="form-group">
 					<label for="inputStart" class="col-sm-3 control-label">Beginn des Austauschs (start of transfer):</label>
 					<div class="col-sm-7">
-						<select data-error="Please select a valid starting semester for the transfer!" type="number" id="inputStart" size="1" maxlength="7" name="starting_semester" class="form-control" required>
+						<select data-error="Please select a valid starting semester for the transfer!" type="number" id="inputStart" size="1" maxlength="7" name="starting_semester" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option value="2019.5">WS19/20</option>
-							<option value="2020.5">WS20/21</option>
+							<option value="2019.5" <?php if(isset($starting_semester) and $starting_semester == "2019.5") echo "selected"; ?>>WS19/20</option>
+							<option value="2020.5" <?php if(isset($starting_semester) and $starting_semester == "2020.5") echo "selected"; ?>>WS20/21</option>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -580,10 +629,10 @@ endif;
 					<label for="inputForeignDegree" class="col-sm-3 control-label">Während des geplanten Auslandsemester werde ich
 					voraussichtlich Student sein in (abroad degree):</label>
 					<div class="col-sm-7">
-						<select data-error="Please select a valid type of degree for the transfer!" type="text" id="inputForeignDegree" size="1" name="foreign_degree" class="form-control" required>
+						<select data-error="Please select a valid type of degree for the transfer!" type="text" id="inputForeignDegree" size="1" name="foreign_degree" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option>einem Bachelorstudiengang an der UDE</option>
-							<option>einem Masterstudiengang an der UDE</option>
+							<option value="1" <?php if(isset($foreign_degree) and $foreign_degree == "1") echo "selected"; ?>>einem Bachelorstudiengang an der UDE</option>
+							<option value="2" <?php if(isset($foreign_degree) and $foreign_degree == "2") echo "selected"; ?>>einem Masterstudiengang an der UDE</option>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -596,11 +645,11 @@ endif;
 				<div class="form-group">
 					<label for="inputFirstPrio" class="col-sm-3 control-label">1. Priorität (1. priority):</label>
 					<div class="col-sm-7">
-						<select data-error="Please select a valid University!" type="number" id="inputFirstPrio" size="1" maxlength="20" name="firstprio" class="form-control" required>
+						<select data-error="Please select a valid University!" type="number" id="inputFirstPrio" size="1" maxlength="20" name="firstprio" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option value="2">UKM, Malaysia</option>
-							<option value="3">UI, Indonesia</option>
-							<option value="5">NTU, Singapur</option>
+							<option value="2" <?php if(isset($first_uni) and $first_uni == "2") echo "selected"; ?>>UKM, Malaysia</option>
+							<option value="3" <?php if(isset($first_uni) and $first_uni == "3") echo "selected"; ?>>UI, Indonesia</option>
+							<option value="5" <?php if(isset($first_uni) and $first_uni == "5") echo "selected"; ?>>NTU, Singapur</option>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -612,11 +661,11 @@ endif;
 				<div class="form-group">
 					<label for="inputSecondPrio" class="col-sm-3 control-label">2. Priorität (2. priority):</label>
 					<div class="col-sm-7">
-						<select data-error="Please select a valid University!" type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio" class="form-control" required>
+						<select data-error="Please select a valid University!" type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option value="2">UKM, Malaysia</option>
-							<option value="3">UI, Indonesia</option>
-							<option value="5">NTU, Singapur</option>
+							<option value="2" <?php if(isset($second_uni) and $second_uni == "2") echo "selected"; ?>>UKM, Malaysia</option>
+							<option value="3" <?php if(isset($second_uni) and $second_uni == "3") echo "selected"; ?>>UI, Indonesia</option>
+							<option value="5" <?php if(isset($second_uni) and $second_uni == "5") echo "selected"; ?>>NTU, Singapur</option>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -628,11 +677,11 @@ endif;
 				<div class="form-group">
 					<label for="inputThirdPrio" class="col-sm-3 control-label">3. Priorität (3. priority):</label>
 					<div class="col-sm-7">
-						<select data-error="Please select a valid University!" type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio" class="form-control" required>
+						<select data-error="Please select a valid University!" type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option value="2">UKM, Malaysia</option>
-							<option value="3">UI, Indonesia</option>
-							<option value="5">NTU, Singapur</option>
+							<option value="2" <?php if(isset($third_uni) and $third_uni == "2") echo "selected"; ?>>UKM, Malaysia</option>
+							<option value="3" <?php if(isset($third_uni) and $third_uni == "3") echo "selected"; ?>>UI, Indonesia</option>
+							<option value="5" <?php if(isset($third_uni) and $third_uni == "5") echo "selected"; ?>>NTU, Singapur</option>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -659,7 +708,13 @@ endif;
 				<div class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Ausgefüllte Fächerwahlliste [Excel Format]</label>	
 					<div class="col-sm-7">
-						<input data-error="Please upload the filled course selection form in Excel format!" type="file" size="75" class="btn btn-primary" name="Fächerwahlliste" accept="text/*" required><br>
+						<?php 
+							if($readonly){
+								?><a href="#filepath">filename</a><?php
+							}else{
+								?><input data-error="Please upload the filled course selection form in Excel format!"  type="file" size="75" class="btn btn-primary" name="Fächerwahlliste" accept=".xls, .xlsx" required><br><?php
+							}
+						?>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -670,85 +725,91 @@ endif;
 				<div class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Motivationsschreiben [In Englisch und PDF]</label>	
 					<div class="col-sm-7">
-						<input type="file" size="75" class="btn btn-primary" name="Motivationsschreiben" accept="text/*" ><br>
+					<?php 
+							if($readonly){
+								?><a href="#filepath">filename</a><?php
+							}else{
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75" class="btn btn-primary" name="Motivationsschreiben" accept=".pdf" ><br>
+								<?php
+							}
+						?>
+					</div>
+					<label  for="errorText" class="col-sm-3 control-label"></label>
+					<div class="col-sm-7">
+						<div class="help-block with-errors"></div>					
 					</div>
 				</div>
 				
 				<div class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Lebenslauf [In Englisch und PDF]</label>	
 					<div class="col-sm-7">
-						<input type="file" size="75" class="btn btn-primary" name="Lebenslauf" accept="text/*" ><br>
+					<?php 
+							if($readonly){
+								?><a href="#filepath">filename</a><?php
+							}else{
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75" class="btn btn-primary" name="Lebenslauf" accept=".pdf" ><br>
+								<?php
+							}
+						?>
+					</div>
+					<label  for="errorText" class="col-sm-3 control-label"></label>
+					<div class="col-sm-7">
+						<div class="help-block with-errors"></div>					
 					</div>
 				</div>
 				
 				<div class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Aktuelles Transkript/Zeugnis [PDF]</label>	
 					<div class="col-sm-7">
-						<input type="file" size="75" class="btn btn-primary" name="Transkript" accept="text/*" ><br>
+					<?php 
+							if($readonly){
+								?><a href="#filepath">filename</a><?php
+							}else{
+								?><input data-error="Only pdf file type is allowed!" type="file" size="75" class="btn btn-primary" name="Transkript" accept=".pdf" ><br>
+								<?php
+							}
+						?>
+					</div>
+					<label  for="errorText" class="col-sm-3 control-label"></label>
+					<div class="col-sm-7">
+						<div class="help-block with-errors"></div>					
 					</div>
 				</div>
 				
 				<div class="form-group">
 					<div class="col-sm-offset-3 col-sm-10">
 						<a href="#foreignstudy" role="tab" data-toggle="tab"><button type="button" class="btn btn-primary" id="zurück5">Zurück</button></a>
-						<button type="submit" name="abschicken" class="btn btn-success" style="width: 340px">Bewerbung abschicken</button>
+						<button type="submit" id="abschicken" name="abschicken" class="btn btn-success" style="width: 340px">Bewerbung abschicken</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
-
-	<!-- sechster Reiter: Fächerwahl -->
-		<!-- <div role="tabpanel" class="tab-pane" id="courselist">
-			<br>
-			<div class="form-horizontal">
-			
-			<form action="?university=1" method="post">
-
-				<div class="form-group" style="background-color: #003D76; color: white"> 
-					<table class="table" rules="none">
-						<tr>
-							<td width="50%" align="center"><label for="Home_uni"><font size="5">Heim-Universität </font><br>(Home-University)</label></th>
-							<td width="50%" align="center"><label for="Foreign_uni"><font size="5">Partner-Universität </font><br>(Foreign-University)</label></th>
-						</tr>
-						<tr>
-							<td>				
-								<select type="text" size="1"  name="home_locationid" class="form-control" required>
-									<?php 
-									$statement = $pdo->prepare("SELECT location, locationid FROM university ORDER BY locationid");
-									$result = $statement->execute();
-									while($row = $statement->fetch()) { ?>
-										<option value="<?php echo ($row['locationid'])?>"><?php echo ($row['location'])?></option>
-									<?php } ?>		
-								</select>
-							</td>
-							<td>
-								<select type="text" size="1"  name="foreign_locationid" class="form-control">
-									<?php 
-									$statement = $pdo->prepare("SELECT location, locationid FROM university ORDER BY locationid");
-									$result = $statement->execute();
-									while($row = $statement->fetch()) { ?>
-									<option value="<?php echo ($row['locationid'])?>"><?php echo ($row['location'])?></option>
-									<?php }?>		
-								</select>
-							</td>
-						</tr>
-					</table>
-
-					<button type="submit" name="university" class="btn btn-lg btn-primary btn-block">Äquivalenzliste laden</button>
-				</div><br> 
-			</form>
-				
-			
-					
-			</div>
-		</div> -->
 	</form>
 	
 	</div>
 	
 </div>
 </div>
+
+<!-- hide sent button if readonly -->
+<?php
+if($readonly){
+	?>
+	<script>
+		var x = document.getElementById("abschicken");
+  		if (x.style.display === "none") {
+    		x.style.display = "block";
+  		} else {
+    		x.style.display = "none";
+  			}
+	</script>
+	<?php
+}
+
+?>
+
+<!-- next and back button click -->
 <script>
 $(document).ready(function(){
 
