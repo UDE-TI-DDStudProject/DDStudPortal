@@ -43,8 +43,8 @@ if(isset($_POST['auswahl'])) {
 		if(!empty($_POST['kurse'])) {
 
 			/*DELETE all old entries of students in database table 'student_selectedsubjects' then INSERT newly checked equivalent-courses into database*/	
-				$stmtDelete = $pdo->prepare("DELETE FROM student_selectedsubjects WHERE personalid = $userid");
-				$stmtInsert = $pdo->prepare("INSERT INTO student_selectedsubjects (equivalence_id, personalid) VALUES (?, $userid)");
+				$stmtDelete = $pdo->prepare("DELETE FROM student_selectedsubjects WHERE personalid = $studentid");
+				$stmtInsert = $pdo->prepare("INSERT INTO student_selectedsubjects (equivalence_id, personalid) VALUES (?, $studentid)");
 		
 				/*Begin transaction*/
 				try {
