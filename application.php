@@ -13,6 +13,7 @@ $studentDB = "student_new";
 $homeaddressDB = "home_address";
 $homestudyDB = "study_home";
 $priorityDB = "priority";
+$hoststudyDB = "study_host";
 
 //set form readonly variable
 $readonly = false;
@@ -28,6 +29,7 @@ $statement = $pdo->prepare("SELECT * FROM $studentDB
 							LEFT JOIN $homeaddressDB ON $homeaddressDB.studentid = $studentDB.personalid 
 							LEFT JOIN $homestudyDB ON $homestudyDB.studentid = $studentDB.personalid 
 							LEFT JOIN $priorityDB ON $priorityDB.studentid = $studentDB.personalid 
+							LEFT JOIN $hoststudyDB ON $hoststudyDB.studentid = $studentDB.personalid 
 							WHERE $studentDB.user_id = $user_id ");
 $result = $statement->execute(array('user_id' => $user_id));
 $student = $statement->fetch();
@@ -44,6 +46,7 @@ if($student !== false) {
 	$overall_status = $student['overall_status'];
 	$intention = $student['intention'];
 	$starting_semester = $student['starting_semester'];
+	$foreign_degree = $student['foreign_degree'];
 
 	$home_street = $student['home_street'];
 	$home_zip = $student['home_zip'];
@@ -64,7 +67,7 @@ if($student !== false) {
 	$second_uni = $student['second_uni'];
 	$third_uni = $student['third_uni'];
 
-	$readonly = true;
+	$readonly = false;
 }	
 
 //bewerbung abgeschickt
@@ -242,9 +245,18 @@ if(isset($_POST['abschicken'])) {
 				'0' 
 				)");
 
+			$statement6 = $pdo->prepare("INSERT INTO $hoststudyDB (
+				studentid,
+				foreign_degree)
+			VALUES (
+				'$studentid',
+				'$foreign_degree'
+				)");	
+
 			$statement3->execute();
 			$statement4->execute();
 			$statement5->execute();
+			$statement6->execute();
 			$pdo->commit();
 			
 			/*Alert successful message after transaction committed */
@@ -706,73 +718,83 @@ endif;
 			<br>
 			<div class="form-horizontal">
 				
-				<div class="form-group"> 
+				<div id="group1" class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Ausgefüllte Fächerwahlliste [Excel Format]</label>	
 					<div class="col-sm-7">
 						<?php 
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input data-error="Please upload the filled course selection form in Excel format!"  type="file" size="75" class="btn btn-primary" name="Fächerwahlliste" accept=".xls, .xlsx" required><br><?php
+								?>
+								<!-- <div class="custom-file">
+								  <input type="file" class="custom-file-input" id="customFile">
+								  <label class="custom-file-label" for="customFile">Choose file</label>
+								</div> -->
+								<input data-error="Please upload the filled course selection form in Excel format!"  type="file" size="75"  name="Fächerwahlliste" class="form-control" id="excelfile" accept=".xls, .xlsx" required>
+								<?php 
 							}
 						?>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
-						<div class="help-block with-errors"></div>					
+						<div class="help-block with-errors" id="fileerror1"></div>
+						<!-- <span class="help-block">error</span>												 -->
 					</div>
 				</div>
 				
-				<div class="form-group"> 
+				<div id="group2" class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Motivationsschreiben [In Englisch und PDF]</label>	
 					<div class="col-sm-7">
 					<?php 
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input  data-error="Only pdf file type is allowed!" type="file" size="75" class="btn btn-primary" name="Motivationsschreiben" accept=".pdf" ><br>
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Motivationsschreiben" id="pdf1" class="form-control" accept=".pdf" ><br>
 								<?php
 							}
 						?>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
+						<span class="help-block" id="pdferror1"></span>
 						<div class="help-block with-errors"></div>					
 					</div>
 				</div>
 				
-				<div class="form-group"> 
+				<div id="group3" class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Lebenslauf [In Englisch und PDF]</label>	
 					<div class="col-sm-7">
 					<?php 
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input  data-error="Only pdf file type is allowed!" type="file" size="75" class="btn btn-primary" name="Lebenslauf" accept=".pdf" ><br>
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Lebenslauf" id="pdf2" accept=".pdf" class="form-control"><br>
 								<?php
 							}
 						?>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
+						<span class="help-block" id="pdferror2"></span>
 						<div class="help-block with-errors"></div>					
 					</div>
 				</div>
 				
-				<div class="form-group"> 
+				<div id="group4" class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Aktuelles Transkript/Zeugnis [PDF]</label>	
 					<div class="col-sm-7">
 					<?php 
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input data-error="Only pdf file type is allowed!" type="file" size="75" class="btn btn-primary" name="Transkript" accept=".pdf" ><br>
+								?><input data-error="Only pdf file type is allowed!" type="file" size="75"  name="Transkript" class="form-control" id="pdf3" accept=".pdf" ><br>
 								<?php
 							}
 						?>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
+						<span class="help-block" id="pdferror3"></span>
 						<div class="help-block with-errors"></div>					
 					</div>
 				</div>
@@ -847,6 +869,38 @@ $(document).ready(function(){
 	$("#zurück5").click(function(){
 		$('.nav-tabs a[href="#foreignstudy"]').tab('show');
 	});
+});
+</script>
+
+<script>
+$(document).ready(function(){
+
+
+	$("#excelfile").change(function(){
+        var ext = this.value.match(/\.(.+)$/)[1];
+		alert(ext);
+
+		switch(ext){
+			case "xls":
+				alert("yay");
+				$('#abschicken').attr('disabled', false); 
+				//$('#group1').removeClass("form-group has-error"); 
+				break;
+			case "xlsx":
+				alert("yay");
+				$('#abschicken').attr('disabled', false); 
+				//$('#group1').removeClass("form-group has-error"); 
+				break;
+			default:
+				alert("nay");
+				$('#abschicken').attr('disabled', true); 
+				//$('#group1').addClass("form-group has-error"); 
+				//$('#group1').addClass("form-group has-error"); 
+				//$('#group1').removeClass("form-group"); 
+				//$("#group1").attr('class', 'form-group has-error');
+				break;
+		}
+    }); 
 });
 </script>
 
