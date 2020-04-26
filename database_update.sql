@@ -361,3 +361,21 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+/*Stud_Host*/
+
+CREATE TABLE IF NOT EXISTS `study_host` (
+  `studentid` int(11) NOT NULL,
+  `foreign_university` int(11) DEFAULT NULL,
+  `foreign_matno` varchar(20) DEFAULT NULL,
+  `foreign_degree` int(11) DEFAULT NULL,
+  `foreign_course` int(11) DEFAULT NULL,
+  `foreign_num_planed_exams` int(1) DEFAULT NULL,
+  PRIMARY KEY (`studentid`),
+  UNIQUE KEY `studentid` (`studentid`),
+  KEY `university_studentid` (`studentid`),
+  KEY `host_universityid` (`foreign_university`),
+  KEY `host_courseid` (`foreign_course`),
+  KEY `host_degreeid` (`foreign_degree`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
