@@ -10,13 +10,16 @@ $user = check_user(); //zur Prüfung des users in der "user"-Datenbank
 $inputDB = 'student_new';
 $userid = $user['id'];
 
+//degree list default
+$degreelist = 1;
+
 //check whether if student has registered already
 $statement = $pdo->prepare("SELECT personalid FROM student_new WHERE user_id = $userid");
 $result = $statement->execute();
 $row = $statement->fetch();
 $studentid = $row['personalid'];
 
-$readonly = false;
+$readonly = true;
 
 include("templates/header.inc.php");
 ?>
@@ -86,13 +89,17 @@ if(isset($_POST['auswahl'])) {
 }
 
 /* Wenn der Button "Äquivalenliste Laden" geklickt wurde, kann geprüft werden, ob die Universitäten ausgewählt wurden*/
-if(isset($_POST['university'])) {
-	if(isset($_POST['home_locationid']) AND isset($_POST['foreign_locationid']) AND ($_POST['home_locationid']>1) AND ($_POST['foreign_locationid']>1)) {
-		$home_locationid = $_POST['home_locationid'];
-		$foreign_locationid = $_POST['foreign_locationid'];
+if(isset($_GET['university'])) {
+	if(isset($_GET['home_locationid']) AND isset($_GET['foreign_locationid']) AND ($_GET['home_locationid']>1) AND ($_GET['foreign_locationid']>1)) {
+		$home_locationid = $_GET['home_locationid'];
+		$foreign_locationid = $_GET['foreign_locationid'];
 		/*echo $home_locationid;
 		echo $foreign_locationid;*/
 		
+		if(isset($_GET['degree_list'])){
+			$degreelist = $_GET['degree_list'];
+		}
+
 		$showFormular = true;
 	}
 	else {
@@ -106,9 +113,9 @@ if(isset($_POST['university'])) {
 
 <!-- ########## Formular zur Abfrage der Universitäten ############ --> 
 
-<form action="?university=1" method="post">
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="GET">
 
-		<div class="form-group" style="background-color: #003D76; color: white"> 
+		<div class="form-group" style="background-color: #003D76; color: white">  
 			<table class="table" rules="none">
 				<tr>
 					<td width="50%" align="center"><label for="Home_uni"><font size="5">Heim-Universität </font><br>(Home-University)</label></th>
@@ -116,7 +123,7 @@ if(isset($_POST['university'])) {
 				</tr>
 				<tr>
 					<td>				
-						<select type="text" size="1" name="home_locationid" class="form-control" required>
+						<select type="text" size="1" name="home_locationid" class="form-control" id="university" required>
 							<?php 
 							$statement = $pdo->prepare("SELECT location, locationid FROM university ORDER BY locationid");
 							$result = $statement->execute();
@@ -127,7 +134,7 @@ if(isset($_POST['university'])) {
 						</select>
 					</td>
 					<td>
-						<select type="text" size="1"  name="foreign_locationid" class="form-control">
+						<select type="text" size="1"  name="foreign_locationid" class="form-control" id="university" required>
 							<?php 
 							$statement = $pdo->prepare("SELECT location, locationid FROM university ORDER BY locationid");
 							$result = $statement->execute();
@@ -140,7 +147,7 @@ if(isset($_POST['university'])) {
 				</tr>
 			</table>
 
-			<button type="submit" name="university" class="btn btn-lg btn-primary btn-block">Äquivalenzliste laden</button>
+			<input type="submit" name="university" class="btn btn-lg btn-primary btn-block" value="Äquivalenzliste laden">
 		</div><br>
 </div>
 
@@ -189,15 +196,19 @@ if($showFormular) {
 ?>  
 
 	<h2>Abgeschickte Fächerwahlliste</h2> 
+	<div class="panel" id="degreelist-panel">
+		<select type="text"  name="degreelist" id="degreelist" class="form-control">
+			<option value="1" <?php if($degreelist==1) echo "selected"; ?>>Bachelor</option>
+			<option value="2" <?php if($degreelist==2) echo "selected"; ?>>Master</option>
+			<option value="0" <?php if($degreelist==0) echo "selected"; ?>>All</option>
+		</select>
+	</div>
+
 	<div class="table-responsive">
 	<table class="table table-hover" id = "courses" >
-	<!-- <table class="table table-hover" id = "courses" border="1" rules="row" cellspacing="10"> -->
 	<thead>
 		<tr style="background-color: #003D76; color: white; align: middle">
-			<?php if(!$readonly){
-				?><td width="8%" align="center"><b>Auswahl</b><br>(Selection)</th><?php
-			} 
-			?>
+			<td width="8%" align="center"><b>Auswahl</b><br>(Selection)</th>
 			<td width="15%" align="center"><b>Kurs-Nr. Heim-Uni</b><br>(Home-Subject-No.)</th>
 			<td width="11%" align="center"><b>Credits Heim-Uni</b><br>(Home-Credits)</th>
 			<td width="25%" align="center"><b>Kurs Heim-Uni</b><br>(Home-subject)</th>
@@ -205,69 +216,49 @@ if($showFormular) {
 			<td width="25%" align="center"><b>Kurs Partner-Uni</b><br>(Foreign-subject)</th>
 			<td width="5%" align="center"><b>Status</b></th>
 		</tr>
-		</thead>
+	</thead>
 
 
 		<?php 
-
-		if($readonly){
-			/*Abfrage der vorhandenen Äquivalenzen aus der "equivalent_subjects"-DB*/
-			$statement = $pdo->prepare("SELECT equivalent_subjects.equivalence_id, equivalent_subjects.home_subject_id, equivalent_subjects.foreign_subject_id, equivalent_subjects.status_id FROM student_selectedsubjects LEFT JOIN equivalent_subjects ON student_selectedsubjects.equivalence_id =  equivalent_subjects.equivalence_id  WHERE student_selectedsubjects.personalid = $studentid");
-			$result = $statement->execute();
-		}else{
-			/*Abfrage der vorhandenen Äquivalenzen aus der "equivalent_subjects"-DB*/
-			$statement = $pdo->prepare("SELECT equivalence_id, home_subject_id, foreign_subject_id, status_id FROM equivalent_subjects ORDER BY status_id, equivalence_id");
-			$result = $statement->execute();
+		/*Query previously selected equivalence-courses' id of the user*/
+		$statement = $pdo->prepare("SELECT equivalence_id FROM student_selectedsubjects 
+									WHERE personalid = $studentid");
+		$result = $statement->execute();
+		$selectedCourses = array();
+		while($selectedCourse = $statement->fetch())
+		{
+			array_push($selectedCourses, $selectedCourse['equivalence_id']);
 		}
 	
-		while($row = $statement->fetch()) {
-			
-			/*Übergabe der Afrage aus "equivalent_subjects"-DB an Variablen*/
-			$home_subject_id = $row['home_subject_id'];
-			$foreign_subject_id = $row['foreign_subject_id'];
-			$status_id = $row['status_id'];
-			$equivalence_id = $row['equivalence_id'];
-			
-			/*Abfrage aus "Subjects"-DB der Infos für Home_Course*/ 
-			$statement1 = $pdo->prepare("SELECT subject_title, subject_code, subject_credits, university_id FROM subjects WHERE (subject_id = $home_subject_id)");
-			$result = $statement1->execute();
-			$row1 = $statement1 ->fetch();
-			
-			/*wenn die ausgewählte Home-University-ID nicht mit der University-ID der Äquivalenz übereinstimmt: Schleife unterbrechen*/
-			if (!($row1['university_id'] == $home_locationid)) {
-				continue;
-				die("falsch Foreign");
-			}
-			
-			/*Abfrage aus "Subjects"-DB der Infos für Foreign_Course*/ 
-			$statement1 = $pdo->prepare("SELECT subject_title, subject_code, subject_credits, university_id FROM subjects WHERE subject_id = $foreign_subject_id");
-			$result = $statement1->execute();
-			$row2 = $statement1 ->fetch();
-			
-			/*wenn die ausgewählte Foreign-University-ID nicht mit der University-ID der Äquivalenz übereinstimmt: Schleife unterbrechen*/
-			if (!($row2['university_id'] == $foreign_locationid)) {
-				continue;
-				die("falsch Foreign");
-			}
-			
-			/*Abfrage aus "equivalence_status"-DB der Infos für Foreign_Course*/ 
-			$statement1 = $pdo->prepare("SELECT status FROM equivalence_status WHERE status_id = $status_id");
-			$result = $statement1->execute();
-			$row3 = $statement1 ->fetch();
-			
 
-            
-            /*Query previously selected equivalence-courses' id of the user*/
-            $statement1 = $pdo->prepare("SELECT equivalence_id FROM student_selectedsubjects WHERE personalid = $studentid");
-            $result = $statement1->execute();
-            $selectedCourses = array();
-            while($selectedCourse = $statement1 ->fetch())
-            {
-                array_push($selectedCourses, $selectedCourse['equivalence_id']);
-            }
-			
+		/*Abfrage der vorhandenen Äquivalenzen aus der "equivalent_subjects"-DB*/
+		if($degreelist!=0){	
+			$statement = $pdo->prepare("SELECT es.equivalence_id as equivalence_id, es.status_id as status_id , st.status as status, 
+			s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title , 
+			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title  
+			FROM equivalent_subjects es 
+			LEFT JOIN subjects s1 ON s1.subject_id = es.home_subject_id  
+			LEFT JOIN subjects s2 ON s2.subject_id = es.foreign_subject_id  
+			LEFT JOIN equivalence_status st ON st.status_id = es.status_id   
+			WHERE s1.university_id = $home_locationid AND s2.university_id = $foreign_locationid  
+			AND s1.degree_id = $degreelist AND s2.degree_id = $degreelist  
+			ORDER BY es.status_id, es.equivalence_id");
+		}else{
+			$statement = $pdo->prepare("SELECT es.equivalence_id as equivalence_id, es.status_id as status_id , st.status as status, 
+			s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title , 
+			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title  
+			FROM equivalent_subjects es 
+			LEFT JOIN subjects s1 ON s1.subject_id = es.home_subject_id  
+			LEFT JOIN subjects s2 ON s2.subject_id = es.foreign_subject_id  
+			LEFT JOIN equivalence_status st ON st.status_id = es.status_id   
+			WHERE s1.university_id = $home_locationid AND s2.university_id = $foreign_locationid  
+			ORDER BY es.status_id, es.equivalence_id");
+		}
+		$result = $statement->execute();
+
+		while($row = $statement->fetch()) {
 			?>
-			<?php 
+			<?php /*
 			if ($status_id == "1") {
 				$backcolor = "yellow";
 			}
@@ -276,23 +267,28 @@ if($showFormular) {
 			}
 			if ($status_id == "3") {
 				$backcolor = "tomato";
-			}?>
+				
+			}*/?>
+
 			<tbody>
 			<!-- <tr style="background-color: <?php //echo $backcolor; ?>"> -->
-			<tr class="<?php if($status_id == "1") echo "warning"; else if($status_id == "2") echo "success"; else if($status_id == "3") echo "danger";?>">
+			<tr class="<?php if($row['status_id'] == "1") echo "warning"; else if($row['status_id'] == "2") echo "success"; else if($row['status_id'] == "3") echo "danger";?>">
             <!--check previously selected equivalence-courses and disable declined courses-->
 			<?php
 				if(!$readonly){
-					?><td align="center"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($status_id == "3") echo "disabled"; ?>></td>
+					?><td align="center"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3") echo "disabled"; ?>></td>
+					<?php
+				}else{
+					?><td align="center"><i <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "class='glyphicon glyphicon-ok'" ?>></i></td>
 					<?php
 				}
 			?>
-			<td align="center" valign="middle"><?php echo $row1['subject_code'] ?></td>
-			<td align="center"><?php echo $row1['subject_credits'] ?></td>
-			<td align="center"><?php echo $row1['subject_title'] ?></td>
-			<td align="center"><?php echo $row2['subject_credits'] ?></td>
-			<td align="center"><?php echo $row2['subject_title'] ?></td>
-			<td align="center"><?php echo $row3['status'] ?></td>
+			<td align="center" valign="middle"><?php echo $row['home_subject_code'] ?></td>
+			<td align="center"><?php echo $row['home_subject_credits'] ?></td>
+			<td align="center"><?php echo $row['home_subject_title'] ?></td>
+			<td align="center"><?php echo $row['foreign_subject_credits'] ?></td>
+			<td align="center"><?php echo $row['foreign_subject_title'] ?></td>
+			<td align="center"><?php echo $row['status'] ?></td>
 			</tr>
 			</tbody>
 			<?php
@@ -333,13 +329,23 @@ if($readonly){
 
 ?>
 
+<!-- if university selection changed, hide table and button -->
 <script>
-//if drop down selection changed, hide table and button
 $(document).ready(function(){
-	$("select").change(function(){
+	$("#university").change(function(){
 		//$("#auswahl").attr("disabled", true);
 		$(".registration-form").hide();
 		$("#courses").hide();
+	});
+});
+</script>
+
+<!-- if degreelist selection changed, hide table and button -->
+<script>
+$(document).ready(function(){
+	$("#degreelist").change(function(){
+		var degreelist =  $("#degreelist").val();
+		window.location.replace("http://localhost/ddstudportal/test_auswahl.php?home_locationid=4&foreign_locationid=2&degree_list="+degreelist+"&university=%C3%84quivalenzliste+laden");
 	});
 });
 </script>
