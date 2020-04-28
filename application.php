@@ -15,6 +15,9 @@ $homestudyDB = "study_home";
 $priorityDB = "priority";
 $hoststudyDB = "study_host";
 
+//set server location
+$file_server = "uploads";
+
 //set form readonly variable
 $readonly = false;
 
@@ -22,7 +25,7 @@ include("templates/header.inc.php");
 ?>
 
 <div class="main">
-<div class="container main-container">
+<div class="container main-container" id="maincontainer">
 
 <?php
 $statement = $pdo->prepare("SELECT * FROM $studentDB
@@ -141,6 +144,7 @@ if(isset($_POST['abschicken'])) {
 		or !isset($home_degree) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
 		or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) or !isset($second_uni) or !isset($third_uni)){
 			$error = true;
+			echo "<br>";
 			?><div class="alert alert-danger"><?php
 			echo 'Please fill in all require fields!';
 			?></div><?php
@@ -266,13 +270,23 @@ if(isset($_POST['abschicken'])) {
 	
 		}catch (PDOException $e){
 			$pdo->rollback();
-			
+			echo "<br>";
 			/*Alert Error message after transaction rollbacked (cancelled) */
 			?><div class="alert alert-danger"><?php
-			echo $e->get_message();
-			echo "<br>";
+			echo $e->getMessage();
 			?></div><?php
 		}
+
+		// //upload files to server
+		// if(!is_dir("Proposals/". $_SESSION["FirstName"] ."/")) {
+    	// 	mkdir("Proposals/". $_SESSION["FirstName"] ."/");
+		// }			
+
+		// // Move the uploaded file
+		// move_uploaded_file($_FILES["upload"]["tmp_name"], "Proposals/". $_SESSION["FirstName"] ."/". $_FILES["upload"]["name"]);
+
+		// // Output location
+		// echo "Stored in: " . "Proposals/". $_SESSION["FirstName"] ."/". $_FILES["upload"]["name"];
 	}
 }	
 ?>
@@ -284,7 +298,7 @@ if(isset($success_msg) && !empty($success_msg)):
 ?>
 	<div class="alert alert-success">
 		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-	  	<?php echo $success_msg; ?>
+	  	<?php echo "<br>"; echo $success_msg; ?>
 	</div>
 <?php 
 endif;
@@ -718,7 +732,7 @@ endif;
 			<br>
 			<div class="form-horizontal">
 				
-				<div id="group1" class="form-group"> 
+				<div class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Ausgefüllte Fächerwahlliste [Excel Format]</label>	
 					<div class="col-sm-7">
 						<?php 
@@ -737,12 +751,11 @@ endif;
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
-						<div class="help-block with-errors" id="fileerror1"></div>
-						<!-- <span class="help-block">error</span>												 -->
+						<div class="help-block with-errors"></div>
 					</div>
 				</div>
 				
-				<div id="group2" class="form-group"> 
+				<div class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Motivationsschreiben [In Englisch und PDF]</label>	
 					<div class="col-sm-7">
 					<?php 
@@ -756,12 +769,11 @@ endif;
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
-						<span class="help-block" id="pdferror1"></span>
 						<div class="help-block with-errors"></div>					
 					</div>
 				</div>
 				
-				<div id="group3" class="form-group"> 
+				<div class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Lebenslauf [In Englisch und PDF]</label>	
 					<div class="col-sm-7">
 					<?php 
@@ -775,12 +787,11 @@ endif;
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
-						<span class="help-block" id="pdferror2"></span>
 						<div class="help-block with-errors"></div>					
 					</div>
 				</div>
 				
-				<div id="group4" class="form-group"> 
+				<div class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Aktuelles Transkript/Zeugnis [PDF]</label>	
 					<div class="col-sm-7">
 					<?php 
@@ -794,7 +805,6 @@ endif;
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
-						<span class="help-block" id="pdferror3"></span>
 						<div class="help-block with-errors"></div>					
 					</div>
 				</div>
@@ -872,29 +882,23 @@ $(document).ready(function(){
 });
 </script>
 
+<!-- check correct file type -->
 <script>
 $(document).ready(function(){
-
-
 	$("#excelfile").change(function(){
         var ext = this.value.match(/\.(.+)$/)[1];
 
 		switch(ext){
 			case "xls":
 				$('#abschicken').attr('disabled', false); 
-				//$('#group1').removeClass("form-group has-error"); 
 				break;
 			case "xlsx":
 				$('#abschicken').attr('disabled', false); 
-				//$('#group1').removeClass("form-group has-error"); 
 				break;
 			default:
 				alert("Please upload a correct file type!");
 				$('#abschicken').attr('disabled', true); 
-				//$('.container main-container').append("<div class=\"alert alert-danger\" role=\"alert\">This is a danger alert—check it out!</div>"); 
-				//$('#group1').addClass("form-group has-error"); 
-				//$('#group1').removeClass("form-group"); 
-				//$("#group1").attr('class', 'form-group has-error');
+				//$('#maincontainer').prepend("<br><div class=\"alert alert-danger\" role=\"alert\">Please upload a correct file type!</div>"); 
 				break;
 		}
     }); 
@@ -905,20 +909,40 @@ $(document).ready(function(){
 		switch(ext){
 			case "pdf":
 				$('#abschicken').attr('disabled', false); 
-				//$('#group1').removeClass("form-group has-error"); 
 				break;
 			default:
 				alert("Please upload a correct file type!");
 				$('#abschicken').attr('disabled', true); 
-				//$('#group1').addClass("form-group has-error"); 
-				//$('#group1').addClass("form-group has-error"); 
-				//$('#group1').removeClass("form-group"); 
-				//$("#group1").attr('class', 'form-group has-error');
+				//$('#maincontainer').prepend("<br><div class=\"alert alert-danger\" role=\"alert\">Please upload a correct file type!</div>"); 
 				break;
 		}
     }); 
 });
 </script>
+
+<!-- form submission click -->
+<!-- <script>
+	$(document).ready(function(){
+		var error = true;
+
+		$.fn.myfunction = function(){
+        	var excelext = $("#excelfile").value.match(/\.(.+)$/)[1];
+        	//var pdfext = $("input[name='Motivationsschreiben']").value.match(/\.(.+)$/)[1];
+			if(excelext !="xlsx" || excelext !="xls"){
+				return true;
+			}else{
+				return false;
+			}
+    	}
+
+		$("form").submit(function (e) {
+			alert("submitting");
+			if(error){
+				e.preventDefault();
+			}
+		});
+	});
+</script> -->
 
 <?php 
 include("templates/footer.inc.php")
