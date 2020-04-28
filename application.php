@@ -185,13 +185,13 @@ if(isset($_POST['abschicken'])) {
 				'$user_id'
 			)");
 		
-			$statement2 = $pdo->prepare("SELECT personalid FROM $studentDB ORDER BY last_update DESC limit 1");
+			$statement2 = $pdo->prepare("SELECT * FROM $studentDB ORDER BY last_update DESC limit 1");
 
 			$statement1->execute();
 
 			$result = $statement2->execute();
-			$row = $statement2->fetch();
-			$studentid = $row['personalid'];
+			$student = $statement2->fetch();
+			$studentid = $student['personalid'];
 
 			$statement3 = $pdo->prepare("INSERT INTO $homeaddressDB (
 				studentid, 
@@ -264,12 +264,14 @@ if(isset($_POST['abschicken'])) {
 			$pdo->commit();
 			
 			/*Alert successful message after transaction committed */
+			echo "<br>";
 			?><div class="alert alert-success"><?php
 			echo 'Bewerbung abgeschickt'."<br>";
 			?></div><?php
 	
 		}catch (PDOException $e){
 			$pdo->rollback();
+			$error = true;
 			echo "<br>";
 			/*Alert Error message after transaction rollbacked (cancelled) */
 			?><div class="alert alert-danger"><?php
@@ -277,16 +279,53 @@ if(isset($_POST['abschicken'])) {
 			?></div><?php
 		}
 
-		// //upload files to server
-		// if(!is_dir("Proposals/". $_SESSION["FirstName"] ."/")) {
-    	// 	mkdir("Proposals/". $_SESSION["FirstName"] ."/");
-		// }			
+		//check PDOException first before upload files to server
+		if(!$error){
+			//get student data
+			$statement = $pdo->prepare("SELECT * FROM $studentDB
+							LEFT JOIN $homeaddressDB ON $homeaddressDB.studentid = $studentDB.personalid 
+							LEFT JOIN $homestudyDB ON $homestudyDB.studentid = $studentDB.personalid 
+							LEFT JOIN $priorityDB ON $priorityDB.studentid = $studentDB.personalid 
+							LEFT JOIN university ON university.locationid = $priorityDB.first_uni 
+							WHERE $studentDB.user_id = $user_id ");
+			$result = $statement->execute();
+			$student = $statement->fetch();
 
-		// // Move the uploaded file
-		// move_uploaded_file($_FILES["upload"]["tmp_name"], "Proposals/". $_SESSION["FirstName"] ."/". $_FILES["upload"]["name"]);
+			//create student directory if not exists
+			if(!is_dir("$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/")) {
+    			mkdir("$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/");
+			}	
 
-		// // Output location
-		// echo "Stored in: " . "Proposals/". $_SESSION["FirstName"] ."/". $_FILES["upload"]["name"];
+			//create student.first_uni directory if not exists
+			if(!is_dir("$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/")) {
+    			mkdir("$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/");
+			}	
+
+			//check if file size > 2MB before save
+			if($_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024){
+				move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/".$_FILES['Fächerwahlliste']['name']);
+			}else{
+				//
+			}
+
+			if($_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024){
+				move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/".$_FILES['Motivationsschreiben']['name']);
+			}else{
+				//
+			}
+
+			if($_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024){
+				move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/".$_FILES['Lebenslauf']['name']);
+			}else{
+				//
+			}
+
+			if($_FILES['Transkript']['size'] <=  2 * 1024 * 1024){
+				move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/".$_FILES['Transkript']['name']);
+			}else{
+				//
+			}
+		}
 	}
 }	
 ?>
@@ -890,10 +929,20 @@ $(document).ready(function(){
 
 		switch(ext){
 			case "xls":
-				$('#abschicken').attr('disabled', false); 
+				if(this.files[0].size > 2 * 1024 * 1024){
+					alert("File size cannot be larger than 2MB!");
+					$('#abschicken').attr('disabled', true); 
+				}else{
+					$('#abschicken').attr('disabled', false); 
+				}
 				break;
 			case "xlsx":
-				$('#abschicken').attr('disabled', false); 
+				if(this.files[0].size > 2 * 1024 * 1024){
+					alert("File size cannot be larger than 2MB!");
+					$('#abschicken').attr('disabled', true); 
+				}else{
+					$('#abschicken').attr('disabled', false); 
+				}
 				break;
 			default:
 				alert("Please upload a correct file type!");
@@ -908,7 +957,12 @@ $(document).ready(function(){
 
 		switch(ext){
 			case "pdf":
-				$('#abschicken').attr('disabled', false); 
+				if(this.files[0].size > 2 * 1024 * 1024){
+					alert("File size cannot be larger than 2MB!");
+					$('#abschicken').attr('disabled', true); 
+				}else{
+					$('#abschicken').attr('disabled', false); 
+				}
 				break;
 			default:
 				alert("Please upload a correct file type!");
