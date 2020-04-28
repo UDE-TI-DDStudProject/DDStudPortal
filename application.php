@@ -749,7 +749,7 @@ endif;
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Motivationsschreiben" id="pdf1" class="form-control" accept=".pdf" ><br>
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Motivationsschreiben" id="pdffile" class="form-control" accept=".pdf" ><br>
 								<?php
 							}
 						?>
@@ -768,7 +768,7 @@ endif;
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Lebenslauf" id="pdf2" accept=".pdf" class="form-control"><br>
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Lebenslauf" id="pdffile" accept=".pdf" class="form-control"><br>
 								<?php
 							}
 						?>
@@ -787,7 +787,7 @@ endif;
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input data-error="Only pdf file type is allowed!" type="file" size="75"  name="Transkript" class="form-control" id="pdf3" accept=".pdf" ><br>
+								?><input data-error="Only pdf file type is allowed!" type="file" size="75"  name="Transkript" class="form-control" id="pdffile" accept=".pdf" ><br>
 								<?php
 							}
 						?>
@@ -882,17 +882,35 @@ $(document).ready(function(){
 
 		switch(ext){
 			case "xls":
-				alert("yay");
 				$('#abschicken').attr('disabled', false); 
 				//$('#group1').removeClass("form-group has-error"); 
 				break;
 			case "xlsx":
-				alert("yay");
 				$('#abschicken').attr('disabled', false); 
 				//$('#group1').removeClass("form-group has-error"); 
 				break;
 			default:
-				alert("nay");
+				alert("Please upload a correct file type!");
+				$('#abschicken').attr('disabled', true); 
+				//$('#group1').addClass("form-group has-error"); 
+				//$('#group1').addClass("form-group has-error"); 
+				//$('#group1').removeClass("form-group"); 
+				//$("#group1").attr('class', 'form-group has-error');
+				break;
+		}
+    }); 
+
+	$("#pdffile").change(function(){
+        var ext = this.value.match(/\.(.+)$/)[1];
+		alert(ext);
+
+		switch(ext){
+			case "pdf":
+				$('#abschicken').attr('disabled', false); 
+				//$('#group1').removeClass("form-group has-error"); 
+				break;
+			default:
+				alert("Please upload a correct file type!");
 				$('#abschicken').attr('disabled', true); 
 				//$('#group1').addClass("form-group has-error"); 
 				//$('#group1').addClass("form-group has-error"); 
