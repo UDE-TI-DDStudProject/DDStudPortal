@@ -154,8 +154,21 @@ if($showFormular) {
 ?>
 <div class="container main-container">
 
+<?php 
+	if($readonly){
+		?>
+		<script>
+			$(document).ready(function(){
+				$("#auswahl").hide();
+			});
+		</script>
+		<?php
+	}
+?>
+
+
 <?php
-/*Check deadline for selecting equivalence-courses */ 
+/*Check deadline for selecting equivalence-courses */ /*
 	$statement1 = $pdo->prepare("SELECT created_at FROM student_new WHERE user_id = $userid");
 	$result = $statement1->execute();
 	$row4 = $statement1 ->fetch();
@@ -172,12 +185,14 @@ if($showFormular) {
 			<?php
 			$readonly = true;
 		}
-	}
-?>
+	}*/
+?>  
 
 	<h2>Abgeschickte Fächerwahlliste</h2> 
-
-	<table id = "courses" border="1" rules="row" cellspacing="10">
+	<div class="table-responsive">
+	<table class="table table-hover" id = "courses" >
+	<!-- <table class="table table-hover" id = "courses" border="1" rules="row" cellspacing="10"> -->
+	<thead>
 		<tr style="background-color: #003D76; color: white; align: middle">
 			<?php if(!$readonly){
 				?><td width="8%" align="center"><b>Auswahl</b><br>(Selection)</th><?php
@@ -190,6 +205,7 @@ if($showFormular) {
 			<td width="25%" align="center"><b>Kurs Partner-Uni</b><br>(Foreign-subject)</th>
 			<td width="5%" align="center"><b>Status</b></th>
 		</tr>
+		</thead>
 
 
 		<?php 
@@ -261,7 +277,9 @@ if($showFormular) {
 			if ($status_id == "3") {
 				$backcolor = "tomato";
 			}?>
-			<tr style="background-color: <?php echo $backcolor; ?>">
+			<tbody>
+			<!-- <tr style="background-color: <?php //echo $backcolor; ?>"> -->
+			<tr class="<?php if($status_id == "1") echo "warning"; else if($status_id == "2") echo "success"; else if($status_id == "3") echo "danger";?>">
             <!--check previously selected equivalence-courses and disable declined courses-->
 			<?php
 				if(!$readonly){
@@ -276,11 +294,12 @@ if($showFormular) {
 			<td align="center"><?php echo $row2['subject_title'] ?></td>
 			<td align="center"><?php echo $row3['status'] ?></td>
 			</tr>
+			</tbody>
 			<?php
 		}
 		?>
 	</table>
-	
+	</div>
 	<br>
 	<div class="registration-form">
 		<button type="submit" name="auswahl" id = "auswahl" class="btn btn-lg btn-primary btn-block">Fächerwahl übernehmen</button>
