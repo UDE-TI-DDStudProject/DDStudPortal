@@ -102,6 +102,7 @@
         <?php else: ?>
         <div id="navbar" class="navbar-collapse collapse">
          <ul class="nav navbar-nav navbar-right navi" >
+			<li><a href="status.php"><i class="glyphicon glyphicon-info-sign"></i> Status</a></li>
 			<li><a href="application.php"><i class="glyphicon glyphicon-edit"></i> Bewerbung</a></li>
 			<!-- <li><a href="internalCourses.php"><i class="glyphicon glyphicon-file"></i> Fächerwahlliste</a></li> -->
 			<li><a href="test_auswahl.php"><i class="glyphicon glyphicon-check"></i> Fächerwahlliste</a></li>
