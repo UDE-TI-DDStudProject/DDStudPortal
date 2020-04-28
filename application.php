@@ -878,7 +878,6 @@ $(document).ready(function(){
 
 	$("#excelfile").change(function(){
         var ext = this.value.match(/\.(.+)$/)[1];
-		alert(ext);
 
 		switch(ext){
 			case "xls":
@@ -892,7 +891,7 @@ $(document).ready(function(){
 			default:
 				alert("Please upload a correct file type!");
 				$('#abschicken').attr('disabled', true); 
-				//$('#group1').addClass("form-group has-error"); 
+				//$('.container main-container').append("<div class=\"alert alert-danger\" role=\"alert\">This is a danger alert—check it out!</div>"); 
 				//$('#group1').addClass("form-group has-error"); 
 				//$('#group1').removeClass("form-group"); 
 				//$("#group1").attr('class', 'form-group has-error');
@@ -902,7 +901,6 @@ $(document).ready(function(){
 
 	$("#pdffile").change(function(){
         var ext = this.value.match(/\.(.+)$/)[1];
-		alert(ext);
 
 		switch(ext){
 			case "pdf":
