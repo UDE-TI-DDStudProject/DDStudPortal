@@ -14,29 +14,18 @@
 
     <!-- Custom styles for this template -->
     <link href="css/style.css" rel="stylesheet">
+    <link href="css/progress-bar.css" rel="stylesheet">
 
 	<!--jQuery CDN-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
 
-	<!-- jQuery UI CDN
-	<link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel = "stylesheet">
-    <script src = "https://code.jquery.com/jquery-1.10.2.js"></script>
-    <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script> -->
+	<!-- jsPDF CDN -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.3/jspdf.plugin.autotable.min.js"></script>
 
-	<!-- Bootstrap Date-Picker Plugin -->
-	<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/> -->
-
-	<!-- jQuery Datepicker .js -->
-	<!-- <script>
-         $(function() {
-            $( "#datepicker-12" ).datepicker({dateFormat: "yy-mm-dd"});
-	    	var dateFormat = $( "#datepicker-12" ).datepicker( "option", "dateFormat" );
-            $( "#datepicker-12" ).datepicker( "option", "dateFormat", 'yy-mm-dd' );
-         });
-    </script> -->
-	
+	<!-- Bootstrap stepper -->
+	<link href="css/progress-bar.css" rel="stylesheet">
 
   </head>
   <body>
@@ -56,6 +45,7 @@
 		.navi {
 			padding-top: 7px;
 		}
+
 	</style>
 
   
