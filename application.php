@@ -8,6 +8,8 @@ require_once("inc/functions.inc.php");
 $user = check_user();
 $user_id = $user['id'];
 
+echo "<script>console.log($user_id);</script>";
+
 //set database table variables
 $studentDB = "student_new";
 $homeaddressDB = "home_address";
@@ -185,13 +187,16 @@ if(isset($_POST['abschicken'])) {
 				'$user_id'
 			)");
 		
-			$statement2 = $pdo->prepare("SELECT * FROM $studentDB ORDER BY last_update DESC limit 1");
+			// $statement2 = $pdo->prepare("SELECT * FROM $studentDB ORDER BY last_update DESC limit 1");
+			$statement2 = $pdo->prepare("SELECT personalid FROM $studentDB WHERE user_id = $user_id");
 
 			$statement1->execute();
 
 			$result = $statement2->execute();
 			$student = $statement2->fetch();
 			$studentid = $student['personalid'];
+
+			echo "<script>console.log($studentid);</script>";
 
 			$statement3 = $pdo->prepare("INSERT INTO $homeaddressDB (
 				studentid, 
@@ -291,37 +296,44 @@ if(isset($_POST['abschicken'])) {
 			$result = $statement->execute();
 			$student = $statement->fetch();
 
-			//create student directory if not exists
-			if(!is_dir("$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/")) {
-    			mkdir("$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/");
+			$firstname_short = $student["firstname"];
+
+			//get three characters of first name
+			if(strlen($firstname_short >= 3)) {
+				$firstname_short = substr($firstname_short, 0, 3);
+			}
+
+			//create first_uni directory if not exists
+			if(!is_dir("$file_server/".$student["location"] ."/")) {
+    			mkdir("$file_server/".$student["location"] ."/");
 			}	
 
-			//create student.first_uni directory if not exists
-			if(!is_dir("$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/")) {
-    			mkdir("$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/");
-			}	
+			//create student directory if not exists
+			if(!is_dir("$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/")) {
+    			mkdir("$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/");
+			}
 
 			//check if file size > 2MB before save
 			if($_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/".$_FILES['Fächerwahlliste']['name']);
+				move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/".$student["home_matno"].$_FILES['Fächerwahlliste']['name']);
 			}else{
 				//
 			}
 
 			if($_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/".$_FILES['Motivationsschreiben']['name']);
+				move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/".$student["home_matno"].$_FILES['Motivationsschreiben']['name']);
 			}else{
 				//
 			}
 
 			if($_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/".$_FILES['Lebenslauf']['name']);
+				move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/".$student["home_matno"].$_FILES['Lebenslauf']['name']);
 			}else{
 				//
 			}
 
 			if($_FILES['Transkript']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$student["personalid"] ."_"  .$student["firstname"]."," .$student["surname"]."/".$student["locationabr"]."/".$_FILES['Transkript']['name']);
+				move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/".$student["home_matno"].$_FILES['Transkript']['name']);
 			}else{
 				//
 			}
@@ -355,7 +367,7 @@ endif;
 	<!-- <li role="presentation" id="tab6"><a href="#courselist" role="tab" data-toggle="tab">Fächerwahl</a></li> -->
   </ul>
 
-  <form role="form" data-toggle="validator" novalidate="true" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
+  <form role="form" id="mainForm" data-toggle="validator" novalidate="true" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
 
   <div class="tab-content">
   <!-- erster Reiter: Persönliche Daten-->		
@@ -770,8 +782,7 @@ endif;
 		<div role="tabpanel" class="tab-pane" id="attachments">
 			<br>
 			<div class="form-horizontal">
-				
-				<div class="form-group"> 
+				<div id="group1" class="form-group"> 
 					<label for="CourseList" class="col-sm-3 control-label"> Ausgefüllte Fächerwahlliste [Excel Format]</label>	
 					<div class="col-sm-7">
 						<?php 
@@ -779,10 +790,6 @@ endif;
 								?><a href="#filepath">filename</a><?php
 							}else{
 								?>
-								<!-- <div class="custom-file">
-								  <input type="file" class="custom-file-input" id="customFile">
-								  <label class="custom-file-label" for="customFile">Choose file</label>
-								</div> -->
 								<input data-error="Please upload the filled course selection form in Excel format!"  type="file" size="75"  name="Fächerwahlliste" class="form-control" id="excelfile" accept=".xls, .xlsx" required>
 								<?php 
 							}
@@ -801,7 +808,7 @@ endif;
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Motivationsschreiben" id="pdffile" class="form-control" accept=".pdf" ><br>
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Motivationsschreiben" id="pdffile" class="form-control" accept=".pdf" required><br>
 								<?php
 							}
 						?>
@@ -819,7 +826,7 @@ endif;
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Lebenslauf" id="pdffile" accept=".pdf" class="form-control"><br>
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Lebenslauf" id="pdffile" accept=".pdf" class="form-control" required><br>
 								<?php
 							}
 						?>
@@ -837,7 +844,7 @@ endif;
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input data-error="Only pdf file type is allowed!" type="file" size="75"  name="Transkript" class="form-control" id="pdffile" accept=".pdf" ><br>
+								?><input data-error="Only pdf file type is allowed!" type="file" size="75"  name="Transkript" class="form-control" id="pdffile" accept=".pdf" required><br>
 								<?php
 							}
 						?>
@@ -947,8 +954,9 @@ $(document).ready(function(){
 			default:
 				alert("Please upload a correct file type!");
 				$('#abschicken').attr('disabled', true); 
+				$('#group1').addClass("has-error"); 
+				// $('#group1').addClass("has-error"); 
 				//$('#maincontainer').prepend("<br><div class=\"alert alert-danger\" role=\"alert\">Please upload a correct file type!</div>"); 
-				break;
 		}
     }); 
 
@@ -973,30 +981,6 @@ $(document).ready(function(){
     }); 
 });
 </script>
-
-<!-- form submission click -->
-<!-- <script>
-	$(document).ready(function(){
-		var error = true;
-
-		$.fn.myfunction = function(){
-        	var excelext = $("#excelfile").value.match(/\.(.+)$/)[1];
-        	//var pdfext = $("input[name='Motivationsschreiben']").value.match(/\.(.+)$/)[1];
-			if(excelext !="xlsx" || excelext !="xls"){
-				return true;
-			}else{
-				return false;
-			}
-    	}
-
-		$("form").submit(function (e) {
-			alert("submitting");
-			if(error){
-				e.preventDefault();
-			}
-		});
-	});
-</script> -->
 
 <?php 
 include("templates/footer.inc.php")
