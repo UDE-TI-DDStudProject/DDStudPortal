@@ -221,6 +221,7 @@ if($showFormular) {
 			<td width="11%" align="center"><b>Credits Partner-Uni</b><br>(Foreign-Credits)</th>
 			<td width="25%" align="center"><b>Kurs Partner-Uni</b><br>(Foreign-subject)</th>
 			<td width="5%" align="center"><b>Status</b></th>
+			<td width="5%" align="center"><b>Zuletzt Aktualisiert</b><br>(Last Updated)</th>
 		</tr>
 	</thead>
 
@@ -241,7 +242,7 @@ if($showFormular) {
 		if($degreelist!=0){
 			$statement = $pdo->prepare("SELECT es.equivalence_id as equivalence_id, es.status_id as status_id , st.status as status,
 			s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title ,
-			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title
+			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, DATE_FORMAT(es.updated_at,'%d/%m/%Y') as updated_at 
 			FROM equivalent_subjects es
 			LEFT JOIN subjects s1 ON s1.subject_id = es.home_subject_id
 			LEFT JOIN subjects s2 ON s2.subject_id = es.foreign_subject_id
@@ -252,7 +253,7 @@ if($showFormular) {
 		}else{
 			$statement = $pdo->prepare("SELECT es.equivalence_id as equivalence_id, es.status_id as status_id , st.status as status,
 			s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title ,
-			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title
+			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, DATE_FORMAT(es.updated_at,'%d/%m/%Y') as updated_at 
 			FROM equivalent_subjects es
 			LEFT JOIN subjects s1 ON s1.subject_id = es.home_subject_id
 			LEFT JOIN subjects s2 ON s2.subject_id = es.foreign_subject_id
@@ -297,6 +298,7 @@ if($showFormular) {
 			<td align="center"><?php echo $row['foreign_subject_credits'] ?></td>
 			<td align="center"><?php echo $row['foreign_subject_title'] ?></td>
 			<td align="center"><?php echo $row['status'] ?></td>
+			<td align="center"><?php echo $row['updated_at'] ?></td>
 			</tr>
 			</tbody>
 			<?php
