@@ -13,10 +13,15 @@ $userid = $user['id'];
 $degreelist = 1;
 
 //check whether if student has registered already
-$statement = $pdo->prepare("SELECT personalid FROM student_new WHERE user_id = $userid");
+$statement = $pdo->prepare("SELECT * FROM student_new 
+							LEFT JOIN study_home on study_home.studentid = student_new.personalid 
+							WHERE user_id = $userid");
 $result = $statement->execute();
 $row = $statement->fetch();
 $studentid = $row['personalid'];
+$student_matno = $row['home_matno'];
+$student_firstname = $row['firstname'];
+$student_surname = $row['surname'];
 
 $readonly = true;
 
@@ -202,7 +207,7 @@ if($showFormular) {
 			<option value="2" <?php if($degreelist==2) echo "selected"; ?>>Master</option>
 			<option value="0" <?php if($degreelist==0) echo "selected"; ?>>All</option>
 		</select>
-		<button type="button" name="print" id = "print" class="btn btn-lg btn-primary btn-block">Fächerwahlliste ausdrücken</button>
+		<button type="button" name="print" id = "print" class="btn btn-lg btn-primary btn-block">Fächerwahlliste ausdrucken</button>
 	</div>
 
 	<div class="table-responsive">
@@ -363,12 +368,22 @@ $(document).ready(function(){
 });
 </script>
 
+<!-- get matno -->
+<?php 
+	echo "<div class=\"$student_matno\" id=\"matno\"></div>";
+	echo "<div class=\"$student_surname\" id=\"surname\"></div>";
+	echo "<div class=\"$student_firstname\" id=\"firstname\"></div>";
+?>
+
 <!-- print list -->
 <script>
 $(document).ready(function(){
 	$("#print").click(function(){
 		var homeUni = $("#homeuniversity option:selected").html();
 		var foreignUni = $("#foreignuniversity option:selected").html();
+		var matno = $("#matno").attr('class');
+		var surname = $("#surname").attr('class');
+		var firstname = $("#firstname").attr('class');
 
 		var doc = new jsPDF('l', 'mm', 'a4');
 		var totalPagesExp = '{total_pages_count_string}';
@@ -388,10 +403,14 @@ $(document).ready(function(){
 					// Header
 				  	doc.setFontSize(20);
       				doc.setFontStyle('normal');
-					doc.addImage(img, 'JPEG', data.settings.margin.left, 15, 36, 14);
+					doc.addImage(img, 'JPEG', pageWidth - data.settings.margin.right - 36, 15, 36, 14);
       				doc.text('Fächerwahlliste', pageWidth / 2, 30, 'center');
 					doc.setFontSize(10);
+					doc.text('Matriculationnummer: ' + matno, data.settings.margin.left  , 20 , 'left');
+					doc.text('Nachname: ' + surname, data.settings.margin.left  , 25 , 'left');
+					doc.text('Vorname: ' + firstname, data.settings.margin.left , 30 , 'left');
       				doc.text('Home-Uni: ' + homeUni + '	     Foreign-Uni: ' +  foreignUni, pageWidth / 2, 40 , 'center');
+					
 
   				    // Footer
   				    var str = 'Page ' + doc.internal.getNumberOfPages();
