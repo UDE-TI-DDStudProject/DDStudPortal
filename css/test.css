@@ -1,0 +1,231 @@
+@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700);
+
+/* body {
+	padding-top: 70px;
+} */
+/* .wrapper {
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+} */
+
+/* header,
+footer {
+	height: 30px;
+} */
+
+main {
+	padding-top: 1.5rem;
+	padding-bottom: 1.5rem;
+	background-image: url(../screenshots/sky.jpg);
+	background-size: 100% auto;
+	background-repeat: repeat;
+	background-position: top;
+}
+
+footer {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	/* position: fixed; */
+	bottom: 0;
+	width: 100%;
+	font-family: Rubik, sans-serif;
+	font-weight: 400;
+	font-size: 15px;
+}
+
+footer .footer-big {
+	padding: 20px 0 10px 0;
+	width: 100%;
+	background: #e5e5e5;
+}
+
+footer ul {
+	padding: 0;
+	margin: 0;
+}
+
+footer li {
+	list-style: none;
+}
+
+footer a {
+	color: #a2a3aa;
+}
+
+footer a:focus,
+a:hover {
+	text-decoration: none;
+	-webkit-transition: .3s ease;
+	-o-transition: .3s ease;
+	transition: .3s ease;
+	color: #003d76;
+}
+
+footer h4 {
+	font-family: Rubik, sans-serif;
+	margin: 0;
+	font-weight: 400;
+	padding: 0;
+	color: #363940;
+}
+
+footer .footer-big .footer-widget {
+	margin-bottom: 10px;
+}
+
+footer .widget-about img {
+	display: block;
+	margin-bottom: 30px;
+	margin-top: 10px;
+}
+
+footer .mini-footer {
+	background: #003d76;
+	text-align: center;
+	padding: 10px 0;
+}
+footer .mini-footer p {
+	margin: 0;
+	line-height: 26px;
+	font-size: 15px;
+	color: #fff;
+}
+footer .mini-footer p a {
+	color: #7dc1ff;
+}
+footer .mini-footer p a:hover {
+	color: #34bfa3;
+}
+
+footer .no-padding {
+	padding: 0 !important;
+}
+
+@media screen and (min-width: 768px) {
+	body {
+		padding-top: 100px;
+	}
+}
+
+.login-form .card-container.card {
+	max-width: 350px;
+	padding: 40px 40px;
+}
+
+.login-form .card {
+	background-color: #ffffff;
+	/* just in case there no content*/
+	padding: 20px 25px 30px;
+	margin: 0 auto 25px;
+	margin-top: 50px;
+	/* shadows and rounded borders */
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	/* -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);*/
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.login-form .profile-img-card {
+	width: 96px;
+	height: 96px;
+	margin: 0 auto 10px;
+	display: block;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+}
+
+.login-form .profile-name-card {
+	font-size: 16px;
+	font-weight: bold;
+	text-align: center;
+	margin: 10px 0 0;
+	min-height: 1em;
+}
+
+.login-form .reauth-email {
+	display: block;
+	color: #404040;
+	line-height: 2;
+	margin-bottom: 10px;
+	font-size: 14px;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.login-form .form-signin #inputEmail,
+.login-form .form-signin #inputPassword {
+	direction: ltr;
+	height: 44px;
+	font-size: 16px;
+}
+
+.login-form .form-signin input[type=email],
+.login-form .form-signin input[type=password],
+.login-form .form-signin input[type=text],
+.login-form .form-signin button {
+	width: 100%;
+	display: block;
+	margin-bottom: 10px;
+	z-index: 1;
+	position: relative;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.login-form .form-signin .form-control:focus {
+	border-color: #003d76;
+	outline: 0;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px #003d76;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px #003d76;
+}
+
+.login-form .btn.btn-signin {
+	background-color: #003d76;
+	padding: 0px;
+	font-weight: 700;
+	font-size: 14px;
+	height: 36px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	border: none;
+	-o-transition: all 0.218s;
+	-moz-transition: all 0.218s;
+	-webkit-transition: all 0.218s;
+	transition: all 0.218s;
+}
+
+.login-form .btn.btn-signin:hover,
+.login-form .btn.btn-signin:active,
+.login-form .btn.btn-signin:focus {
+	background-color: #82bdf3;
+}
+
+.login-form .forgot-password {
+	color: #82bdf3;
+}
+
+.login-form .forgot-password:hover,
+.login-form .forgot-password:active,
+.login-form .forgot-password:focus {
+	color: #003d76;
+}
+
+.login-form .btn {
+	font-weight: 700;
+	height: 36px;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	cursor: default;
+}
