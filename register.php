@@ -14,13 +14,14 @@ $showFormular = true; //Variable ob das Registrierungsformular anezeigt werden s
  
 if(isset($_GET['register'])) {
 	$error = false;
+	$salutationid = trim($_POST['salutation']);
 	$vorname = trim($_POST['vorname']);
 	$nachname = trim($_POST['nachname']);
 	$email = trim($_POST['email']);
 	$passwort = $_POST['passwort'];
 	$passwort2 = $_POST['passwort2'];
 	
-	if(empty($vorname) || empty($nachname) || empty($email)) {
+	if(empty($vorname) || empty($nachname) || empty($email) || empty($salutationid)) {
 		echo 'Bitte alle Felder ausfüllen<br>';
 		$error = true;
 	}
@@ -40,7 +41,7 @@ if(isset($_GET['register'])) {
 	
 	//Überprüfe, dass die E-Mail-Adresse noch nicht registriert wurde
 	if(!$error) { 
-		$statement = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+		$statement = $pdo->prepare("SELECT * FROM user WHERE email = :email");
 		$result = $statement->execute(array('email' => $email));
 		$user = $statement->fetch();
 		
@@ -54,8 +55,8 @@ if(isset($_GET['register'])) {
 	if(!$error) {	
 		$passwort_hash = password_hash($passwort, PASSWORD_DEFAULT);
 		
-		$statement = $pdo->prepare("INSERT INTO users (email, passwort, vorname, nachname) VALUES (:email, :passwort, :vorname, :nachname)");
-		$result = $statement->execute(array('email' => $email, 'passwort' => $passwort_hash, 'vorname' => $vorname, 'nachname' => $nachname));
+		$statement = $pdo->prepare("INSERT INTO user(user_group_id, salutation_id, firstname, lastname, email, password) VALUES (1, :salutationid, :vorname, :nachname, :email, :passwort)");
+		$result = $statement->execute(array('salutationid' => $salutationid, 'email' => $email, 'passwort' => $passwort_hash, 'vorname' => $vorname, 'nachname' => $nachname));
 		
 		if($result) {		
 			echo 'Du wurdest erfolgreich registriert. <a href="login.php">Zum Login</a>';
@@ -70,6 +71,29 @@ if($showFormular) {
 ?>
 
 <form action="?register=1" method="post">
+
+<!-- <label for="inputVorname">Salutation:</label>
+<div class="form-group">
+<label class="radio-inline">
+      <input type="radio" name="salutation" value="1">Frau
+    </label>
+    <label class="radio-inline">
+      <input type="radio" name="salutation" value="2">Herr
+    </label>
+	</div> -->
+
+<div class="form-group">
+<label for="inputVorname">Salutation:</label>
+<select type="text" size="1" name="salutation" class="form-control" id="selectSalutation" required>
+		<?php
+		$statement = $pdo->prepare("SELECT * FROM salutation");
+		$result = $statement->execute();
+		while($row = $statement->fetch()) { ?>
+            <!--show selected option after selection 06.04.2020 by lin-->
+			<option value="<?php echo ($row['salutation_id'])?>"><?php echo ($row['name'])?></option>
+		<?php } ?>
+	</select>
+</div>
 
 <div class="form-group">
 <label for="inputVorname">Vorname:</label>

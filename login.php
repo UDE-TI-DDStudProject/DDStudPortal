@@ -8,21 +8,21 @@ if(isset($_POST['email']) && isset($_POST['passwort'])) {
 	$email = $_POST['email'];
 	$passwort = $_POST['passwort'];
 
-	$statement = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+	$statement = $pdo->prepare("SELECT * FROM user WHERE email = :email");
 	$result = $statement->execute(array('email' => $email));
 	$user = $statement->fetch();
 
 	//Überprüfung des Passworts
-	if ($user !== false && password_verify($passwort, $user['passwort'])) {
-		$_SESSION['userid'] = $user['id'];
+	if ($user !== false && password_verify($passwort, $user['password'])) {
+		$_SESSION['userid'] = $user['user_id'];
 
 		//Möchte der Nutzer angemeldet beleiben?
 		if(isset($_POST['angemeldet_bleiben'])) {
 			$identifier = random_string();
 			$securitytoken = random_string();
 				
-			$insert = $pdo->prepare("INSERT INTO securitytokens (user_id, identifier, securitytoken) VALUES (:user_id, :identifier, :securitytoken)");
-			$insert->execute(array('user_id' => $user['id'], 'identifier' => $identifier, 'securitytoken' => sha1($securitytoken)));
+			$insert = $pdo->prepare("INSERT INTO securitytoken (user_id, identifier, securitytoken) VALUES (:user_id, :identifier, :securitytoken)");
+			$insert->execute(array('user_id' => $user['user_id'], 'identifier' => $identifier, 'securitytoken' => sha1($securitytoken)));
 			setcookie("identifier",$identifier,time()+(3600*24*365)); //Valid for 1 year
 			setcookie("securitytoken",$securitytoken,time()+(3600*24*365)); //Valid for 1 year
 		}
