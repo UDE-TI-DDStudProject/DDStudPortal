@@ -6,16 +6,16 @@ require_once("inc/functions.inc.php");
 //Überprüfe, dass der User eingeloggt ist
 //Der Aufruf von check_user() muss in alle internen Seiten eingebaut sein
 $user = check_user();
-$user_id = $user['id'];
+$user_id = $user['user_id'];
 
 echo "<script>console.log($user_id);</script>";
 
 //set database table variables
-$studentDB = "student_new";
-$homeaddressDB = "home_address";
+$studentDB = "student";
+$applicationDB = "application";
+$homeaddressDB = "address";
 $homestudyDB = "study_home";
 $priorityDB = "priority";
-$hoststudyDB = "study_host";
 
 //set server location
 $file_server = "uploads";
@@ -30,47 +30,69 @@ include("templates/header.inc.php");
 <div class="container main-container" id="maincontainer">
 
 <?php
-$statement = $pdo->prepare("SELECT * FROM $studentDB
-							LEFT JOIN $homeaddressDB ON $homeaddressDB.studentid = $studentDB.personalid 
-							LEFT JOIN $homestudyDB ON $homestudyDB.studentid = $studentDB.personalid 
-							LEFT JOIN $priorityDB ON $priorityDB.studentid = $studentDB.personalid 
-							LEFT JOIN $hoststudyDB ON $hoststudyDB.studentid = $studentDB.personalid 
-							WHERE $studentDB.user_id = $user_id ");
+$statement = $pdo->prepare("SELECT * FROM $studentDB WHERE $studentDB.user_id = $user_id ");
 $result = $statement->execute(array('user_id' => $user_id));
-$student = $statement->fetch();
+$personaldata = $statement->fetch();
+
+$statement = $pdo->prepare("SELECT * FROM $homeaddressDB WHERE address_id = :homeaddressid ");
+$result = $statement->execute(array('homeaddressid' => $personaldata['home_address_id']));
+$homeaddress = $statement->fetch();
+
+$statement = $pdo->prepare("SELECT * FROM $applicationDB WHERE student_id = :studentid ");
+$result = $statement->execute(array('studentid' => $personaldata['student_id']));
+$application = $statement->fetch();
+
+$statement = $pdo->prepare("SELECT * FROM $homestudyDB WHERE application_id = :applicationid ");
+$result = $statement->execute(array('applicationid' => $application['application_id']));
+$homestudy = $statement->fetch();
+
+$statement = $pdo->prepare("SELECT * FROM $priorityDB WHERE application_id = :applicationid ");
+$result = $statement->execute(array('applicationid' => $application['application_id']));
+$priority = $statement->fetch();
+
+// $statement = $pdo->prepare("SELECT * FROM $studentDB
+// 							LEFT JOIN $applicationDB ON $applicationDB.student_id = $studentDB.student_id 
+// 							LEFT JOIN $homeaddressDB ON $homeaddressDB.address_id = $studentDB.home_address_id 
+// 							LEFT JOIN $homestudyDB ON $homestudyDB.application_id = $applicationDB.application_id 
+// 							LEFT JOIN $priorityDB ON $priorityDB.application_id = $applicationDB.application_id 
+// 							WHERE $studentDB.user_id = $user_id ");
+// $result = $statement->execute(array('user_id' => $user_id));
+// $student = $statement->fetch();
 
 //
-if($student !== false) {
+if($user !== false) {
 	//set all data from query result
-	$salutation = $student['salutation'];
-	$firstname = $student['firstname'];
-	$surname =$student['surname'];
-	$email = $student['email'];
-	$nationality = $student['nationality'];
-	$birthday = $student['birthday'];
-	$overall_status = $student['overall_status'];
-	$intention = $student['intention'];
-	$starting_semester = $student['starting_semester'];
-	$foreign_degree = $student['foreign_degree'];
+	$salutation = $user['salutation_id'];
+	$firstname = $user['firstname'];
+	$surname =$user['lastname'];
+	$email = $user['email'];
+	$nationality = $personaldata['nationality_country_id'];
+	$birthday = $personaldata['birthdate'];
+	// $overall_status = $personaldata['overall_status'];
+	$intention = $application['intention_id'];
+	$starting_semester = $application['exchange_period_id'];
+	$foreign_degree = $application['applied_degree_id'];
 
-	$home_street = $student['home_street'];
-	$home_zip = $student['home_zip'];
-	$home_city = $student['home_city'];
-	$home_state = $student['home_state'];
-	$home_country = $student['home_country'];
-	$home_phone = $student['home_phone'];
+	// $hhome_no = $homeaddress['house_no'];
+	$home_street = $homeaddress['street'];
+	$home_zip = $homeaddress['zipcode'];
+	$home_city = $homeaddress['city'];
+	$home_state = $homeaddress['state'];
+	$home_country = $homeaddress['country_id'];
+	$home_phone = $homeaddress['phone_no'];
 
-	$home_degree =  $student['home_degree'];
-	$home_course =  $student['home_course'];
-	$home_matno =  $student['home_matno'];
-	$home_enrollment =  $student['home_enrollment'];
-	$home_semester =  $student['home_semester'];
-	$home_credits =  $student['home_credits'];
-	$home_cgpa =  $student['home_cgpa'];
+	$home_university = $homestudy['home_university_id'];
+	$home_degree =  $homestudy['home_degree_id'];
+	$home_course =  $homestudy['home_course_id'];
+	$home_matno =  $homestudy['home_matno'];
+	$home_enrollment =  $homestudy['home_enrollment_date'];
+	$home_semester =  $homestudy['home_semester'];
+	$home_credits =  $homestudy['home_credits'];
+	$home_cgpa =  $homestudy['home_cgpa'];
 
-	$first_uni = $student['first_uni'];
-	$second_uni = $student['second_uni'];
-	$third_uni = $student['third_uni'];
+	$first_uni = $priority['first_uni_id'];
+	$second_uni = $priority['second_uni_id'];
+	$third_uni = $priority['third_uni_id'];
 
 	$readonly = false;
 }	
@@ -93,12 +115,12 @@ if(isset($_POST['abschicken'])) {
 	$home_state = trim($_POST['home_state']);
 	$home_country = trim($_POST['home_country']);
 	$home_phone = trim($_POST['home_phone']);
-	$user_id = $user['id'];
 	
 	//fixed parameters
-	$overall_status = "Interested";
+	// $overall_status = "Interested";
 	
 	//ab hier Home_study DB
+	$home_university = trim($_POST['home_university']);
 	$home_degree = trim($_POST['home_degree']);
 	$home_course = trim($_POST['home_course']);
 	$home_matno = trim($_POST['home_matno']);
@@ -108,7 +130,7 @@ if(isset($_POST['abschicken'])) {
 	$home_cgpa = Namen_bereinigen(trim($_POST['home_cgpa']));
 	
 	//fixed parameters
-	$home_university = "4"; //Universität Duisburg-Essen
+	// $home_university = "4"; //Universität Duisburg-Essen
 	
 	//ab hier Foreign_study für Student_new DB
 	$intention = trim($_POST['intention']);
@@ -143,7 +165,7 @@ if(isset($_POST['abschicken'])) {
 		//Check if all required fields are filled
 		if(!isset($salutation) or !isset($firstname) or !isset($surname) or !isset($email) or !isset($nationality) or !isset($birthday)
 		or !isset($home_street) or !isset($home_zip) or !isset($home_city) or !isset($home_state) or !isset($home_country) or !isset($home_phone)
-		or !isset($home_degree) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
+		or !isset($home_degree) or !isset($home_university) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
 		or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) or !isset($second_uni) or !isset($third_uni)){
 			$error = true;
 			echo "<br>";
@@ -163,49 +185,24 @@ if(isset($_POST['abschicken'])) {
     		$pdo->setAttribute( PDO::ATTR_EMULATE_PREPARES, FALSE );
 			$pdo->beginTransaction();
 
-			$statement1 = $pdo->prepare("INSERT INTO $studentDB (
-				surname, 
-				firstname, 
-				email, 
-				birthday, 
-				nationality, 
-				salutation, 
-				overall_status,
-				intention,
-				starting_semester,
-				user_id) 
-			VALUES (
-				'$surname', 
-				'$firstname', 
-				'$email', 
-				'$birthday', 
-				'$nationality', 
-				'$salutation',
-				'$overall_status',
-				'$intention',
-				'$starting_semester',
-				'$user_id'
-			)");
-		
-			// $statement2 = $pdo->prepare("SELECT * FROM $studentDB ORDER BY last_update DESC limit 1");
-			$statement2 = $pdo->prepare("SELECT personalid FROM $studentDB WHERE user_id = $user_id");
-
+			$statement1 = $pdo->prepare("INSERT INTO $studentDB (birthdate, nationality_country_id, user_id) VALUES ('$birthday', $nationality, $user_id)");
 			$statement1->execute();
 
+			$statement2 = $pdo->prepare("SELECT student_id FROM $studentDB WHERE user_id = $user_id");
 			$result = $statement2->execute();
 			$student = $statement2->fetch();
-			$studentid = $student['personalid'];
+			$studentid = $student['student_id'];
 
 			echo "<script>console.log($studentid);</script>";
 
 			$statement3 = $pdo->prepare("INSERT INTO $homeaddressDB (
-				studentid, 
-				home_street, 
-				home_zip, 
-				home_city, 
-				home_state, 
-				home_country, 
-				home_phone) 
+				student_id,
+				street, 
+				zipcode, 
+				city, 
+				state, 
+				country_id, 
+				phone_no) 
 			VALUES (
 				'$studentid', 
 				'$home_street', 
@@ -213,17 +210,43 @@ if(isset($_POST['abschicken'])) {
 				'$home_city', 
 				'$home_state', 
 				'$home_country', 
-				'$home_phone'
+				'$home_phone')");
+			$statement3->execute();
+
+			$statement8 = $pdo->prepare("SELECT LAST_INSERT_ID(address_id) as address_id FROM $homeaddressDB");
+			$statement8->execute();
+			$homeaddress = $statement8->fetch();
+			$homeaddressid = $homeaddress['address_id'];
+
+			$statement4 = $pdo->prepare("UPDATE $studentDB SET home_address_id = $homeaddressid WHERE student_id = $studentid");
+			$statement4->execute();
+
+			$statement5 = $pdo->prepare("INSERT INTO $applicationDB (
+				student_id,
+				exchange_period_id, 
+				intention_id, 
+				applied_degree_id) 
+			VALUES (
+				'$studentid', 
+				'$starting_semester', 
+				'$intention', 
+				'$foreign_degree'
 			)");
+			$statement5->execute();
+
+			$statement9 = $pdo->prepare("SELECT LAST_INSERT_ID(application_id) as application_id FROM $applicationDB");
+			$statement9->execute();
+			$application =  $statement9->fetch();
+			$applicationid = $application['application_id'];
 		
-			$statement4 = $pdo->prepare("INSERT INTO $homestudyDB (
-				home_university,
+			$statement6 = $pdo->prepare("INSERT INTO $homestudyDB (
+				home_university_id,
 				home_matno,
-				home_degree, 
-				home_course,
-				studentid,
+				home_degree_id, 
+				home_course_id,
+				application_id,
 				home_cgpa,
-				home_enrollment,
+				home_enrollment_date,
 				home_semester,
 				home_credits
 				) 
@@ -232,40 +255,29 @@ if(isset($_POST['abschicken'])) {
 				'$home_matno',
 				'$home_degree', 
 				'$home_course',
-				'$studentid',
+				'$applicationid',
 				'$home_cgpa',
 				'$home_enrollment',
 				'$home_semester',
 				'$home_credits'
 				)");
-		
+				
+			$statement6->execute();
+
 			//noexams_firstuni is not null in database, but what does it stand for?
-			$statement5 = $pdo->prepare("INSERT INTO $priorityDB (
-				studentid,
-				first_uni,
-				second_uni,
-				third_uni,
-				noexams_firstuni)
+			$statement7 = $pdo->prepare("INSERT INTO $priorityDB (
+				application_id,
+				first_uni_id,
+				second_uni_id,
+				third_uni_id)
 			VALUES (
-				'$studentid',
+				'$applicationid',
 				'$first_uni',
 				'$second_uni',
-				'$third_uni',
-				'0' 
+				'$third_uni'
 				)");
+			$statement7->execute();
 
-			$statement6 = $pdo->prepare("INSERT INTO $hoststudyDB (
-				studentid,
-				foreign_degree)
-			VALUES (
-				'$studentid',
-				'$foreign_degree'
-				)");	
-
-			$statement3->execute();
-			$statement4->execute();
-			$statement5->execute();
-			$statement6->execute();
 			$pdo->commit();
 			
 			/*Alert successful message after transaction committed */
@@ -284,56 +296,57 @@ if(isset($_POST['abschicken'])) {
 			?></div><?php
 		}
 
-		//check PDOException first before upload files to server
+		// check PDOException first before upload files to server
 		if(!$error){
 			//get student data
-			$statement = $pdo->prepare("SELECT * FROM $studentDB
-							LEFT JOIN $homeaddressDB ON $homeaddressDB.studentid = $studentDB.personalid 
-							LEFT JOIN $homestudyDB ON $homestudyDB.studentid = $studentDB.personalid 
-							LEFT JOIN $priorityDB ON $priorityDB.studentid = $studentDB.personalid 
-							LEFT JOIN university ON university.locationid = $priorityDB.first_uni 
-							WHERE $studentDB.user_id = $user_id ");
+			$statement = $pdo->prepare("SELECT university.name FROM $priorityDB 
+			LEFT JOIN university on university.university_id = $priorityDB.first_uni_id 
+			WHERE application_id = $applicationid ");
 			$result = $statement->execute();
-			$student = $statement->fetch();
+			$priority = $statement->fetch();
 
-			$firstname_short = $student["firstname"];
+			$statement = $pdo->prepare("SELECT home_matno FROM $homestudyDB WHERE application_id = $applicationid ");
+			$result = $statement->execute();
+			$matno = $statement->fetch();
+
+			$firstname_short = $user["firstname"];
 
 			//get three characters of first name
-			if(strlen($firstname_short >= 3)) {
+			if(strlen($firstname_short) >= 3) {
 				$firstname_short = substr($firstname_short, 0, 3);
 			}
 
 			//create first_uni directory if not exists
-			if(!is_dir("$file_server/".$student["location"] ."/")) {
-    			mkdir("$file_server/".$student["location"] ."/");
+			if(!is_dir("$file_server/".$priority["name"] ."/")) {
+    			mkdir("$file_server/".$priority["name"] ."/");
 			}	
 
 			//create student directory if not exists
-			if(!is_dir("$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/")) {
-    			mkdir("$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/");
+			if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/")) {
+    			mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/");
 			}
 
 			//check if file size > 2MB before save
 			if($_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/".$student["home_matno"].$_FILES['Fächerwahlliste']['name']);
+				move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
 			}else{
 				//
 			}
 
 			if($_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/".$student["home_matno"].$_FILES['Motivationsschreiben']['name']);
+				move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"]."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
 			}else{
 				//
 			}
 
 			if($_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/".$student["home_matno"].$_FILES['Lebenslauf']['name']);
+				move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
 			}else{
 				//
 			}
 
 			if($_FILES['Transkript']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$student["location"] ."/".$student["surname"]."_"  .$firstname_short."_"  .$student["home_matno"]."/".$student["home_matno"].$_FILES['Transkript']['name']);
+				move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
 			}else{
 				//
 			}
@@ -381,8 +394,13 @@ endif;
 					<div class="col-sm-7">
 					<select data-error="Please choose a salutation!" type="text" id="inputSalutation" size="1" name="salutation" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 						<option></option>
-						<option value="Mr" <?php if(isset($salutation) and $salutation == "Mr") echo "selected"; ?>>Herr (Mr)</option>
-						<option value="Ms" <?php if(isset($salutation) and $salutation == "Ms") echo "selected"; ?>>Frau (Ms)</option>
+						<?php
+							$statement = $pdo->prepare("SELECT * FROM salutation");
+							$result = $statement->execute();
+							while($row = $statement->fetch()) { ?>
+        					    <!--show selected option after selection 06.04.2020 by lin-->
+								<option value="<?php echo ($row['salutation_id'])?>" <?php if(isset($salutation) and $salutation == $row['salutation_id']) echo "selected"; ?> readonly><?php echo ($row['name'])?></option>
+							<?php } ?>
 					</select>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
@@ -394,7 +412,7 @@ endif;
 				<div class="form-group row">
 					<label for="inputFirstName" class="col-sm-3 control-label">Vorname (first name):</label>
 					<div class="col-sm-7">
-						<input data-error="Please fill in your first name!" type="text" id="inputFirstName" name="firstname" class="form-control" value=<?php if(isset($firstname)) echo "$firstname"; else echo htmlentities($user['vorname']); ?> readonly>
+						<input data-error="Please fill in your first name!" type="text" id="inputFirstName" name="firstname" class="form-control" value="<?php if(isset($firstname)) echo $firstname;?>" readonly>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -406,7 +424,7 @@ endif;
 				<div class="form-group row">
 					<label for="inputSurname" class="col-sm-3 control-label">Nachname (surname):</label>
 					<div class="col-sm-7">
-						<input data-error="Please fill in your surname!" type="text" id="inputSurname" name="surname" class="form-control" value=<?php if(isset($surname)) echo "$surname"; else echo htmlentities($user['nachname']); ?> readonly>
+						<input data-error="Please fill in your surname!" type="text" id="inputSurname" name="surname" class="form-control" value="<?php if(isset($surname)) echo $surname;?>" readonly>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -417,7 +435,7 @@ endif;
 				<div class="form-group row">
 					<label for="inputEmail" class="col-sm-3 control-label">E-Mail (only @stud.uni-due.de):</label>
 					<div class="col-sm-7">
-						<input type="email" id="inputEmail" name="email" class="form-control" value=<?php  if(isset($email)) echo "$email"; else echo htmlentities($user['email']); ?> readonly>
+						<input type="email" id="inputEmail" name="email" class="form-control" value="<?php  if(isset($email)) echo $email;?>" readonly>
 					</div>
 					<label for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -431,11 +449,10 @@ endif;
 						<select data-error="Please select your nationality!" type="text" id="inputNationality" size="1"  name="nationality" class="form-control"  <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 						<!-- Eingefügt start-->
 							<?php 
-								$statement = $pdo->prepare("SELECT * FROM countries ORDER BY countryid");
+								$statement = $pdo->prepare("SELECT * FROM country ORDER BY country_id");
 								$result = $statement->execute();
-								$count = 1;
 								while($row = $statement->fetch()) { ?>
-									<option  <?php if(isset($nationality) and $nationality == $row['country']) echo "selected";?>><?php echo ($row['country']);?></option>
+									<option value="<?php echo ($row['country_id']);?>" <?php if(isset($nationality) and $nationality == $row['country_id']) echo "selected";?>><?php echo ($row['name']);?></option>
 							<?php } ?>		
 						<!--Eingefügt ende --> 
 						</select>
@@ -520,11 +537,10 @@ endif;
 						<select data-error="Country cannot be empty!" type="text" id="inputCountry" size="1"  name="home_country" class="form-control"  <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<!-- Eingefügt start-->
 							<?php 
-								$statement = $pdo->prepare("SELECT * FROM countries ORDER BY countryid");
+								$statement = $pdo->prepare("SELECT * FROM country ORDER BY country_id");
 								$result = $statement->execute();
-								$count = 1;
 								while($row = $statement->fetch()) { ?>
-									<option <?php if(isset($home_country) and $home_country == $row['country']) echo "selected"; ?>><?php echo ($row['country']);?></option>
+									<option value="<?php echo ($row['country_id']);?>" <?php if(isset($home_country) and $home_country == $row['country_id']) echo "selected"; ?>><?php echo ($row['name']);?></option>
 							<?php } ?>		
 							<!--Eingefügt ende --> 
 						</select>
@@ -559,14 +575,38 @@ endif;
 	<!-- dritter Reiter: Homestudy -->
 		<div role="tabpanel" class="tab-pane" id="homestudy">
 			<br>
-			<div class="form-horizontal">	
+			<div class="form-horizontal">
+
+				<div class="form-group"> <!-- Tabelle in ddstud vorhanden -->
+					<label for="inputHomeUniversity" class="col-sm-3 control-label">Aktuelle Universität <br> (home university): </label>
+					<div class="col-sm-7">
+						<select data-error="Please select your home university!" type="value" id="inputHomeUniversity" size="1"  name="home_university" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
+						<!-- Eingefügt start-->
+							<?php 
+								$statement = $pdo->prepare("SELECT * FROM university ORDER BY name ASC");
+								$result = $statement->execute();
+								while($row = $statement->fetch()) { ?>
+									<option value="<?php echo ($row['university_id']);?>" <?php if(isset($home_university) and $home_university == $row['university_id']) echo "selected"; ?>><?php echo ($row['name']);?></option> <!-- value="<?php //echo $row['courseid']?>" -->
+							<?php } ?>		
+						<!--Eingefügt ende --> 
+						</select>
+					</div>
+					<label  for="errorText" class="col-sm-3 control-label"></label>
+					<div class="col-sm-7">
+						<div class="help-block with-errors"></div>					
+					</div>
+				</div>
+
 				<div class="form-group"> <!-- Tabelle in ddstud vorhanden -->
 					<label for="inputHomeDegree" class="col-sm-3 control-label">Derzeit angestrebter Abschluss <br>(home degree): </label>
 					<div class="col-sm-7">
 						<select data-error="Please select your home degree!" type="value" id="inputHomeDegree" size="1" maxlength="30" name="home_degree" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
-							<option></option>
-							<option value="1" <?php if(isset($home_degree) and $home_degree == "1") echo "selected"; ?>>Bachelor of Science</option>
-							<option value="2" <?php if(isset($home_degree) and $home_degree == "2") echo "selected"; ?>>Master of Science</option>
+							<?php 
+								$statement = $pdo->prepare("SELECT * FROM degree ");
+								$result = $statement->execute();
+								while($row = $statement->fetch()) { ?>
+									<option value="<?php echo ($row['degree_id']);?>" <?php if(isset($home_degree) and $home_degree == $row['degree_id']) echo "selected"; ?>><?php echo ($row['name']);?></option>
+							<?php } ?>	
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -581,10 +621,10 @@ endif;
 						<select data-error="Please select your home course!" type="value" id="inputHomeCourse" size="1"  name="home_course" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 						<!-- Eingefügt start-->
 							<?php 
-								$statement = $pdo->prepare("SELECT * FROM courses ORDER BY course ASC");
+								$statement = $pdo->prepare("SELECT * FROM course ORDER BY name ASC");
 								$result = $statement->execute();
 								while($row = $statement->fetch()) { ?>
-									<option value="<?php echo ($row['courseid']);?>" <?php if(isset($home_course) and $home_course == $row['courseid']) echo "selected"; ?>><?php echo ($row['course']);?></option> <!-- value="<?php //echo $row['courseid']?>" -->
+									<option value="<?php echo ($row['course_id']);?>" <?php if(isset($home_course) and $home_course == $row['course_id']) echo "selected"; ?>><?php echo ($row['name']);?></option> <!-- value="<?php //echo $row['courseid']?>" -->
 							<?php } ?>		
 						<!--Eingefügt ende --> 
 						</select>
@@ -606,10 +646,21 @@ endif;
 					</div>
 				</div>
 					
-				<div class="form-group"> <!-- existiert in ddstud noch nicht -->
+				<!-- <div class="form-group"> 
 					<label for="inputEnrollment" class="col-sm-3 control-label">Monat/Jahr der Einschreibung in aktuellen Studiengang <br>(month/year of enrollment): </label>
 					<div class="col-sm-7">
 						<input data-error="Please enter your enrollment month/year!" type="text" id="inputEnrollment" pattern="\d{1,2}/\d{4}" maxlength="7" name="home_enrollment" class="form-control" placeholder="MM/YYYY" <?php if(isset($home_enrollment)) echo "value=\"$home_enrollment\""; ?>  <?php if($readonly) echo "readonly"; else echo "required"; ?>>
+					</div>
+					<label  for="errorText" class="col-sm-3 control-label"></label>
+					<div class="col-sm-7">
+						<div class="help-block with-errors"></div>					
+					</div>
+				</div> -->
+
+				<div class="form-group"> <!-- existiert in ddstud noch nicht -->
+					<label for="inputEnrollment" class="col-sm-3 control-label">Monat/Jahr der Einschreibung in aktuellen Studiengang <br>(month/year of enrollment): </label>
+					<div class="col-sm-7">
+						<input data-error="Please enter your enrollment month/year!" pattern="\d{4}-\d{1,2}-\d{1,2}"  type="date" id="inputEnrollment"  name="home_enrollment" class="form-control" <?php if(isset($home_enrollment)) echo "value=\"$home_enrollment\""; ?>  <?php if($readonly) echo "readonly"; else echo "required"; ?>>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
 					<div class="col-sm-7">
@@ -679,7 +730,12 @@ endif;
 					<div class="col-sm-7">
 						<select data-error="Please select a valid type of transfer!" type="text" id="inputIntention" size="1" maxlength="20" name="intention" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option <?php if(isset($intention) and $intention == "Exchange") echo "selected"; ?>>Exchange</option>
+							<?php 
+								$statement = $pdo->prepare("SELECT * FROM intention");
+								$result = $statement->execute();
+								while($row = $statement->fetch()) { ?>
+									<option value="<?php echo ($row['intention_id']);?>" <?php if(isset($intention) and $intention == $row['intention_id']) echo "selected"; ?>><?php echo ($row['name']);?></option> 
+							<?php } ?>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -693,8 +749,12 @@ endif;
 					<div class="col-sm-7">
 						<select data-error="Please select a valid starting semester for the transfer!" type="number" id="inputStart" size="1" maxlength="7" name="starting_semester" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option value="2019.5" <?php if(isset($starting_semester) and $starting_semester == "2019.5") echo "selected"; ?>>WS19/20</option>
-							<option value="2020.5" <?php if(isset($starting_semester) and $starting_semester == "2020.5") echo "selected"; ?>>WS20/21</option>
+							<?php 
+								$statement = $pdo->prepare("SELECT * FROM exchange_period");
+								$result = $statement->execute();
+								while($row = $statement->fetch()) { ?>
+									<option value="<?php echo ($row['period_id']);?>" <?php if(isset($starting_semester) and $starting_semester == $row['period_id']) echo "selected"; ?>><?php echo ($row['exchange_semester']);?></option> 
+							<?php } ?>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -708,9 +768,12 @@ endif;
 					voraussichtlich Student sein in (abroad degree):</label>
 					<div class="col-sm-7">
 						<select data-error="Please select a valid type of degree for the transfer!" type="text" id="inputForeignDegree" size="1" name="foreign_degree" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
-							<option></option>
-							<option value="1" <?php if(isset($foreign_degree) and $foreign_degree == "1") echo "selected"; ?>>einem Bachelorstudiengang an der UDE</option>
-							<option value="2" <?php if(isset($foreign_degree) and $foreign_degree == "2") echo "selected"; ?>>einem Masterstudiengang an der UDE</option>
+							<?php 
+								$statement = $pdo->prepare("SELECT * FROM degree");
+								$result = $statement->execute();
+								while($row = $statement->fetch()) { ?>
+									<option value="<?php echo ($row['degree_id']);?>" <?php if(isset($foreign_degree) and $foreign_degree == $row['degree_id']) echo "selected"; ?>><?php echo ($row['name']);?></option> 
+							<?php } ?>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -725,9 +788,12 @@ endif;
 					<div class="col-sm-7">
 						<select data-error="Please select a valid University!" type="number" id="inputFirstPrio" size="1" maxlength="20" name="firstprio" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
 							<option></option>
-							<option value="2" <?php if(isset($first_uni) and $first_uni == "2") echo "selected"; ?>>UKM, Malaysia</option>
-							<option value="3" <?php if(isset($first_uni) and $first_uni == "3") echo "selected"; ?>>UI, Indonesia</option>
-							<option value="5" <?php if(isset($first_uni) and $first_uni == "5") echo "selected"; ?>>NTU, Singapur</option>
+							<?php 
+								$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,4)");
+								$result = $statement->execute();
+								while($row = $statement->fetch()) { ?>
+									<option value="<?php echo ($row['university_id']);?>" <?php if(isset($first_uni) and $first_uni == $row['university_id']) echo "selected"; ?>><?php echo ($row['name']);?></option> 
+							<?php } ?>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -739,11 +805,14 @@ endif;
 				<div class="form-group">
 					<label for="inputSecondPrio" class="col-sm-3 control-label">2. Priorität (2. priority):</label>
 					<div class="col-sm-7">
-						<select data-error="Please select a valid University!" type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
+						<select data-error="Please select a valid University!" type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio" class="form-control" <?php if($readonly) echo "disabled";  ?>>
 							<option></option>
-							<option value="2" <?php if(isset($second_uni) and $second_uni == "2") echo "selected"; ?>>UKM, Malaysia</option>
-							<option value="3" <?php if(isset($second_uni) and $second_uni == "3") echo "selected"; ?>>UI, Indonesia</option>
-							<option value="5" <?php if(isset($second_uni) and $second_uni == "5") echo "selected"; ?>>NTU, Singapur</option>
+							<?php 
+								$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,4)");
+								$result = $statement->execute();
+								while($row = $statement->fetch()) { ?>
+									<option value="<?php echo ($row['university_id']);?>" <?php if(isset($second_uni) and $second_uni == $row['university_id']) echo "selected"; ?>><?php echo ($row['name']);?></option> 
+							<?php } ?>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -755,11 +824,14 @@ endif;
 				<div class="form-group">
 					<label for="inputThirdPrio" class="col-sm-3 control-label">3. Priorität (3. priority):</label>
 					<div class="col-sm-7">
-						<select data-error="Please select a valid University!" type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
+						<select data-error="Please select a valid University!" type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio" class="form-control" <?php if($readonly) echo "disabled";  ?>>
 							<option></option>
-							<option value="2" <?php if(isset($third_uni) and $third_uni == "2") echo "selected"; ?>>UKM, Malaysia</option>
-							<option value="3" <?php if(isset($third_uni) and $third_uni == "3") echo "selected"; ?>>UI, Indonesia</option>
-							<option value="5" <?php if(isset($third_uni) and $third_uni == "5") echo "selected"; ?>>NTU, Singapur</option>
+							<?php 
+								$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,4)");
+								$result = $statement->execute();
+								while($row = $statement->fetch()) { ?>
+									<option value="<?php echo ($row['university_id']);?>" <?php if(isset($third_uni) and $third_uni == $row['university_id']) echo "selected"; ?>><?php echo ($row['name']);?></option> 
+							<?php } ?>
 						</select>
 					</div>
 					<label  for="errorText" class="col-sm-3 control-label"></label>
@@ -808,7 +880,7 @@ endif;
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Motivationsschreiben" id="pdffile" class="form-control" accept=".pdf" required><br>
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Motivationsschreiben" id="pdffile" class="form-control" accept=".pdf" ><br>
 								<?php
 							}
 						?>
@@ -826,7 +898,7 @@ endif;
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Lebenslauf" id="pdffile" accept=".pdf" class="form-control" required><br>
+								?><input  data-error="Only pdf file type is allowed!" type="file" size="75"  name="Lebenslauf" id="pdffile" accept=".pdf" class="form-control" ><br>
 								<?php
 							}
 						?>
@@ -844,7 +916,7 @@ endif;
 							if($readonly){
 								?><a href="#filepath">filename</a><?php
 							}else{
-								?><input data-error="Only pdf file type is allowed!" type="file" size="75"  name="Transkript" class="form-control" id="pdffile" accept=".pdf" required><br>
+								?><input data-error="Only pdf file type is allowed!" type="file" size="75"  name="Transkript" class="form-control" id="pdffile" accept=".pdf" ><br>
 								<?php
 							}
 						?>
