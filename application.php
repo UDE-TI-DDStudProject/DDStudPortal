@@ -392,7 +392,7 @@ endif;
 				<div class="form-group row">
 					<label for="inputSalutation" class="col-sm-3 control-label">Anrede (salutation):</label>
 					<div class="col-sm-7">
-					<select data-error="Please choose a salutation!" type="text" id="inputSalutation" size="1" name="salutation" class="form-control" <?php if($readonly) echo "disabled"; else echo "required"; ?>>
+					<select data-error="Please choose a salutation!" type="text" id="inputSalutation" size="1" name="salutation" class="form-control" disabled>
 						<option></option>
 						<?php
 							$statement = $pdo->prepare("SELECT * FROM salutation");

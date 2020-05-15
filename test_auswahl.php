@@ -23,10 +23,24 @@ $applicationid = $row['application_id'];
 $student_matno = $row['home_matno'];
 $student_firstname = $user['firstname'];
 $student_surname = $user['lastname'];
+$applied_periodid = $row['exchange_period_id'];
 
-echo "<script>console.log(\"$student_matno\");</script>";
+echo "<script>console.log(\"$studentid\");</script>";
 
-$readonly = true;
+//check deadline, set table readonly
+$statement = $pdo->prepare("SELECT * FROM exchange_period 	
+							WHERE period_id = $applied_periodid");
+$result = $statement->execute();
+$period = $statement->fetch();
+$perioddeadline = $period['application_end'];
+
+if(((strtotime(date('Y-m-d h:i:sa')) - strtotime($perioddeadline))/60/60/24) >= 0){
+	$readonly = true;
+}else{
+	$readonly = false;
+}
+
+// $readonly = true;
 
 include("templates/header.inc.php");
 ?>
@@ -50,13 +64,13 @@ $showFormular = false; //Variable ob das Registrierungsformular angezeigt werden
 if(isset($_POST['auswahl'])) {
 	if(isset($studentid)){
 		if(!empty($_POST['kurse'])) {
-
 			/*DELETE all old entries of students in database table 'student_selectedsubjects' then INSERT newly checked equivalent-courses into database*/
 				$stmtDelete = $pdo->prepare("DELETE FROM applied_equivalence WHERE application_id = $applicationid ");
 				$stmtInsert = $pdo->prepare("INSERT INTO applied_equivalence (equivalence_id, application_id) VALUES (?, $applicationid)");
 
 				/*Begin transaction*/
 				try {
+
 					$pdo->beginTransaction();
 					$stmtDelete->execute();
 					foreach ($_POST['kurse'] as $value)
@@ -79,15 +93,17 @@ if(isset($_POST['auswahl'])) {
 					echo $e->get_message();
 					?></div><?php
 				}
-			}
-
-			/*Show previous universities selection and the course-selection form*/
-			if(isset($_POST['home_locationid']) AND isset($_POST['foreign_locationid']) AND ($_POST['home_locationid']>1) AND ($_POST['foreign_locationid']>1)) {
-				$home_locationid = $_POST['home_locationid'];
-				$foreign_locationid = $_POST['foreign_locationid'];
 
 				$showFormular = true;
 			}
+
+			// /*Show previous universities selection and the course-selection form*/
+			// if(isset($_GET['home_locationid']) AND isset($_GET['foreign_locationid']) AND ($_GET['home_locationid']>1) AND ($_GET['foreign_locationid']>1)) {
+			// 	$home_locationid = $_GET['home_locationid'];
+			// 	$foreign_locationid = $_GET['foreign_locationid'];
+
+			// 	$showFormular = true;
+			// }
 	}else{
 		?><div class="alert alert-danger"><?php
 		echo 'Sie haben sich noch nicht beworben. <br> Bitte erst <a href="application.php">Bewerbungformular</a> abschicken!';
@@ -212,6 +228,10 @@ if($showFormular) {
 		</select>
 		<button type="button" name="print" id = "print" class="btn btn-lg btn-primary btn-block">Fächerwahlliste ausdrucken</button>
 	</div>
+	</form>
+
+	<?php $url = $_SERVER['PHP_SELF']; ?>
+	<form action="<?php echo "$url?home_locationid=$home_locationid&foreign_locationid=$foreign_locationid&university=Äquivalenzliste+laden"; ?>" method="POST">
 
 	<div class="table-responsive">
 	<table class="table table-hover" id = "courses" >
