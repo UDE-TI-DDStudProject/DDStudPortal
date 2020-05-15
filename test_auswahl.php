@@ -6,22 +6,25 @@ require_once("inc/functions.inc.php");
 //Überprüfe, dass der User eingeloggt ist
 //Der Aufruf von check_user() muss in alle internen Seiten eingebaut sein
 $user = check_user(); //zur Prüfung des users in der "user"-Datenbank
-$inputDB = 'student_new';
-$userid = $user['id'];
+$userid = $user['user_id'];
 
 //degree list default
 $degreelist = 1;
 
 //check whether if student has registered already
-$statement = $pdo->prepare("SELECT * FROM student_new 
-							LEFT JOIN study_home on study_home.studentid = student_new.personalid 
-							WHERE user_id = $userid");
+$statement = $pdo->prepare("SELECT * FROM student 	
+							LEFT JOIN application on application.student_id = student.student_id
+							LEFT JOIN study_home on study_home.application_id = application.application_id 
+							WHERE student.user_id = $userid");
 $result = $statement->execute();
 $row = $statement->fetch();
-$studentid = $row['personalid'];
+$studentid = $row['student_id'];
+$applicationid = $row['application_id'];
 $student_matno = $row['home_matno'];
-$student_firstname = $row['firstname'];
-$student_surname = $row['surname'];
+$student_firstname = $user['firstname'];
+$student_surname = $user['lastname'];
+
+echo "<script>console.log(\"$student_matno\");</script>";
 
 $readonly = true;
 
@@ -49,8 +52,8 @@ if(isset($_POST['auswahl'])) {
 		if(!empty($_POST['kurse'])) {
 
 			/*DELETE all old entries of students in database table 'student_selectedsubjects' then INSERT newly checked equivalent-courses into database*/
-				$stmtDelete = $pdo->prepare("DELETE FROM student_selectedsubjects WHERE personalid = $studentid");
-				$stmtInsert = $pdo->prepare("INSERT INTO student_selectedsubjects (equivalence_id, personalid) VALUES (?, $studentid)");
+				$stmtDelete = $pdo->prepare("DELETE FROM applied_equivalence WHERE application_id = $applicationid ");
+				$stmtInsert = $pdo->prepare("INSERT INTO applied_equivalence (equivalence_id, application_id) VALUES (?, $applicationid)");
 
 				/*Begin transaction*/
 				try {
@@ -129,22 +132,22 @@ if(isset($_GET['university'])) {
 					<td>
 						<select type="text" size="1" name="home_locationid" class="form-control" id="homeuniversity" required>
 							<?php
-							$statement = $pdo->prepare("SELECT location, locationid FROM university ORDER BY locationid");
+							$statement = $pdo->prepare("SELECT name, university_id FROM university ORDER BY university_id");
 							$result = $statement->execute();
 							while($row = $statement->fetch()) { ?>
                                 <!--show selected option after selection 06.04.2020 by lin-->
-								<option  <?php if (isset($home_locationid) AND $row['locationid'] == $home_locationid) echo "selected" ?> value="<?php echo ($row['locationid'])?>"><?php echo ($row['location'])?></option>
+								<option  <?php if (isset($home_locationid) AND $row['university_id'] == $home_locationid) echo "selected" ?> value="<?php echo ($row['university_id'])?>"><?php echo ($row['name'])?></option>
 							<?php } ?>
 						</select>
 					</td>
 					<td>
 						<select type="text" size="1"  name="foreign_locationid" class="form-control" id="foreignuniversity" required>
 							<?php
-							$statement = $pdo->prepare("SELECT location, locationid FROM university ORDER BY locationid");
+							$statement = $pdo->prepare("SELECT name, university_id FROM university ORDER BY university_id");
 							$result = $statement->execute();
 							while($row = $statement->fetch()) { ?>
                             <!--show selected option after selection 06.04.2020 by lin-->
-							<option  <?php if (isset($foreign_locationid) AND $row['locationid'] == $foreign_locationid) echo "selected" ?> value="<?php echo ($row['locationid'])?>"><?php echo ($row['location'])?></option>
+							<option  <?php if (isset($foreign_locationid) AND $row['university_id'] == $foreign_locationid) echo "selected" ?> value="<?php echo ($row['university_id'])?>"><?php echo ($row['name'])?></option>
 							<?php } ?>
 						</select>
 					</td>
@@ -228,8 +231,8 @@ if($showFormular) {
 
 		<?php
 		/*Query previously selected equivalence-courses' id of the user*/
-		$statement = $pdo->prepare("SELECT equivalence_id FROM student_selectedsubjects
-									WHERE personalid = $studentid");
+		$statement = $pdo->prepare("SELECT equivalence_id FROM applied_equivalence
+									WHERE application_id = $applicationid");
 		$result = $statement->execute();
 		$selectedCourses = array();
 		while($selectedCourse = $statement->fetch())
@@ -240,24 +243,24 @@ if($showFormular) {
 
 		/*Abfrage der vorhandenen Äquivalenzen aus der "equivalent_subjects"-DB*/
 		if($degreelist!=0){
-			$statement = $pdo->prepare("SELECT es.equivalence_id as equivalence_id, es.status_id as status_id , st.status as status,
+			$statement = $pdo->prepare("SELECT es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
 			s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title ,
-			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, DATE_FORMAT(es.updated_at,'%d/%m/%Y') as updated_at 
+			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at  
 			FROM equivalent_subjects es
-			LEFT JOIN subjects s1 ON s1.subject_id = es.home_subject_id
-			LEFT JOIN subjects s2 ON s2.subject_id = es.foreign_subject_id
-			LEFT JOIN equivalence_status st ON st.status_id = es.status_id
+			LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
+			LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
+			LEFT JOIN status st ON st.status_id = es.status_id
 			WHERE s1.university_id = $home_locationid AND s2.university_id = $foreign_locationid
 			AND s1.degree_id = $degreelist AND s2.degree_id = $degreelist
 			ORDER BY es.status_id, es.equivalence_id");
 		}else{
-			$statement = $pdo->prepare("SELECT es.equivalence_id as equivalence_id, es.status_id as status_id , st.status as status,
+			$statement = $pdo->prepare("SELECT es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
 			s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title ,
-			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, DATE_FORMAT(es.updated_at,'%d/%m/%Y') as updated_at 
+			s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
 			FROM equivalent_subjects es
-			LEFT JOIN subjects s1 ON s1.subject_id = es.home_subject_id
-			LEFT JOIN subjects s2 ON s2.subject_id = es.foreign_subject_id
-			LEFT JOIN equivalence_status st ON st.status_id = es.status_id
+			LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
+			LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
+			LEFT JOIN status st ON st.status_id = es.status_id
 			WHERE s1.university_id = $home_locationid AND s2.university_id = $foreign_locationid
 			ORDER BY es.status_id, es.equivalence_id");
 		}
@@ -408,7 +411,7 @@ $(document).ready(function(){
 					doc.addImage(img, 'JPEG', pageWidth - data.settings.margin.right - 36, 15, 36, 14);
       				doc.text('Fächerwahlliste', pageWidth / 2, 30, 'center');
 					doc.setFontSize(10);
-					doc.text('Matriculationnummer: ' + matno, data.settings.margin.left  , 20 , 'left');
+					doc.text('Matriculationnummer: ' + matno.toString(), data.settings.margin.left  , 20 , 'left');
 					doc.text('Nachname: ' + surname, data.settings.margin.left  , 25 , 'left');
 					doc.text('Vorname: ' + firstname, data.settings.margin.left , 30 , 'left');
       				doc.text('Home-Uni: ' + homeUni + '	     Foreign-Uni: ' +  foreignUni, pageWidth / 2, 40 , 'center');
