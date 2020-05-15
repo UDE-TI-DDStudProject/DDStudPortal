@@ -6,25 +6,28 @@ require_once("inc/functions.inc.php");
 //Überprüfe, dass der User eingeloggt ist
 //Der Aufruf von check_user() muss in alle internen Seiten eingebaut sein
 $user = check_user();
+$activeTab = "";
 
 include("templates/header.inc.php");
 
-if(isset($_GET['save'])) {
-	$save = $_GET['save'];
+if(isset($_POST['savePersonalData'])) {
 	
-	if($save == 'personal_data') {
-		$vorname = trim($_POST['vorname']);
-		$nachname = trim($_POST['nachname']);
-		
-		if($vorname == "" || $nachname == "") {
-			$error_msg = "Bitte Vor- und Nachname ausfüllen.";
-		} else {
-			$statement = $pdo->prepare("UPDATE users SET vorname = :vorname, nachname = :nachname, updated_at=NOW() WHERE id = :userid");
-			$result = $statement->execute(array('vorname' => $vorname, 'nachname'=> $nachname, 'userid' => $user['id'] ));
-						
-			$success_msg = "Daten erfolgreich gespeichert.";
-		}
-	} else if($save == 'email') {
+	$activeTab = "data";
+	$vorname = trim($_POST['vorname']);
+	$nachname = trim($_POST['nachname']);
+	$salutation = trim($_POST['salutation']);
+	
+	if($vorname == "" || $nachname == "") {
+		$error_msg = "Bitte Vor- und Nachname ausfüllen.";
+	} else {
+		$statement = $pdo->prepare("UPDATE user SET firstname = :vorname, lastname = :nachname, salutation_id = :salutation WHERE user_id = :userid");
+		$result = $statement->execute(array('vorname' => $vorname, 'nachname'=> $nachname, 'salutation' => $salutation, 'userid' => $user['user_id'] ));
+					
+		$success_msg = "Daten erfolgreich gespeichert.";
+	}
+
+}else if(isset($_POST['saveEmail'])) {
+		$activeTab = "email";
 		$passwort = $_POST['passwort'];
 		$email = trim($_POST['email']);
 		$email2 = trim($_POST['email2']);
@@ -33,37 +36,38 @@ if(isset($_GET['save'])) {
 			$error_msg = "Die eingegebenen E-Mail-Adressen stimmten nicht überein.";
 		} else if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$error_msg = "Bitte eine gültige E-Mail-Adresse eingeben.";
-		} else if(!password_verify($passwort, $user['passwort'])) {
+		} else if(!password_verify($passwort, $user['password'])) {
 			$error_msg = "Bitte korrektes Passwort eingeben.";
 		} else {
-			$statement = $pdo->prepare("UPDATE users SET email = :email WHERE id = :userid");
-			$result = $statement->execute(array('email' => $email, 'userid' => $user['id'] ));
+			$statement = $pdo->prepare("UPDATE user SET email = :email WHERE user_id = :userid");
+			$result = $statement->execute(array('email' => $email, 'userid' => $user['user_id'] ));
 			
 			$success_msg = "E-Mail-Adresse erfolgreich gespeichert.";
 		}
-		
-	} else if($save == 'passwort') {
-		$passwortAlt = $_POST['passwortAlt'];
-		$passwortNeu = trim($_POST['passwortNeu']);
-		$passwortNeu2 = trim($_POST['passwortNeu2']);
-		
-		if($passwortNeu != $passwortNeu2) {
-			$error_msg = "Die eingegebenen Passwörter stimmten nicht überein.";
-		} else if($passwortNeu == "") {
-			$error_msg = "Das Passwort darf nicht leer sein.";
-		} else if(!password_verify($passwortAlt, $user['passwort'])) {
-			$error_msg = "Bitte korrektes Passwort eingeben.";
-		} else {
-			$passwort_hash = password_hash($passwortNeu, PASSWORD_DEFAULT);
+
+} else if(isset($_POST['savePassword'])) {
+	$activeTab = "passwort";
+	$passwortAlt = $_POST['passwortAlt'];
+	$passwortNeu = trim($_POST['passwortNeu']);
+	$passwortNeu2 = trim($_POST['passwortNeu2']);
+	
+	if($passwortNeu != $passwortNeu2) {
+		$error_msg = "Die eingegebenen Passwörter stimmten nicht überein.";
+	} else if($passwortNeu == "") {
+		$error_msg = "Das Passwort darf nicht leer sein.";
+	} else if(!password_verify($passwortAlt, $user['password'])) {
+		$error_msg = "Bitte korrektes Passwort eingeben.";
+	} else {
+		$passwort_hash = password_hash($passwortNeu, PASSWORD_DEFAULT);
+			
+		$statement = $pdo->prepare("UPDATE user SET password = :passwort WHERE user_id = :userid");
+		$result = $statement->execute(array('passwort' => $passwort_hash, 'userid' => $user['user_id'] ));
 				
-			$statement = $pdo->prepare("UPDATE users SET passwort = :passwort WHERE id = :userid");
-			$result = $statement->execute(array('passwort' => $passwort_hash, 'userid' => $user['id'] ));
-					
-			$success_msg = "Passwort erfolgreich gespeichert.";
-		}
-		
+		$success_msg = "Passwort erfolgreich gespeichert.";
 	}
+	
 }
+
 
 $user = check_user();
 
@@ -109,24 +113,39 @@ endif;
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="data">
     	<br>
-    	<form action="?save=personal_data" method="post" class="form-horizontal">
+    	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-horizontal">
+
+			<div class="form-group">
+    			<label for="inputSalutation" class="col-sm-2 control-label">Salutation</label>
+    			<div class="col-sm-10">
+					<select type="text" size="1" name="salutation" class="form-control" id="selectSalutation" required>
+						<?php
+						$statement = $pdo->prepare("SELECT * FROM salutation");
+						$result = $statement->execute();
+						while($row = $statement->fetch()) { ?>
+							<option value="<?php echo ($row['salutation_id'])?>" <?php if($row['salutation_id'] == $user['salutation_id']) echo "selected"; ?>><?php echo ($row['name'])?></option>
+						<?php } ?>
+					</select>
+    			</div>
+    		</div>
+
     		<div class="form-group">
     			<label for="inputVorname" class="col-sm-2 control-label">Vorname</label>
     			<div class="col-sm-10">
-    				<input class="form-control" id="inputVorname" name="vorname" type="text" value="<?php echo htmlentities($user['vorname']); ?>" required>
+    				<input class="form-control" id="inputVorname" name="vorname" type="text" value="<?php echo htmlentities($user['firstname']); ?>" required>
     			</div>
     		</div>
     		
     		<div class="form-group">
     			<label for="inputNachname" class="col-sm-2 control-label">Nachname</label>
     			<div class="col-sm-10">
-    				<input class="form-control" id="inputNachname" name="nachname" type="text" value="<?php echo htmlentities($user['nachname']); ?>" required>
+    				<input class="form-control" id="inputNachname" name="nachname" type="text" value="<?php echo htmlentities($user['lastname']); ?>" required>
     			</div>
     		</div>
     		
     		<div class="form-group">
 			    <div class="col-sm-offset-2 col-sm-10">
-			      <button type="submit" class="btn btn-primary">Speichern</button>
+			      <button name="savePersonalData" id="savePersonalData" type="submit" class="btn btn-primary">Speichern</button>
 			    </div>
 			</div>
     	</form>
@@ -135,8 +154,8 @@ endif;
     <!-- Änderung der E-Mail-Adresse -->
     <div role="tabpanel" class="tab-pane" id="email">
     	<br>
-    	<p>Zum Änderen deiner E-Mail-Adresse gib bitte dein aktuelles Passwort sowie die neue E-Mail-Adresse ein.</p>
-    	<form action="?save=email" method="post" class="form-horizontal">
+    	<p>Zum Ändern deiner E-Mail-Adresse gib bitte dein aktuelles Passwort sowie die neue E-Mail-Adresse ein.</p>
+    	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-horizontal">
     		<div class="form-group">
     			<label for="inputPasswort" class="col-sm-2 control-label">Passwort</label>
     			<div class="col-sm-10">
@@ -161,7 +180,7 @@ endif;
     		
     		<div class="form-group">
 			    <div class="col-sm-offset-2 col-sm-10">
-			      <button type="submit" class="btn btn-primary">Speichern</button>
+			      <button name="saveEmail"  id="saveEmail" type="submit" class="btn btn-primary">Speichern</button>
 			    </div>
 			</div>
     	</form>
@@ -171,7 +190,7 @@ endif;
     <div role="tabpanel" class="tab-pane" id="passwort">
     	<br>
     	<p>Zum Änderen deines Passworts gib bitte dein aktuelles Passwort sowie das neue Passwort ein.</p>
-    	<form action="?save=passwort" method="post" class="form-horizontal">
+    	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="form-horizontal">
     		<div class="form-group">
     			<label for="inputPasswort" class="col-sm-2 control-label">Altes Passwort</label>
     			<div class="col-sm-10">
@@ -196,7 +215,7 @@ endif;
     		
     		<div class="form-group">
 			    <div class="col-sm-offset-2 col-sm-10">
-			      <button type="submit" class="btn btn-primary">Speichern</button>
+			      <button name="savePassword"  id="savePassword" type="submit" class="btn btn-primary">Speichern</button>
 			    </div>
 			</div>
     	</form>
@@ -207,6 +226,23 @@ endif;
 </div>
 
 </div>
+
+<?php
+
+if(isset($activeTab)){
+	echo "<script>
+	$(document).ready(function(){
+		showTab('$activeTab');
+	});
+
+	function showTab(tab){
+		$('.nav-tabs a[href=\"#' + tab + '\"]').tab('show');
+	};
+	</script>";
+}
+?>
+
+
 <?php 
 include("templates/footer.inc.php")
 ?>
