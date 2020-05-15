@@ -13,7 +13,7 @@ function check_user() {
 		$identifier = $_COOKIE['identifier'];
 		$securitytoken = $_COOKIE['securitytoken'];
 		
-		$statement = $pdo->prepare("SELECT * FROM securitytokens WHERE identifier = ?");
+		$statement = $pdo->prepare("SELECT * FROM securitytoken WHERE identifier = ?");
 		$result = $statement->execute(array($identifier));
 		$securitytoken_row = $statement->fetch();
 	
@@ -24,7 +24,7 @@ function check_user() {
 		} else { //Token war korrekt
 			//Setze neuen Token
 			$neuer_securitytoken = random_string();
-			$insert = $pdo->prepare("UPDATE securitytokens SET securitytoken = :securitytoken WHERE identifier = :identifier");
+			$insert = $pdo->prepare("UPDATE securitytoken SET securitytoken = :securitytoken WHERE identifier = :identifier");
 			$insert->execute(array('securitytoken' => sha1($neuer_securitytoken), 'identifier' => $identifier));
 			setcookie("identifier",$identifier,time()+(3600*24*365)); //1 Jahr Gültigkeit
 			setcookie("securitytoken",$neuer_securitytoken,time()+(3600*24*365)); //1 Jahr Gültigkeit
@@ -40,7 +40,7 @@ function check_user() {
 	}
 	
 
-	$statement = $pdo->prepare("SELECT * FROM users WHERE id = :id");
+	$statement = $pdo->prepare("SELECT * FROM user WHERE user_id = :id");
 	$result = $statement->execute(array('id' => $_SESSION['userid']));
 	$user = $statement->fetch();
 	
