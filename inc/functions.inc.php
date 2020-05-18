@@ -36,15 +36,14 @@ function check_user() {
 	
 	
 	if(!isset($_SESSION['userid'])) {
-		die('Bitte zuerst <a href="login.php">einloggen</a>');
+		return null;
+	}else{
+		$statement = $pdo->prepare("SELECT * FROM user WHERE user_id = :id");
+		$result = $statement->execute(array('id' => $_SESSION['userid']));
+		$user = $statement->fetch();
+		
+		return $user;
 	}
-	
-
-	$statement = $pdo->prepare("SELECT * FROM user WHERE user_id = :id");
-	$result = $statement->execute(array('id' => $_SESSION['userid']));
-	$user = $statement->fetch();
-	
-	return $user;
 }
 
 /**
@@ -127,4 +126,17 @@ function Namen_bereinigen($dateiname)
     // und nun jagen wir noch die Heilfunktion darüber
     $dateiname = filter_var($dateiname, FILTER_SANITIZE_URL);
     return ($dateiname);
+}
+
+function password_strength($password){
+	$uppercase = preg_match('@[A-Z]@', $password);
+	$lowercase = preg_match('@[a-z]@', $password);
+	$number    = preg_match('@[0-9]@', $password);
+	$specialChars = preg_match('@[^\w]@', $password);
+
+	if(!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
+	  return false;
+	}else{
+		return true;
+	}
 }

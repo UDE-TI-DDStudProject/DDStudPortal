@@ -10,15 +10,18 @@ setcookie("securitytoken","",time()-(3600*24*365));
 require_once("inc/config.inc.php");
 require_once("inc/functions.inc.php");
 
-include("templates/header.inc.php");
+header("location: testlogin.php");
+exit;
+
+// include("templates/header.inc.php");
 ?>
-<div class="main">
+<!-- <div class="main">
 	<div class="container main-container">
 		<div class="container main-container registration-form">
-		Der Logout war erfolgreich. <a href="login.php">Zurück zum Login</a>.
+		Der Logout war erfolgreich. <a href="test.php">Zurück zum Login</a>.
 		</div>
 	</div>
-</div>
+</div> -->
 <?php 
-include("templates/footer.inc.php")
+//include("templates/footer.inc.php")
 ?>

@@ -14,19 +14,16 @@
 
     <!-- Custom styles for this template -->
     <link href="css/style.css" rel="stylesheet">
-    <!-- <link href="css/progress-bar.css" rel="stylesheet"> -->
-    <link href="css/bootstrap-stepper.css" rel="stylesheet">
+    <!-- <link href="css/bootstrap-stepper.css" rel="stylesheet"> -->
 
 	<!--jQuery CDN-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
-
+	
 	<!-- jsPDF CDN -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.3/jspdf.plugin.autotable.min.js"></script>
 
-	<!-- Bootstrap stepper -->
-	<link href="css/progress-bar.css" rel="stylesheet">
 
   </head>
   <body>

@@ -105,7 +105,7 @@
         </div>
       </footer>
 
-</div>
+<!-- </div> -->
 
 
   <!-- jQuery -->

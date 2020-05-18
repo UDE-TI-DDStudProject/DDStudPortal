@@ -47,13 +47,13 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <!-- Menu on the left -->
       <ul class="navbar-nav">
-        <li class="nav-item active">
+        <!-- <li class="nav-item active">
           <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
-        </li>
+        </li> -->
         <!-- Dropdown menu Information-->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user-alt"></i> Information
+          <i class="fas fa-info-circle"></i> Information
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <h6 class="dropdown-header">Application</h6>
@@ -68,51 +68,28 @@
             <a class="dropdown-item" href="#">After Exchange</a>
           </div>
         </li>
-          <!-- Application Information-->
-          <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user-alt"></i> Application Process
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <h6 class="dropdown-header">Application</h6>
-            <a class="dropdown-item" href="#">Exchange application</a>
-            <a class="dropdown-item" href="#">Select courses</a>
-            <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Exchange</h6>
-            <a class="dropdown-item" href="#">Visa application</a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-pen-square"></i> Apply now</a>
-        </li>
       </ul>
         <ul class="navbar-nav ml-auto">
-          <!-- Dropdown Login -->
+        <!-- Dropdown menu Account-->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user-alt"></i> Login
+          <i class="far fa-file"></i> Application
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-            <form class="px-4 py-3" action="testlogin.php" method="post">
-              <div class="form-group">
-                <label for="exampleDropdownFormEmail1">Email address</label>
-                <input name="email" type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="E-Mail">
-              </div>
-              <div class="form-group">
-                <label for="exampleDropdownFormPassword1">Password</label>
-                <input name="passwort" type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Passwort">
-              </div>
-              <div class="form-check">
-                <input name="rememberMe" type="checkbox" class="form-check-input" id="dropdownCheck" checked>
-                <label class="form-check-label" for="dropdownCheck">
-                  angemeldet bleiben
-                </label>
-              </div>
-              <button type="submit" class="btn btn-primary">Anmelden</button>
-            </form>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="register.php">Registrieren</a>
-            <a class="dropdown-item" href="passwortvergessen.php">Passwort vergessen?</a>
+            <a class="dropdown-item" href="test_status.php"><i class="fas fa-bell"></i> Application status</a>
+            <a class="dropdown-item" href="#"><i class="fas fa-plane-departure"></i> Before Departure</a>
+            <a class="dropdown-item" href="#"><i class="fas fa-plane-arrival"></i> After Departure</a>
+          </div>
+        </li>
+        <!-- Dropdown menu Account-->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user-alt"></i> Account
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+            <!-- <a class="dropdown-item" href="#"><i class="fas fa-bell"></i> Application status</a> -->
+            <a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Account Settings</a>
+            <a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
           </div>
         </li>
         </ul>
