@@ -110,7 +110,7 @@
 	display: none;
 }
 
-.tab-content {
+.stepper .tab-content {
 	position: relative;
 	text-align: center;
 }
