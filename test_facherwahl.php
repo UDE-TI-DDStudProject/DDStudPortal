@@ -200,7 +200,7 @@ if(isset($_POST['save'])) {
                         <div class="radio-group">
                             <div class="form-check form-check-inline">
                               <input name="degree1" class="form-check-input" type="checkbox" id="degree1" value="degree" checked>
-                              <label class="form-check-label" for="inlineCheckbox1">Degree</label>
+                              <label class="form-check-label" for="inlineCheckbox1">Bachelor</label>
                             </div>
                             <div class="form-check form-check-inline">
                               <input name="master1" class="form-check-input" type="checkbox" id="master1" value="master" checked>
@@ -310,7 +310,7 @@ if(isset($_POST['save'])) {
                         <div class="radio-group">
                             <div class="form-check form-check-inline">
                               <input name="degree2" class="form-check-input" type="checkbox" id="degree2" value="degree" checked>
-                              <label class="form-check-label" for="inlineCheckbox1">Degree</label>
+                              <label class="form-check-label" for="inlineCheckbox1">Bachelor</label>
                             </div>
                             <div class="form-check form-check-inline">
                               <input name="master2" class="form-check-input" type="checkbox" id="master2" value="master" checked>
@@ -420,7 +420,7 @@ if(isset($_POST['save'])) {
                         <div class="radio-group">
                             <div class="form-check form-check-inline">
                               <input name="degree3" class="form-check-input" type="checkbox" id="degree3" value="degree" checked>
-                              <label class="form-check-label" for="inlineCheckbox1">Degree</label>
+                              <label class="form-check-label" for="inlineCheckbox1">Bachelor</label>
                             </div>
                             <div class="form-check form-check-inline">
                               <input name="master3" class="form-check-input" type="checkbox" id="master3" value="master" checked>

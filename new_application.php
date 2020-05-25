@@ -42,7 +42,7 @@
         $statement = $pdo->prepare("SELECT * FROM exchange_period ep 
                                     WHERE not exists (SELECT ap.exchange_period_id FROM student st
                                     LEFT JOIN application ap on ap.student_id = st.student_id 
-                                    WHERE user_id = 1 and ap.exchange_period_id = ep.period_id)
+                                    WHERE st.user_id = :id and ap.exchange_period_id = ep.period_id)
                                     and now() between ep.application_begin and ep.application_end");
         $result = $statement->execute(array('id'=> $user['user_id']));
         $periods = array();

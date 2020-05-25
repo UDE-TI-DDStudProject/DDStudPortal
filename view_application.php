@@ -216,7 +216,7 @@
 
         <div class="container">
         <div class="text-right">
-            <button type="button" class="btn btn-success btn-sm" id="print">Ausdrucken</button>
+            <button type="button" class="btn btn-outline-success btn-sm" id="print">Ausdrucken</button>
         </div>
 
         <div class="table-responsive">

@@ -720,7 +720,7 @@
 
                       <div class="text-right">
                         <button type="button" class="btn btn-secondary" id="zurück5">Zurück</button>
-                        <button type="submit" class="btn btn-success" id="abschicken" name="abschicken">Bewerbung speichern</button>
+                        <button type="submit" class="btn btn-success" id="abschicken" name="abschicken">Bewerbung ändern</button>
                       </div>
 
                     </div>
