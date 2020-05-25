@@ -73,6 +73,9 @@
             <a class="dropdown-item" href="#">After Exchange</a>
           </div>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="new_application.php"><i class="fas fa-pen"></i> New Application</a>
+        </li>
       </ul>
         <ul class="navbar-nav ml-auto">
         <!-- Dropdown menu Account-->
@@ -87,7 +90,7 @@
           </div>
         </li> -->
         <li class="nav-item">
-          <a class="nav-link" href="new_application.php"><i class="fas fa-pen"></i> New Application</a>
+          <a class="nav-link" href="test_status.php"><i class="fas fa-home"></i>Mein Homepage</a>        
         </li>
         <!-- Dropdown menu Account-->
         <li class="nav-item dropdown">
@@ -95,7 +98,7 @@
             <i class="fas fa-user-alt"></i> Account
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="test_status.php"><i class="fas fa-home"></i> Profile Homepage</a>
+            <!-- <a class="dropdown-item" href="test_status.php"><i class="fas fa-home"></i> Profile Homepage</a> -->
             <a class="dropdown-item" href="test_setup.php"><i class="fas fa-cog"></i> Account Settings</a>
             <a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
           </div>
