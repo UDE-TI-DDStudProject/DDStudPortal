@@ -223,12 +223,42 @@
 
 <main class="container-fluid flex-fill">
     <div class="card view-application-form">
-        <!-- page title -->
-        <div class="page-title">
-            <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Application
+
+        <div class="title-row" style="display: flex; justify-content: space-between;">
+            <!-- page title -->
+            <div class="page-title">
+                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Applikation
+            </div>
+
+            <div class="title-button">
+              <div class="text-right">
+                <button type="button" class="btn btn-outline-success btn-sm" id="print">Ausdrucken</button>
+              </div>
+            </div>
         </div>
 
-        <div class="page-navigation">
+        <div class="stepper">
+          <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
+          <div class="stepper-item active">
+            <span class="stepper-circle">1</span>
+            <span class="stepper-label">Bewerbungsformular</span>
+          </div>
+          </a>
+          <div class="stepper-line"></div>
+          <a class="stepper-link" href="test_facherwahl.php?id=<?php echo $applicationid?>">
+          <div class="stepper-item complete">
+            <span class="stepper-circle">2</span>
+            <span class="stepper-label">Fächerwahlliste</span>
+          </div>
+          </a>
+          <div class="stepper-line"></div>
+          <div class="stepper-item disabled">
+            <span class="stepper-circle">2</span>
+            <span class="stepper-label">Reviewed</span>
+          </div>
+        </div>
+
+        <!-- <div class="page-navigation">
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="test_status.php">Homepage</a></li>
@@ -236,8 +266,7 @@
                 <li class="breadcrumb-item"><a href="test_facherwahl.php?id=<?php echo $applicationid;?>">Subject Selection</a></li>
               </ol>
             </nav>
-        </div>
-        <!-- <small class="submitted-date" id="<?php echo $submitted; ?>">submitted on <?php echo $submitted; ?></small> -->
+        </div> -->
         <!-- show message -->
         <?php 
         if(isset($success_msg) && !empty($success_msg)):
@@ -262,9 +291,7 @@
         ?>
 
         <div class="container">
-        <div class="text-right">
-            <button type="button" class="btn btn-outline-success btn-sm" id="print">Ausdrucken</button>
-        </div>
+
 
         <div class="table-responsive">
             <table class="table table-borderless table-hover table-sm" id="application">
