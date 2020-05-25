@@ -262,29 +262,49 @@
 			//create student directory if not exists
 			if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/")) {
     			mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/");
+            }
+            
+            //create filetype directory if not exists
+			if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste")) {
+    			mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste");
+            }
+            
+            //create filetype directory if not exists
+			if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben")) {
+    			mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben");
+            }
+            
+            //create filetype directory if not exists
+			if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf")) {
+    			mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf");
+            }
+            
+            //create filetype directory if not exists
+			if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript")) {
+    			mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript");
 			}
 
 			//check if file size > 2MB before save
 			if($_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
+				move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
 			}else{
 				//
 			}
 
 			if($_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"]."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
+				move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"]."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
 			}else{
 				//
 			}
 
 			if($_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
+				move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
 			}else{
 				//
 			}
 
 			if($_FILES['Transkript']['size'] <=  2 * 1024 * 1024){
-				move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
+				move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
 			}else{
 				//
 			}

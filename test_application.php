@@ -237,57 +237,100 @@
       // check PDOException first before upload files to server
 		if(!$error){
 			//get student data
-			// $statement = $pdo->prepare("SELECT university.name FROM $priorityDB 
-			// LEFT JOIN university on university.university_id = $priorityDB.first_uni_id 
-			// WHERE application_id = $applicationid ");
-			// $result = $statement->execute();
-			// $priority = $statement->fetch();
+			$statement = $pdo->prepare("SELECT university.name FROM $priorityDB 
+			LEFT JOIN university on university.university_id = $priorityDB.first_uni_id 
+			WHERE application_id = $applicationid ");
+			$result = $statement->execute();
+			$priority = $statement->fetch();
 
-			// $statement = $pdo->prepare("SELECT home_matno FROM $homestudyDB WHERE application_id = $applicationid ");
-			// $result = $statement->execute();
-			// $matno = $statement->fetch();
+			$statement = $pdo->prepare("SELECT home_matno FROM $homestudyDB WHERE application_id = $applicationid ");
+			$result = $statement->execute();
+			$matno = $statement->fetch();
 
-			// $firstname_short = $user["firstname"];
+			$firstname_short = $user["firstname"];
 
-			// //get three characters of first name
-			// if(strlen($firstname_short) >= 3) {
-			// 	$firstname_short = substr($firstname_short, 0, 3);
-			// }
+			//get three characters of first name
+			if(strlen($firstname_short) >= 3) {
+				$firstname_short = substr($firstname_short, 0, 3);
+			}
 
-			// //create first_uni directory if not exists
-			// if(!is_dir("$file_server/".$priority["name"] ."/")) {
-    	// 		mkdir("$file_server/".$priority["name"] ."/");
-			// }	
+			//create first_uni directory if not exists
+			if(!is_dir("$file_server/".$priority["name"] ."/")) {
+    			mkdir("$file_server/".$priority["name"] ."/");
+      }	
+    
+			//create student directory if not exists
+			if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/")) {
+    			mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/");
+      }
 
-			// //create student directory if not exists
-			// if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/")) {
-    	// 		mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/");
-			// }
+      if(file_exists($_FILES['Fächerwahlliste']['tmp_name']) && is_uploaded_file($_FILES['Fächerwahlliste']['tmp_name']) && $_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024) {
+        if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/")) {
+          //remove files in this folder
+          $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/". '*', GLOB_MARK);
+          foreach ($files as $file) {
+              if (is_dir($file)) {
+                  self::deleteDir($file);
+              } else {
+                  unlink($file);
+              }
+          }
+        }else{
+          mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/"); 
+        }
+        move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
+      }
 
-			// //check if file size > 2MB before save
-			// if($_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024){
-			// 	move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
-			// }else{
-			// 	//
-			// }
+      if(file_exists($_FILES['Motivationsschreiben']['tmp_name']) && is_uploaded_file($_FILES['Motivationsschreiben']['tmp_name']) && $_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024) {
+        if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/")) {
+          //remove files in this folder
+          $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/". '*', GLOB_MARK);
+          foreach ($files as $file) {
+              if (is_dir($file)) {
+                  self::deleteDir($file);
+              } else {
+                  unlink($file);
+              }
+          }
+        }else{
+          mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/"); 
+        }
+        move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
+      }
 
-			// if($_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024){
-			// 	move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"]."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
-			// }else{
-			// 	//
-			// }
+      if(file_exists($_FILES['Lebenslauf']['tmp_name']) && is_uploaded_file($_FILES['Lebenslauf']['tmp_name']) && $_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024) {
+        if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/")) {
+          //remove files in this folder
+          $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/". '*', GLOB_MARK);
+          foreach ($files as $file) {
+              if (is_dir($file)) {
+                  self::deleteDir($file);
+              } else {
+                  unlink($file);
+              }
+          }
+        }else{
+          mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/"); 
+        }
+        move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
+      }
 
-			// if($_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024){
-			// 	move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
-			// }else{
-			// 	//
-			// }
-
-			// if($_FILES['Transkript']['size'] <=  2 * 1024 * 1024){
-			// 	move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
-			// }else{
-			// 	//
-			// }
+      if(file_exists($_FILES['Transkript']['tmp_name']) && is_uploaded_file($_FILES['Transkript']['tmp_name']) && $_FILES['Transkript']['size'] <=  2 * 1024 * 1024) {
+        if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/")) {
+          //remove files in this folder
+          $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/". '*', GLOB_MARK);
+          foreach ($files as $file) {
+              if (is_dir($file)) {
+                  self::deleteDir($file);
+              } else {
+                  unlink($file);
+              }
+          }
+        }else{
+          mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/"); 
+        }
+        move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
+      }        
 		}
   }
 }
@@ -673,13 +716,17 @@
                     </div>
                     <!-- attachments -->
                     <div class="tab-pane fade" id="attachments" role="tabpanel" aria-labelledby="tab4">
+
+                    <div class="alert alert-warning">
+            	        	If you don't wish to change your uploaded documents, you can skip this section and save your application now. Otherwise, existing document(s) will be replaced new document(s).
+            	      </div>
                         
-                      <div class="form-group row">
+                    <div class="form-group row">
 				              	<label for="CourseList" class="col-sm-3 col-form-label col-form-label-sm">Ausgefüllte Fächerwahlliste [Excel Format]</label>
 				              	<div class="col-sm-9">
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="excelfile" size="75" accept=".xls, .xlsx" name="Fächerwahlliste">
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <input type="file" class="custom-file-input" id="file1" size="75" accept=".xls, .xlsx" name="Fächerwahlliste" required>
+                            <label class="custom-file-label" for="customFile" id="inputFächerwahlliste">Choose file</label>
                           </div>                          
                           <div id="CourseListFeedback" class="invalid-feedback"></div>
                         </div>
@@ -689,8 +736,8 @@
 				              	<label for="CourseList" class="col-sm-3 col-form-label col-form-label-sm">Motivationsschreiben [In Englisch und PDF]</label>
 				              	<div class="col-sm-9">
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Motivationsschreiben" id="pdffile">
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Motivationsschreiben" id="file2" required>
+                            <label class="custom-file-label" for="customFile" id="inputMotivationsschreiben">Choose file</label>
                           </div>                          
                           <div id="CourseListFeedback" class="invalid-feedback"></div>
                         </div>
@@ -700,8 +747,8 @@
 				              	<label for="CourseList" class="col-sm-3 col-form-label col-form-label-sm">Lebenslauf [In Englisch und PDF]</label>
 				              	<div class="col-sm-9">
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Lebenslauf" id="pdffile">
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Lebenslauf" id="file3" required>
+                            <label class="custom-file-label" for="customFile" id="inputLebenslauf">Choose file</label>
                           </div>                          
                           <div id="CourseListFeedback" class="invalid-feedback"></div>
                         </div>
@@ -711,8 +758,8 @@
 				              	<label for="CourseList" class="col-sm-3 col-form-label col-form-label-sm">Aktuelles Transkript/Zeugnis [PDF]</label>
 				              	<div class="col-sm-9">
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Transkript" id="pdffile">
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Transkript" id="file4" required>
+                            <label class="custom-file-label" for="customFile" id="inputTranskript">Choose file</label>
                           </div>                          
                           <div id="CourseListFeedback" class="invalid-feedback"></div>
                         </div>
@@ -775,6 +822,36 @@ $(document).ready(function(){
 	$("#zurück5").click(function(){
 		$('.nav-tabs a[href="#foreignstudy"]').tab('show');
 	});
+});
+</script>
+
+<!-- custom file browser show input -->
+<script>
+$(document).ready(function(){
+
+	$("#file1").change(function(e){
+        var file = e.target.files[0].name;
+        $("#inputFächerwahlliste").empty();
+        $("#inputFächerwahlliste").append(file);
+    }); 
+
+    $("#file2").change(function(e){
+        var file = e.target.files[0].name;
+        $("#inputMotivationsschreiben").empty();
+        $("#inputMotivationsschreiben").append(file);
+    }); 
+
+    $("#file3").change(function(e){
+        var file = e.target.files[0].name;
+        $("#inputLebenslauf").empty();
+        $("#inputLebenslauf").append(file);
+    }); 
+
+    $("#file4").change(function(e){
+        var file = e.target.files[0].name;
+        $("#inputTranskript").empty();
+        $("#inputTranskript").append(file);
+    }); 
 });
 </script>
 

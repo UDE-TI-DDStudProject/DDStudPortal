@@ -129,6 +129,53 @@
           $readonly = false;
       }
     }
+
+    //get 3 chars of first name
+    $firstname_short = $user["firstname"];
+
+    //get three characters of first name
+    if(strlen($firstname_short) >= 3) {
+        $firstname_short = substr($firstname_short, 0, 3);
+    }
+
+    //check uploaded document
+	if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste")) {
+      $facherwahlliste = true;
+      $F_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
+      if(file_exists($F_files[0])){
+        $F_name = basename($F_files[0]);
+      }
+    }else{
+        $facherwahlliste = false;
+    }
+    if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben")) {
+      $Motivationsschreiben = true;
+      $M_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
+      if(file_exists($M_files[0])){
+        $M_name = basename($M_files[0]);
+      }
+    }else{
+        $Motivationsschreiben = false;
+    }
+    if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf")) {
+      $Lebenslauf = true;
+      $L_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
+      if(file_exists($L_files[0])){
+        $L_name = basename($L_files[0]);
+      }
+    }else{
+        $Lebenslauf = false;
+    }
+    if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript")) {
+      $Transkript = true;
+      $T_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript"."/". '*', GLOB_MARK);
+      if(file_exists($T_files[0])){
+        $T_name = basename($T_files[0]);
+      }
+	}else{
+        $Transkript = false;
+    }
+
 ?>
 
 <?php 
@@ -332,19 +379,19 @@
                 </tr>
                 <tr class="d-flex">
                   <td class="col-sm-3">Fächerwahlliste</td>
-                  <td class="col-sm-9"></td>
+                  <td class="col-sm-9"><?php if(isset($F_name)) { ?> <a href="<?php echo $F_files[0]; ?>"><?php echo $F_name ?></a> <?php } else echo "-" ?></td>
                 </tr>
                 <tr class="d-flex">
                   <td class="col-sm-3">Motivationsschreiben</td>
-                  <td class="col-sm-9"></td>
+                  <td class="col-sm-9"><?php if(isset($M_name)) { ?> <a href="<?php echo $M_files[0]; ?>"><?php echo $M_name ?></a> <?php } else echo "-" ?></td>
                 </tr>
                 <tr class="d-flex">
                   <td class="col-sm-3">Lebenslauf</td>
-                  <td class="col-sm-9"></td>
+                  <td class="col-sm-9"><?php if(isset($L_name)) { ?> <a href="<?php echo $L_files[0]; ?>"><?php echo $L_name ?></a> <?php } else echo "-" ?></td>
                 </tr>
                 <tr class="d-flex">
                   <td class="col-sm-3">Transkript</td>
-                  <td class="col-sm-9"></td>
+                  <td class="col-sm-9"><?php if(isset($T_name)) { ?> <a href="<?php echo $T_files[0]; ?>"><?php echo $T_name ?></a> <?php } else echo "-" ?></td>
                 </tr>
               </tbody>
             </table>
