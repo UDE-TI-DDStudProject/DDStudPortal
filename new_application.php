@@ -3,20 +3,17 @@
     require_once("inc/config.inc.php");
     require_once("inc/functions.inc.php");
 
+    $show = true;
+
     //redirect user to homepage if the user has already login
     $user = check_user();
+    $user_id = $user['user_id'];
 
     if(!isset($user)){
         header("location: testlogin.php");
         exit;
     }
 
-    if(!isset($_GET['id'])){
-      header("location: test_status.php");
-      exit;
-    }
-
-    $applicationid = $_GET['id'];
     $salutationid = $user["salutation_id"];
     $firstname = $user["firstname"];
     $lastname = $user["lastname"];
@@ -39,77 +36,31 @@
     //set server location
     $file_server = "uploads";
 
-    //Get data
+    //Check if user still can submit a new form
     if(isset($user)){
-      $statement = $pdo->prepare("SELECT * FROM student WHERE user_id = :id");
-      $result = $statement->execute(array('id' => $user['user_id']));
-      $student = $statement->fetch();
-
-      $studentid = $student['student_id'];
-      $nationality = $student['nationality_country_id'];
-      $birthday = $student['birthdate'];
-    }
-    if(isset($student)){
-      $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id");
-      $result = $statement->execute(array('id' => $applicationid));
-      $application = $statement->fetch();
-
-      $intention = $application['intention_id'];
-      $starting_semester = $application['exchange_period_id'];
-      $foreign_degree = $application['applied_degree_id'];
-
-      $statement = $pdo->prepare("SELECT * FROM address WHERE address_id = :id");
-      $result = $statement->execute(array('id' => $application['home_address_id']));
-      $homeaddress = $statement->fetch();
-
-      $home_street = $homeaddress['street'];
-      $home_zip = $homeaddress['zipcode'];
-      $home_city = $homeaddress['city'];
-      $home_state = $homeaddress['state'];
-      $home_country = $homeaddress['country_id'];
-      $home_phone = $homeaddress['phone_no'];
-    }
-    if(isset($application)){
-      $statement = $pdo->prepare("SELECT *, ROUND(home_credits) as credits, ROUND(home_cgpa,1) as cgpa FROM study_home WHERE application_id = :id");
-      $result = $statement->execute(array('id' => $application['application_id']));
-      $homestudy = $statement->fetch();
-
-      $home_university = $homestudy['home_university_id'];
-      $home_degree =  $homestudy['home_degree_id'];
-      $home_course =  $homestudy['home_course_id'];
-      $home_matno =  $homestudy['home_matno'];
-      $home_enrollment =  $homestudy['home_enrollment_date'];
-      $home_semester =  $homestudy['home_semester'];
-      $home_credits =  $homestudy['credits'];
-      $home_cgpa =  $homestudy['cgpa'];
-  
-      $statement = $pdo->prepare("SELECT * FROM priority WHERE application_id = :id");
-      $result = $statement->execute(array('id' => $application['application_id']));
-      $priority = $statement->fetch();
-
-      $first_uni = $priority['first_uni_id'];
-      $second_uni = $priority['second_uni_id'];
-      $third_uni = $priority['third_uni_id'];
-
-      $statement = $pdo->prepare("SELECT * FROM exchange_period WHERE period_id = :id");
-      $result = $statement->execute(array('id' => $application['exchange_period_id']));
-      $period = $statement->fetch();
-
-      //set form readonly after deadline
-      if(isset($period)){
-        $deadline = $period['application_end'];
-
-        if(((strtotime(date('Y-m-d h:i:sa')) - strtotime($deadline))/60/60/24) >= 0){
-          header("location: view_application.php?editabort=1&id=".$applicationid);
-          exit;
+        //get all available exchange period
+        $statement = $pdo->prepare("SELECT * FROM exchange_period ep 
+                                    WHERE not exists (SELECT ap.exchange_period_id FROM student st
+                                    LEFT JOIN application ap on ap.student_id = st.student_id 
+                                    WHERE user_id = 1 and ap.exchange_period_id = ep.period_id)
+                                    and now() between ep.application_begin and ep.application_end");
+        $result = $statement->execute(array('id'=> $user['user_id']));
+        $periods = array();
+        while($row = $statement->fetch()){
+            array_push($periods, $row);
         }
-      }
+
+        if(count($periods)==0){
+            $error = true;
+            $show = false;
+            $error_msg = "There is currently no open application!";
+        }
     }
 ?>
 
 <!-- after form submit -->
 <?php 
-  if(isset($_POST['abschicken'])){
+  if(isset($_POST['abschicken']) ){
     $error = false;
     //ab hier Student_new DB
     $nationality = trim($_POST['nationality']);
@@ -154,7 +105,7 @@
       }
     }
 
-    //check whether if selected period is past deadline
+    //check deadline
     if(!$error) { 
       $statement = $pdo->prepare("SELECT * FROM exchange_period WHERE period_id = :id");
       $result = $statement->execute(array('id' => $starting_semester));
@@ -166,67 +117,116 @@
 
         if(((strtotime(date('Y-m-d h:i:sa')) - strtotime($deadline))/60/60/24) >= 0){
           $error = true;
-          $error_msg = "Selected period is no longer applicable/editable!";
+          $error_msg = "Selected period is not available!";
         }
       }
     }
 
-    if(!$error){
+    if(!$error && isset($_POST['abschicken'])){
       try {
         //check error in qeuries and throw exception if error found
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         $pdo->setAttribute( PDO::ATTR_EMULATE_PREPARES, FALSE );
         $pdo->beginTransaction();
   
-        $statement1 = $pdo->prepare("UPDATE $studentDB SET 
-        birthdate = :birthdate , 
-        nationality_country_id = :countryid WHERE user_id = :userid ");
-        $statement1->execute(array('birthdate'=>$birthday, 'countryid'=> $nationality, 'userid'=>$user['user_id']));
+        $statement1 = $pdo->prepare("INSERT INTO $studentDB (birthdate, nationality_country_id, user_id) VALUES ('$birthday', $nationality, $user_id)");
+        $statement1->execute();
   
-        $statement3 = $pdo->prepare("UPDATE $homeaddressDB SET
-          street = :street, 
-          zipcode = :zip, 
-          city = :city, 
-          state = :state, 
-          country_id = :countryid, 
-          phone_no =:phone WHERE address_id = :addressid"); 
-        $statement3->execute(array('addressid'=>$homeaddress['address_id'], 'street'=>$home_street, 'zip'=>$home_zip, 'city'=>$home_city, 'state'=>$home_state, 'countryid'=>$home_country, 'phone'=>$home_phone ));
+        $statement2 = $pdo->prepare("SELECT student_id FROM $studentDB WHERE user_id = $user_id");
+        $result = $statement2->execute();
+        $student = $statement2->fetch();
+        $studentid = $student['student_id'];
   
-        $statement5 = $pdo->prepare("UPDATE $applicationDB SET
-          exchange_period_id=:periodid, 
-          intention_id=:intentionid, 
-          applied_degree_id=:degreeid WHERE application_id = :applicationid");
-        $statement5->execute(array('periodid'=>$starting_semester, 'intentionid'=>$intention, 'degreeid'=>$foreign_degree, 'applicationid'=>$applicationid ));
+        $statement3 = $pdo->prepare("INSERT INTO $homeaddressDB (
+          student_id,
+          street, 
+          zipcode, 
+          city, 
+          state, 
+          country_id, 
+          phone_no) 
+        VALUES (
+          '$studentid', 
+          '$home_street', 
+          '$home_zip', 
+          '$home_city', 
+          '$home_state', 
+          '$home_country', 
+          '$home_phone')");
+        $statement3->execute();
+  
+        $statement8 = $pdo->prepare("SELECT * FROM $homeaddressDB WHERE student_id = $studentid ORDER BY created_at DESC limit 1");
+        $statement8->execute();
+        $homeaddress = $statement8->fetch();
+        $homeaddressid = $homeaddress['address_id'];
+  
+        // $statement4 = $pdo->prepare("UPDATE $studentDB SET home_address_id = $homeaddressid WHERE student_id = $studentid");
+        // $statement4->execute();
+  
+        $statement5 = $pdo->prepare("INSERT INTO $applicationDB (
+          student_id,
+          exchange_period_id, 
+          intention_id, 
+          applied_degree_id,
+          home_address_id) 
+        VALUES (
+          '$studentid', 
+          '$starting_semester', 
+          '$intention', 
+          '$foreign_degree',
+          '$homeaddressid'
+        )");
+        $statement5->execute();
+  
+        $statement9 = $pdo->prepare("SELECT * FROM $applicationDB WHERE student_id = $studentid ORDER BY created_at DESC limit 1");
+        $statement9->execute();
+        $application =  $statement9->fetch();
+        $applicationid = $application['application_id'];
 
+        echo "<script>console.log('$applicationid');</script>";
       
-        $statement6 = $pdo->prepare("UPDATE $homestudyDB SET
-          home_university_id=:uni,
-          home_matno=:matno,
-          home_degree_id=:degree, 
-          home_course_id=:course,
-          home_cgpa=:cgpa,
-          home_enrollment_date=:enroll,
-          home_semester=:sem,
-          home_credits=:credits WHERE application_id = :applicationid");
-        $statement6->execute(array('uni'=>$home_university, 'matno'=>$home_matno, 'degree'=>$home_degree, 'course'=>$home_course, 'cgpa'=>$home_cgpa, 'enroll'=>$home_enrollment, 'credits'=>$home_credits, 'sem'=>$home_semester, 'applicationid'=>$applicationid));
+        $statement6 = $pdo->prepare("INSERT INTO $homestudyDB (
+          home_university_id,
+          home_matno,
+          home_degree_id, 
+          home_course_id,
+          application_id,
+          home_cgpa,
+          home_enrollment_date,
+          home_semester,
+          home_credits
+          ) 
+        VALUES (
+          '$home_university',
+          '$home_matno',
+          '$home_degree', 
+          '$home_course',
+          '$applicationid',
+          '$home_cgpa',
+          '$home_enrollment',
+          '$home_semester',
+          '$home_credits'
+          )");
+          
+        $statement6->execute();
 
-        if(!isset($second_uni) || empty($second_uni)){
-          $second_uni = "NULL";
-        }
-        if(!isset($third_uni) || empty($third_uni)){
-          $third_uni = "NULL";
-        }
-        $statement7 = $pdo->prepare("UPDATE $priorityDB SET
-          first_uni_id= $first_uni,
-          second_uni_id=$second_uni,
-          third_uni_id= $third_uni 
-          WHERE application_id =:applicationid");
-        $statement7->execute(array('applicationid'=>$applicationid));
+        $statement7 = $pdo->prepare("INSERT INTO $priorityDB (
+          application_id,
+          first_uni_id,
+          second_uni_id,
+          third_uni_id)
+        VALUES (
+          '$applicationid',
+          '$first_uni',
+          '$second_uni',
+          '$third_uni'
+          )");
+        $statement7->execute();
   
         $pdo->commit();
         
         /*Alert successful message after transaction committed */
-        $success_msg = 'Bewerbung gespeichert';
+        $success_msg = 'Bewerbung abgeschickt';
     
       }catch (PDOException $e){
         $pdo->rollback();
@@ -237,58 +237,63 @@
       // check PDOException first before upload files to server
 		if(!$error){
 			//get student data
-			// $statement = $pdo->prepare("SELECT university.name FROM $priorityDB 
-			// LEFT JOIN university on university.university_id = $priorityDB.first_uni_id 
-			// WHERE application_id = $applicationid ");
-			// $result = $statement->execute();
-			// $priority = $statement->fetch();
+			$statement = $pdo->prepare("SELECT university.name FROM $priorityDB 
+			LEFT JOIN university on university.university_id = $priorityDB.first_uni_id 
+			WHERE application_id = $applicationid ");
+			$result = $statement->execute();
+			$priority = $statement->fetch();
 
-			// $statement = $pdo->prepare("SELECT home_matno FROM $homestudyDB WHERE application_id = $applicationid ");
-			// $result = $statement->execute();
-			// $matno = $statement->fetch();
+			$statement = $pdo->prepare("SELECT home_matno FROM $homestudyDB WHERE application_id = $applicationid ");
+			$result = $statement->execute();
+			$matno = $statement->fetch();
 
-			// $firstname_short = $user["firstname"];
+			$firstname_short = $user["firstname"];
 
-			// //get three characters of first name
-			// if(strlen($firstname_short) >= 3) {
-			// 	$firstname_short = substr($firstname_short, 0, 3);
-			// }
+			//get three characters of first name
+			if(strlen($firstname_short) >= 3) {
+				$firstname_short = substr($firstname_short, 0, 3);
+			}
 
-			// //create first_uni directory if not exists
-			// if(!is_dir("$file_server/".$priority["name"] ."/")) {
-    	// 		mkdir("$file_server/".$priority["name"] ."/");
-			// }	
+			//create first_uni directory if not exists
+			if(!is_dir("$file_server/".$priority["name"] ."/")) {
+    			mkdir("$file_server/".$priority["name"] ."/");
+			}	
 
-			// //create student directory if not exists
-			// if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/")) {
-    	// 		mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/");
-			// }
+			//create student directory if not exists
+			if(!is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/")) {
+    			mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/");
+			}
 
-			// //check if file size > 2MB before save
-			// if($_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024){
-			// 	move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
-			// }else{
-			// 	//
-			// }
+			//check if file size > 2MB before save
+			if($_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024){
+				move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
+			}else{
+				//
+			}
 
-			// if($_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024){
-			// 	move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"]."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
-			// }else{
-			// 	//
-			// }
+			if($_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024){
+				move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"]."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
+			}else{
+				//
+			}
 
-			// if($_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024){
-			// 	move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
-			// }else{
-			// 	//
-			// }
+			if($_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024){
+				move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
+			}else{
+				//
+			}
 
-			// if($_FILES['Transkript']['size'] <=  2 * 1024 * 1024){
-			// 	move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
-			// }else{
-			// 	//
-			// }
-		}
+			if($_FILES['Transkript']['size'] <=  2 * 1024 * 1024){
+				move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
+			}else{
+				//
+			}
+        }
+        
+        if(!$error){
+            header("location: view_application.php?submitsuccess=1&id=".$applicationid);
+            exit;
+        }
   }
 }
 ?>
@@ -302,16 +307,6 @@
             <!-- page title -->
             <div class="page-title">
                 <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Bewerbungsformular
-            </div>
-
-            <div class="page-navigation">
-                <nav aria-label="breadcrumb">
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="test_status.php">Homepage</a></li>
-                    <li class="breadcrumb-item"><a href="view_application.php?id=<?php echo $applicationid;?>">View Application</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Edit Application</li>
-                  </ol>
-                </nav>
             </div>
             <!-- show message -->
             <?php 
@@ -329,12 +324,13 @@
             if(isset($error_msg) && !empty($error_msg)):
             ?>
             	<div class="alert alert-danger">
-            		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            	  	<?php echo $error_msg; ?>
+                    <?php echo $error_msg; ?>
             	</div>
             <?php 
             endif;
             ?>
+
+            <?php if($show) {?>
             <!-- tab navigation -->
             <nav class="nav-application-form">
               <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -346,7 +342,7 @@
               </div>
             </nav>
             <!-- form -->
-            <form id="applicationForm" action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $applicationid;?>" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+            <form id="applicationForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
                 <!-- tab content -->
                 <div class="tab-content" id="nav-tabContent">
                     <!-- personaldata -->
@@ -584,18 +580,14 @@
 				              	<div class="col-sm-9">
 				              		<select type="number" id="inputStart" size="1" maxlength="7" name="starting_semester" class="form-control form-control-sm" >
 				              			<option></option>
-				              			<?php 
-				              				$statement = $pdo->prepare("SELECT * FROM exchange_period  WHERE now() between application_begin and application_end ");
-				              				$result = $statement->execute();
-				              				while($row = $statement->fetch()) { ?>
-				              					<option value="<?php echo ($row['period_id']);?>" <?php if(isset($starting_semester) and $starting_semester == $row['period_id']) echo "selected"; ?>><?php echo ($row['exchange_semester']);?></option> 
-				              			<?php } ?>
-                            <?php 
-				              				$statement = $pdo->prepare("SELECT * FROM exchange_period  WHERE now() not between application_begin and application_end ");
-				              				$result = $statement->execute();
-				              				while($row = $statement->fetch()) { ?>
-				              					<option value="<?php echo ($row['period_id']);?>" <?php if(isset($starting_semester) and $starting_semester == $row['period_id']) echo "selected"; ?> disabled><?php echo ($row['exchange_semester']);?></option> 
-				              			<?php } ?>
+                                          <?php 
+                                            if(isset($periods)){
+                                                foreach($periods as $period){ ?>
+                                                    <option value="<?php echo $period['period_id'];?>" <?php if(isset($starting_semester) and $starting_semester == $period['period_id']) echo "selected"; ?>><?php echo ($period['exchange_semester']);?></option> 
+                                                <?php
+                                                }
+                                            }
+                                          ?>
 				              		</select>
 				              	</div>
                         <div id="periodFeedback" class="invalid-feedback"></div>
@@ -673,13 +665,13 @@
                     </div>
                     <!-- attachments -->
                     <div class="tab-pane fade" id="attachments" role="tabpanel" aria-labelledby="tab4">
-                        
+
                       <div class="form-group row">
 				              	<label for="CourseList" class="col-sm-3 col-form-label col-form-label-sm">Ausgefüllte Fächerwahlliste [Excel Format]</label>
 				              	<div class="col-sm-9">
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="excelfile" size="75" accept=".xls, .xlsx" name="Fächerwahlliste">
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <input type="file" class="custom-file-input" id="file1" size="75" accept=".xls, .xlsx" name="Fächerwahlliste" required>
+                            <label class="custom-file-label" for="customFile" id="inputFächerwahlliste">Choose file</label>
                           </div>                          
                           <div id="CourseListFeedback" class="invalid-feedback"></div>
                         </div>
@@ -689,8 +681,8 @@
 				              	<label for="CourseList" class="col-sm-3 col-form-label col-form-label-sm">Motivationsschreiben [In Englisch und PDF]</label>
 				              	<div class="col-sm-9">
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Motivationsschreiben" id="pdffile">
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Motivationsschreiben" id="file2" required>
+                            <label class="custom-file-label" for="customFile" id="inputMotivationsschreiben">Choose file</label>
                           </div>                          
                           <div id="CourseListFeedback" class="invalid-feedback"></div>
                         </div>
@@ -700,8 +692,8 @@
 				              	<label for="CourseList" class="col-sm-3 col-form-label col-form-label-sm">Lebenslauf [In Englisch und PDF]</label>
 				              	<div class="col-sm-9">
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Lebenslauf" id="pdffile">
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Lebenslauf" id="file3" required>
+                            <label class="custom-file-label" for="customFile" id="inputLebenslauf">Choose file</label>
                           </div>                          
                           <div id="CourseListFeedback" class="invalid-feedback"></div>
                         </div>
@@ -711,8 +703,8 @@
 				              	<label for="CourseList" class="col-sm-3 col-form-label col-form-label-sm">Aktuelles Transkript/Zeugnis [PDF]</label>
 				              	<div class="col-sm-9">
                           <div class="custom-file">
-                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Transkript" id="pdffile">
-                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <input type="file" class="custom-file-input" size="75" accept=".pdf" name="Transkript" id="file4" required>
+                            <label class="custom-file-label" for="customFile" id="inputTranskript">Choose file</label>
                           </div>                          
                           <div id="CourseListFeedback" class="invalid-feedback"></div>
                         </div>
@@ -720,21 +712,43 @@
 
                       <div class="text-right">
                         <button type="button" class="btn btn-secondary" id="zurück5">Zurück</button>
-                        <button type="submit" class="btn btn-success" id="abschicken" name="abschicken">Bewerbung speichern</button>
+                        <button type="submit" class="btn btn-success" id="abschicken" name="abschicken">Bewerbung abschicken</button>
                       </div>
 
                     </div>
                 </div>
             </form>
+            <?php } ?>
         </div>
 </main>
 
-<!-- form validation -->
+<!-- custom file browser show input -->
 <script>
 $(document).ready(function(){
-  // $('#applicationForm').find('input, select').each(function(){
-  //  console.info(this);
-  // }); 
+
+	$("#file1").change(function(e){
+        var file = e.target.files[0].name;
+        $("#inputFächerwahlliste").empty();
+        $("#inputFächerwahlliste").append(file);
+    }); 
+
+    $("#file2").change(function(e){
+        var file = e.target.files[0].name;
+        $("#inputMotivationsschreiben").empty();
+        $("#inputMotivationsschreiben").append(file);
+    }); 
+
+    $("#file3").change(function(e){
+        var file = e.target.files[0].name;
+        $("#inputLebenslauf").empty();
+        $("#inputLebenslauf").append(file);
+    }); 
+
+    $("#file4").change(function(e){
+        var file = e.target.files[0].name;
+        $("#inputTranskript").empty();
+        $("#inputTranskript").append(file);
+    }); 
 });
 </script>
 

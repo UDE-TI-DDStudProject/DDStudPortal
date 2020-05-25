@@ -112,6 +112,13 @@ footer .mini-footer p a:hover {
 	margin-top: 50px;
 }
 
+.card.view-application-form {
+	max-width: 800px;
+	padding: 20px 25px 30px;
+	margin: 0 auto 25px;
+	margin-top: 50px;
+}
+
 .card.status-form {
 	width: 90%;
 	padding: 20px 25px 30px;
@@ -179,13 +186,21 @@ form label {
 }
 
 #pills-tabContent {
-	padding-top: 40px;
-	padding-bottom: 40px;
-	padding-left: 100px;
-	padding-right: 40px;
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
 .view-application-form .col-sm-3 {
 	color: #003d76;
 	font-weight: 500;
+}
+
+.view-application-form .table-responsive,
+.auswahl-form .table-responsive {
+	font-size: 15px;
+}
+
+.breadcrumb {
+	font-size: 15px;
+	background-color: #a7ccf0;
 }

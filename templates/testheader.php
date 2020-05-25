@@ -47,9 +47,9 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <!-- Menu on the left -->
       <ul class="navbar-nav">
-        <li class="nav-item active">
+        <!-- <li class="nav-item active">
           <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
-        </li>
+        </li> -->
         <!-- Dropdown menu Information-->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -82,9 +82,9 @@
             <a class="dropdown-item" href="#">Visa application</a>
           </div>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" href="#"><i class="fas fa-pen-square"></i> Apply now</a>
-        </li>
+        </li> -->
       </ul>
         <ul class="navbar-nav ml-auto">
           <!-- Dropdown Login -->
@@ -95,11 +95,11 @@
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
             <form class="px-4 py-3" action="testlogin.php" method="post">
               <div class="form-group">
-                <label for="exampleDropdownFormEmail1">Email address</label>
+                <label for="exampleDropdownFormEmail1">E-Mail</label>
                 <input name="email" type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="E-Mail">
               </div>
               <div class="form-group">
-                <label for="exampleDropdownFormPassword1">Password</label>
+                <label for="exampleDropdownFormPassword1">Passwort</label>
                 <input name="passwort" type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Passwort">
               </div>
               <div class="form-check">
@@ -111,7 +111,7 @@
               <button type="submit" class="btn btn-primary">Anmelden</button>
             </form>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="register.php">Registrieren</a>
+            <a class="dropdown-item" href="test_register.php">Registrieren</a>
             <a class="dropdown-item" href="passwortvergessen.php">Passwort vergessen?</a>
           </div>
         </li>

@@ -1,11 +1,11 @@
-function required(control_id, feedback_id, errortext) {
+function required(control_id, feedback_id, errormsg) {
 	$('#' + feedback_id).empty();
 
 	var value = $('#' + control_id).val();
 
 	if (value == '') {
 		$('#' + control_id).addClass('is-invalid');
-		$('#' + feedback_id).append(errortext);
+		$('#' + feedback_id).append(errormsg);
 		return false;
 	} else {
 		$('#' + control_id).removeClass('is-invalid');

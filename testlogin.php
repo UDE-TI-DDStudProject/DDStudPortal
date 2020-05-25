@@ -7,7 +7,7 @@
     $user = check_user();
 
     if(isset($user)){
-        header("location: status.php");
+        header("location: test_application.php");
         exit;
     }
 
@@ -36,7 +36,7 @@
                 setcookie("securitytoken",$securitytoken,time()+(3600*24*365)); //Valid for 1 year
             }
         
-            header("location: test_application.php");
+            header("location: test_status.php");
             exit;
         } else {
             $error_message =  "E-Mail oder Passwort war ungültig!";
@@ -75,6 +75,7 @@
         </form>
         <br>
         <small><a href="passwortvergessen.php">Passwort vergessen</a></small>
+        <small><a href="test_register.php">Registieren</a></small>
     </div>
 </main>
 
@@ -89,10 +90,25 @@ $(document).ready(function(){
     //form validation 
     $("#loginForm").submit(function(e){
 
+        // var error = false;
+
+        // $('#loginForm').find('input, select').each(function(){
+        //     var require = this['required'];
+        //     var id = this['id'];
+        //     var name = this['name'];
+        //     var feedback = name + 'Feedback';
+
+        //     var validated = required(id, feedback);
+
+        //     if(validated==false){
+        //         error = true;
+        //     }
+        // }); 
+
         var validateEmail = required("inputEmail", "emailFeedback", "Email cannot be empty");
         var validatePassword = required("inputPassword", "passwordFeedback", "Password cannot be empty");
 
-        if(validateEmail == false || validatePassword==false){
+        if(validateEmail==false || validatePassword==false){
             e.preventDefault();
         }
     });

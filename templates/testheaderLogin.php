@@ -13,7 +13,8 @@
   <!-- Bootstrap 4 core CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   <!-- style.css -->
-  <link rel="stylesheet" href="css/test1.css">
+  <link rel="stylesheet" href="css/test2.css">
+  <!-- <link rel="stylesheet" href="css/test1.css"> -->
   <!-- <link rel="stylesheet" href="css/testlayout.css"> -->
 
   <!-- jQuery -->
@@ -21,6 +22,10 @@
 
   <!-- form validate -->
   <script src="js/form-validate"></script>
+
+  	<!-- jsPDF CDN -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.3/jspdf.plugin.autotable.min.js"></script>
 
 </head>
 <body class="d-flex flex-column">
@@ -71,15 +76,18 @@
       </ul>
         <ul class="navbar-nav ml-auto">
         <!-- Dropdown menu Account-->
-        <li class="nav-item dropdown">
+        <!-- <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="far fa-file"></i> Application
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="test_status.php"><i class="fas fa-bell"></i> Application status</a>
+            <a class="dropdown-item" href="#"><i class="fas fa-bell"></i> Application status</a>
             <a class="dropdown-item" href="#"><i class="fas fa-plane-departure"></i> Before Departure</a>
             <a class="dropdown-item" href="#"><i class="fas fa-plane-arrival"></i> After Departure</a>
           </div>
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" href="new_application.php"><i class="fas fa-pen"></i> New Application</a>
         </li>
         <!-- Dropdown menu Account-->
         <li class="nav-item dropdown">
@@ -87,8 +95,8 @@
             <i class="fas fa-user-alt"></i> Account
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-            <!-- <a class="dropdown-item" href="#"><i class="fas fa-bell"></i> Application status</a> -->
-            <a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Account Settings</a>
+            <a class="dropdown-item" href="test_status.php"><i class="fas fa-home"></i> Profile Homepage</a>
+            <a class="dropdown-item" href="test_setup.php"><i class="fas fa-cog"></i> Account Settings</a>
             <a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
           </div>
         </li>
