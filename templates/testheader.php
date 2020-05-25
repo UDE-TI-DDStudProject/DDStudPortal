@@ -35,7 +35,7 @@
       <img src="screenshots/UDE-Logo1.png" width="150" height="70" class="d-inline-block align-top" alt="">
     </a>
     <!-- Exchange Logo hyperlink -->
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="test_homepage.php">
       <img src="screenshots/worldwide.png" width="30" height="30" class="d-inline-block align-center" alt="">
       Südostasien
     </a>
