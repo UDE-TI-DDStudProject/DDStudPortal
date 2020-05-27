@@ -213,8 +213,8 @@ form label {
 	padding-top: 20px;
 }
 
-.status-form .table-responsive {
-	/* background-color: #fff; */
+.auswahl-form .table-responsive {
+	text-align: center;
 }
 
 .breadcrumb {
@@ -256,7 +256,7 @@ form label {
 	user-select: none;
 	background-color: transparent;
 	border: none;
-	border-radius: .25rem;
+	border-radius: 1rem;
 	transition: background-color .15s ease-out, color .15s ease-out;
 }
 

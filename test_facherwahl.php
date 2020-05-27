@@ -132,20 +132,31 @@ if(isset($_POST['save'])) {
 
 <main class="container-fluid flex-fill">
         <div class="card auswahl-form">
-            <!-- page title -->
-            <div class="page-title">
-                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Fächerwahlliste
+
+            <div class="title-row" style="display: flex; justify-content: space-between;">
+              <!-- page title -->
+              <div class="page-title">
+                  <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Fächerwahlliste
+              </div>
+
+              <div class="title-button">
+                  <form action="view_application.php?id=<?php echo $applicationid?>" method="post">
+                      <div class="text-right">
+                          <button type="submit" class="btn btn-outline-primary btn-sm" name="backToHomepage">Zurück zum Übersicht</button>        
+                      </div>
+                  </form>
+              </div>
             </div>
 
-            <div class="stepper">
-              <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
+            <!-- <div class="stepper">
+              <a class="stepper-link" href="view_application.php?id=<?php //echo $applicationid?>">
               <div class="stepper-item complete" data-toggle="tooltip" data-placement="top" title="Bewerbungsformular">
                 <span class="stepper-circle">1</span>
                 <span class="stepper-label">Bewerbungsformular</span>
               </div>
               </a>
               <div class="stepper-line"></div>
-              <a class="stepper-link" href="test_facherwahl.php?id=<?php echo $applicationid?>">
+              <a class="stepper-link" href="test_facherwahl.php?id=<?php //echo $applicationid?>">
               <div class="stepper-item active"  data-toggle="tooltip" data-placement="top" title="Fächerwahlliste">
                 <span class="stepper-circle">2</span>
                 <span class="stepper-label">Fächerwahlliste</span>
@@ -156,7 +167,7 @@ if(isset($_POST['save'])) {
                 <span class="stepper-circle">3</span>
                 <span class="stepper-label">Bewerbung eingereicht</span>
               </div>
-            </div>
+            </div> -->
 
             <!-- <div class="page-navigation">
                 <nav aria-label="breadcrumb">
