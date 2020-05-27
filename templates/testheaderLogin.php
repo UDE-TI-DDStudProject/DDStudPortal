@@ -62,7 +62,7 @@
         <!-- Dropdown menu Information-->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-info-circle"></i> Information
+          <i class="fas fa-info-circle"></i> Informationen
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <h6 class="dropdown-header">Application</h6>
@@ -78,7 +78,7 @@
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="new_application.php"><i class="fas fa-pen"></i> New Application</a>
+          <a class="nav-link" href="new_application.php"><i class="fas fa-pen"></i> Neue Bewerbung</a>
         </li>
       </ul>
         <ul class="navbar-nav ml-auto">
@@ -103,7 +103,7 @@
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
             <!-- <a class="dropdown-item" href="test_status.php"><i class="fas fa-home"></i> Profile Homepage</a> -->
-            <a class="dropdown-item" href="test_setup.php"><i class="fas fa-cog"></i> Account Settings</a>
+            <a class="dropdown-item" href="test_setup.php"><i class="fas fa-cog"></i> Einstellungen</a>
             <a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
           </div>
         </li>

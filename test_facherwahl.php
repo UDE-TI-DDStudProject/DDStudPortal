@@ -154,7 +154,7 @@ if(isset($_POST['save'])) {
               <div class="stepper-line"></div>
               <div class="stepper-item disabled">
                 <span class="stepper-circle">2</span>
-                <span class="stepper-label">Reviewed</span>
+                <span class="stepper-label">Bewerbung ist eingereicht</span>
               </div>
             </div>
 
@@ -192,13 +192,13 @@ if(isset($_POST['save'])) {
 
             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
               <li class="nav-item" role="presentation">
-                <a class="nav-link<?php if($activeUni == 1) echo" active"?><?php if(!isset($first_uni_id)) echo" disabled"?>" aria-disabled="<?php if(!isset($first_uni_id)) echo "true"; else echo "false";?>" id="pills-first-tab" data-toggle="pill" href="#pills-first" role="tab" aria-controls="pills-first" aria-selected="<?php if($activeUni == 1) echo "true"; else echo "false" ;?>">First Priority<?php if(isset($first_uni_title)) echo " - ".$first_uni_title;?></a>
+                <a class="nav-link<?php if($activeUni == 1) echo" active"?><?php if(!isset($first_uni_id)) echo" disabled"?>" aria-disabled="<?php if(!isset($first_uni_id)) echo "true"; else echo "false";?>" id="pills-first-tab" data-toggle="pill" href="#pills-first" role="tab" aria-controls="pills-first" aria-selected="<?php if($activeUni == 1) echo "true"; else echo "false" ;?>">1. Priorität<?php if(isset($first_uni_title)) echo " - ".$first_uni_title;?></a>
               </li>
               <li class="nav-item" role="presentation">
-                <a class="nav-link<?php if($activeUni == 2) echo" active"?><?php if(!isset($second_uni_id)) echo" disabled"?>" aria-disabled="<?php if(!isset($second_uni_id)) echo "true"; else echo "false";?>" id="pills-second-tab" data-toggle="pill" href="#pills-second" role="tab" aria-controls="pills-second" aria-selected="<?php if($activeUni == 2) echo "true"; else echo "false" ;?>">Second Priority<?php if(isset($second_uni_title)) echo " - ".$second_uni_title;?></a>
+                <a class="nav-link<?php if($activeUni == 2) echo" active"?><?php if(!isset($second_uni_id)) echo" disabled"?>" aria-disabled="<?php if(!isset($second_uni_id)) echo "true"; else echo "false";?>" id="pills-second-tab" data-toggle="pill" href="#pills-second" role="tab" aria-controls="pills-second" aria-selected="<?php if($activeUni == 2) echo "true"; else echo "false" ;?>">2. Priorität<?php if(isset($second_uni_title)) echo " - ".$second_uni_title;?></a>
               </li>
               <li class="nav-item" role="presentation">
-                <a class="nav-link<?php if($activeUni == 3) echo" active"?><?php if(!isset($third_uni_id)) echo" disabled"?>" aria-disabled="<?php if(!isset($third_uni_id)) echo "true"; else echo "false";?>" id="pills-third-tab" data-toggle="pill" href="#pills-third" role="tab" aria-controls="pills-third" aria-selected="<?php if($activeUni == 3) echo "true"; else echo "false" ;?>">Third Priority<?php if(isset($third_uni_title)) echo " - ".$third_uni_title;?></a>
+                <a class="nav-link<?php if($activeUni == 3) echo" active"?><?php if(!isset($third_uni_id)) echo" disabled"?>" aria-disabled="<?php if(!isset($third_uni_id)) echo "true"; else echo "false";?>" id="pills-third-tab" data-toggle="pill" href="#pills-third" role="tab" aria-controls="pills-third" aria-selected="<?php if($activeUni == 3) echo "true"; else echo "false" ;?>">3. Priorität<?php if(isset($third_uni_title)) echo " - ".$third_uni_title;?></a>
               </li>
             </ul>
 
@@ -214,7 +214,7 @@ if(isset($_POST['save'])) {
 
                         <!-- print table button -->
                         <div class="text-right">
-                            <button type="button" class="btn btn-success" id="print" name="1">ausdrucken</button>
+                            <button type="button" class="btn btn-success" id="print" name="1">Ausdrucken</button>
                         </div>
                         
                         <!-- radio button -->
@@ -234,14 +234,14 @@ if(isset($_POST['save'])) {
                             <table class="table table-hover table-sm" id="courses1">
                               <thead>
                                 <tr  style="background-color: #003D76; color: white;">
-                                    <th scope="col" width="8%" align="center">Auswahl<br>(Selection)</th>
-			                        <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni<br>(Home-Subject-No.)</th>
-			                        <th scope="col" width="11%" align="center">Credits Heim-Uni<br>(Home-Credits)</th>
-			                        <th scope="col" width="25%" align="center">Kurs Heim-Uni<br>(Home-subject)</th>
-			                        <th scope="col" width="11%" align="center">Credits Partner-Uni<br>(Foreign-Credits)</th>
-			                        <th scope="col" width="25%" align="center">Kurs Partner-Uni<br>(Foreign-subject)</th>
+                                    <th scope="col" width="8%" align="center">Auswahl</th>
+			                        <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
+			                        <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
+			                        <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
+			                        <th scope="col" width="11%" align="center">Credits Partner-Uni</th>
+			                        <th scope="col" width="25%" align="center">Kurs Partner-Uni</th>
 			                        <th scope="col" width="5%" align="center">Status</th>
-			                        <th scope="col" width="5%" align="center">Zuletzt Aktualisiert<br>(Last Updated)</th>
+			                        <th scope="col" width="5%" align="center">Zuletzt Aktualisiert</th>
                                 </tr>
                               </thead>
 
@@ -304,7 +304,7 @@ if(isset($_POST['save'])) {
                         
                         <!-- save -->
                         <div class="text-right">
-                            <button type="submit" class="btn btn-primary" name="save">speichern</button>
+                            <button type="submit" class="btn btn-primary" name="save">Speichern</button>
                         </div>
                         </form>
                         
@@ -324,7 +324,7 @@ if(isset($_POST['save'])) {
 
                         <!-- print table button -->
                         <div class="text-right">
-                            <button type="button" class="btn btn-success" id="second_auswahl" name="printSecond">ausdrucken</button>
+                            <button type="button" class="btn btn-success" id="second_auswahl" name="printSecond">Ausdrucken</button>
                         </div>
                         
                         <!-- radio button -->
@@ -344,14 +344,14 @@ if(isset($_POST['save'])) {
                             <table class="table table-hover table-sm" id="courses2">
                               <thead>
                                 <tr  style="background-color: #003D76; color: white;">
-                                    <th scope="col" width="8%" align="center">Auswahl<br>(Selection)</th>
-			                        <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni<br>(Home-Subject-No.)</th>
-			                        <th scope="col" width="11%" align="center">Credits Heim-Uni<br>(Home-Credits)</th>
-			                        <th scope="col" width="25%" align="center">Kurs Heim-Uni<br>(Home-subject)</th>
-			                        <th scope="col" width="11%" align="center">Credits Partner-Uni<br>(Foreign-Credits)</th>
-			                        <th scope="col" width="25%" align="center">Kurs Partner-Uni<br>(Foreign-subject)</th>
+                                <th scope="col" width="8%" align="center">Auswahl</th>
+			                        <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
+			                        <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
+			                        <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
+			                        <th scope="col" width="11%" align="center">Credits Partner-Uni</th>
+			                        <th scope="col" width="25%" align="center">Kurs Partner-Uni</th>
 			                        <th scope="col" width="5%" align="center">Status</th>
-			                        <th scope="col" width="5%" align="center">Zuletzt Aktualisiert<br>(Last Updated)</th>
+			                        <th scope="col" width="5%" align="center">Zuletzt Aktualisiert</th>
                                 </tr>
                               </thead>
 
@@ -435,7 +435,7 @@ if(isset($_POST['save'])) {
                         
                         <!-- save -->
                         <div class="text-right">
-                            <button type="submit" class="btn btn-primary" name="save">speichern</button>
+                            <button type="submit" class="btn btn-primary" name="save">Speichern</button>
                         </div>
                         </form>
                         
@@ -455,7 +455,7 @@ if(isset($_POST['save'])) {
 
                         <!-- print table button -->
                         <div class="text-right">
-                            <button type="button" class="btn btn-success" id="third_auswahl" name="printThird">ausdrucken</button>
+                            <button type="button" class="btn btn-success" id="third_auswahl" name="printThird">Ausdrucken</button>
                         </div>
                         
                         <!-- radio button -->
@@ -475,14 +475,14 @@ if(isset($_POST['save'])) {
                             <table class="table table-hover table-sm" id="courses2">
                               <thead>
                                 <tr  style="background-color: #003D76; color: white;">
-                                    <th scope="col" width="8%" align="center">Auswahl<br>(Selection)</th>
-			                        <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni<br>(Home-Subject-No.)</th>
-			                        <th scope="col" width="11%" align="center">Credits Heim-Uni<br>(Home-Credits)</th>
-			                        <th scope="col" width="25%" align="center">Kurs Heim-Uni<br>(Home-subject)</th>
-			                        <th scope="col" width="11%" align="center">Credits Partner-Uni<br>(Foreign-Credits)</th>
-			                        <th scope="col" width="25%" align="center">Kurs Partner-Uni<br>(Foreign-subject)</th>
+                                <th scope="col" width="8%" align="center">Auswahl</th>
+			                        <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
+			                        <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
+			                        <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
+			                        <th scope="col" width="11%" align="center">Credits Partner-Uni</th>
+			                        <th scope="col" width="25%" align="center">Kurs Partner-Uni</th>
 			                        <th scope="col" width="5%" align="center">Status</th>
-			                        <th scope="col" width="5%" align="center">Zuletzt Aktualisiert<br>(Last Updated)</th>
+			                        <th scope="col" width="5%" align="center">Zuletzt Aktualisiert</th>
                                 </tr>
                               </thead>
 
@@ -545,7 +545,7 @@ if(isset($_POST['save'])) {
                         
                         <!-- save -->
                         <div class="text-right">
-                            <button type="submit" class="btn btn-primary" name="save">speichern</button>
+                            <button type="submit" class="btn btn-primary" name="save">Speichern</button>
                         </div>
                         </form>
                         

@@ -27,7 +27,8 @@
       }
       //check password strength (defined in functions.inc.php)
       if(!password_strength($passwort)) {
-        $error_message =  'Password must contain at least one upper case, one lower case, a number, a special character and at least 8 characters!';
+        // $error_message =  'Password must contain at least one upper case, one lower case, a number, a special character and at least 8 characters!';
+        $error_message =  'Das Passwort muss mindestens acht Zeichen lang sein und mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten!';
         $error = true;
       }
       //check repeated password
@@ -44,6 +45,13 @@
 
         if($user !== false) {
           $error_message = 'Diese E-Mail-Adresse ist bereits vergeben';
+          $error = true;
+        }
+      }
+
+      if(!$error) {
+        if(!isset($_POST['agreeToTerms'])){
+          $error_message = 'Du musst erst die allgemeinen Geschäftsbedingungen akzeptieren!';
           $error = true;
         }
       }
@@ -105,7 +113,7 @@
               <div id="emailFeedback" class="invalid-feedback"></div>
             </div>
             <div class="form-group">
-              <input type="password" name="passwort" class="form-control" id="inputPassword" placeholder="Passwort" data-toggle="tooltip" data-placement="top" title="Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.">
+              <input type="password" name="passwort" class="form-control" id="inputPassword" placeholder="Passwort" data-toggle="tooltip" data-placement="top" title="Das Passwort muss mindestens acht Zeichen lang sein und mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten!">
               <!-- <small id="passwordHelpBlock" class="form-text text-muted">
                 Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
               </small> -->
@@ -117,8 +125,8 @@
             </div>
             <div class="form-group">
                 <div class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input form-control-sm" id="agreeterms" name="agreeterms" checked>
-                  <label class="custom-control-label col-form-label-sm" for="agreeToTerms">Agree To Terms and Condition</label>
+                  <input type="checkbox" class="custom-control-input form-control-sm" id="agreeToTerms" name="agreeToTerms" checked>
+                  <label class="custom-control-label col-form-label-sm" for="agreeToTerms"><a href="#">allgemeinen Geschäftsbedingungen</a> lesen und akzeptieren</label>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block" id="btnregister" name="register">Registrieren</button>

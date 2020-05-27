@@ -46,13 +46,13 @@
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
-                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Meine Applikation
+                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Meine Bewerbungen
             </div>
 
             <div class="title-button">
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-success" name="newApplication">Neue Applikation</button>        
+                        <button type="submit" class="btn btn-success" name="newApplication">Neue Bewerbung</button>        
                     </div>
                 </form>
             </div>
@@ -101,8 +101,10 @@
         ?>
 
         <?php 
-            if(count($applications)==0){
-                echo "<p>No application</p>";
+            if(!isset($applications)){
+                echo "<p>Keine Applikation</p>";
+            }else if(count($applications)==0){
+                echo "<p>Keine Applikation</p>";
             }else{
                 ?>
 
@@ -110,10 +112,10 @@
                     <table class="table table-hover table-sm" style="font-size: 18px;"> 
                       <thead>
                         <tr>
-                          <th scope="col">Applied Semester</th>
-                          <th scope="col">Submission Date</th>
-                          <th scope="col">Last updated on</th>
-                          <th scope="col">Current Status</th>
+                          <th scope="col">Bewerbtes Auslandsemester</th>
+                          <th scope="col">Eingereicht am</th>
+                          <th scope="col">Zuletzt bearbeitet am</th>
+                          <th scope="col">Aktueller Stand</th>
                           <th scope="col"></th>
                         </tr>
                       </thead>
@@ -126,7 +128,7 @@
                                     <td><?php echo $application['created_at'] ?></td>
                                     <td><?php echo $application['updated_at'] ?></td>
                                     <td><?php echo $application['application_status'] ?></td>
-                                    <td><a href="view_application.php?id=<?php echo $application['application_id']; ?>">view application</a></td>
+                                    <td><a href="view_application.php?id=<?php echo $application['application_id']; ?>">Bewerbung öffnen</a></td>
                                 </tr>
                             <?php }
                           ?>

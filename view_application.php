@@ -22,7 +22,8 @@
     }else if(isset($_GET['editsuccess'])){
         $success_msg = "Bewerbung gespeichert!";
     }else if(isset($_GET['editabort'])){
-        $error_msg = "Application cannot be edited after deadline!";
+        $error_msg = "Bewerbung darf nicht nach dem Deadline bearbeitet werden!";
+        // $error_msg = "Application cannot be edited after deadline!";
     }
 
     $applicationid = $_GET['id'];
@@ -227,7 +228,7 @@
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
-                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Applikation
+                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Bewerbungsübersicht
             </div>
 
             <div class="title-button">
@@ -254,7 +255,7 @@
           <div class="stepper-line"></div>
           <div class="stepper-item disabled">
             <span class="stepper-circle">2</span>
-            <span class="stepper-label">Reviewed</span>
+            <span class="stepper-label">Bewerbung ist eingereicht</span>
           </div>
         </div>
 
@@ -297,7 +298,7 @@
             <table class="table table-borderless table-hover table-sm" id="application">
               <tbody>
               <tr class="d-flex">
-                  <td class="col-sm-3">Submitted on</td>
+                  <td class="col-sm-3">Eingereicht am</td>
                   <td class="col-sm-9"><?php if(isset($submitted)) echo $submitted ?></td>
                 </tr>
                 <tr class="d-flex">
@@ -365,7 +366,7 @@
                   <td class="col-sm-9"><?php if(isset($home_matno)) echo $home_matno ?></td>
                 </tr>
                 <tr class="d-flex">
-                  <td class="col-sm-3">Monat/Jahr der Einschreibung in aktuellen Studiengang(month/year of enrollment):</td>
+                  <td class="col-sm-3">Monat/Jahr der Einschreibung in aktuellen Studiengang</td>
                   <td class="col-sm-9"><?php if(isset($home_enrollment)) echo $home_enrollment ?></td>
                 </tr>
                 <tr class="d-flex">
@@ -373,35 +374,35 @@
                   <td class="col-sm-9"><?php if(isset($home_semester)) echo $home_semester ?></td>
                 </tr>
                 <tr class="d-flex">
-                  <td class="col-sm-3">Summe bisher erworbener Kreditpunkte laut beigefügtem Transkript (Credits):</td>
+                  <td class="col-sm-3">Summe bisher erworbener Kreditpunkte laut beigefügtem Transkript</td>
                   <td class="col-sm-9"><?php if(isset($home_credits)) echo $home_credits ?></td>
                 </tr>
                 <tr class="d-flex">
-                  <td class="col-sm-3">Durchschnittsnote laut beigefügtem Transkript (CGPA/ Average Grade)):</td>
+                  <td class="col-sm-3">Durchschnittsnote laut beigefügtem Transkript</td>
                   <td class="col-sm-9"><?php if(isset($home_cgpa)) echo $home_cgpa ?></td>
                 </tr>
                 <tr class="d-flex">
-                  <td class="col-sm-3">Programm (type of transfer):</td>
+                  <td class="col-sm-3">Programm</td>
                   <td class="col-sm-9"><?php if(isset($intention)) echo $intention ?></td>
                 </tr>
                 <tr class="d-flex">
-                  <td class="col-sm-3">Beginn des Austauschs (start of transfer):</td>
+                  <td class="col-sm-3">Beginn des Austauschs</td>
                   <td class="col-sm-9"><?php if(isset($starting_semester)) echo $starting_semester ?></td>
                 </tr>
                 <tr class="d-flex">
-                  <td class="col-sm-3">Während des geplanten Auslandsemester werde ich voraussichtlich Student sein in (abroad degree):</td>
+                  <td class="col-sm-3">Während des geplanten Auslandsemester werde ich voraussichtlich Student sein in</td>
                   <td class="col-sm-9"><?php if(isset($foreign_degree)) echo $foreign_degree ?></td>
                 </tr>
                 <tr class="d-flex">
-                  <td class="col-sm-3">1. Priorität (1. priority):</td>
+                  <td class="col-sm-3">1. Priorität</td>
                   <td class="col-sm-9"><?php if(isset($first_uni)) echo $first_uni ?></td>
                 </tr>
                 <tr class="d-flex">
-                  <td class="col-sm-3">2. Priorität (2. priority):</td>
+                  <td class="col-sm-3">2. Priorität</td>
                   <td class="col-sm-9"><?php if(isset($second_uni)) echo $second_uni ?></td>
                 </tr>
                 <tr class="d-flex">
-                  <td class="col-sm-3">3. Priorität (3. priority):</td>
+                  <td class="col-sm-3">3. Priorität</td>
                   <td class="col-sm-9"><?php if(isset($third_uni)) echo $third_uni ?></td>
                 </tr>
                 <tr class="d-flex">

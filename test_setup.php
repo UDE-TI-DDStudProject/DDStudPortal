@@ -239,7 +239,8 @@ $user = check_user();
             <div class="tab-pane fade" id="deleteaccount" role="tabpanel" aria-labelledby="tab4">
                 <!-- form -->
                 <div class="alert alert-warning">
-        	        	<?php echo "By removing your account, all your data will be deleted!"; ?>
+        	        	<?php echo "Deine Daten werden gelöscht, nach dem dein Account gelöscht ist!"; ?>
+        	        	<?php //echo "By removing your account, all your data will be deleted!"; ?>
         	      </div>
                 <form id="deleteAccount" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="needs-validation" novalidate>
                     <div class="form-group row">

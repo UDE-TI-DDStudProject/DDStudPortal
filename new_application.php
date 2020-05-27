@@ -53,7 +53,8 @@
         if(count($periods)==0){
             $error = true;
             $show = false;
-            $error_msg = "There is currently no open application!";
+            $error_msg = "Es gibt zurzeit keine offene Bewerbungen!";
+            // $error_msg = "There is currently no open application!";
         }
     }
 ?>
@@ -529,7 +530,7 @@
                       </div>
 
                       <div class="form-group row"> 
-				              	<label for="inputEnrollment" class="col-sm-3 col-form-label col-form-label-sm">Monat/Jahr der Einschreibung in aktuellen Studiengang <br>(month/year of enrollment): </label>
+				              	<label for="inputEnrollment" class="col-sm-3 col-form-label col-form-label-sm">Monat/Jahr der Einschreibung in aktuellen Studiengang</label>
 				              	<div class="col-sm-9">
 				              		<input pattern="\d{4}-\d{1,2}-\d{1,2}"  type="date" id="inputEnrollment"  name="home_enrollment" class="form-control form-control-sm" <?php if(isset($home_enrollment)) echo "value=\"$home_enrollment\""; ?> >
                           <div id="enrollmentFeedback" class="invalid-feedback"></div>
@@ -537,7 +538,7 @@
                       </div>
                     
                       <div class="form-group row">
-				              	<label for="inputHomeSemester" class="col-sm-3 col-form-label col-form-label-sm">Fachsemester aktueller Studiengang (semester): </label>
+				              	<label for="inputHomeSemester" class="col-sm-3 col-form-label col-form-label-sm">Fachsemester aktueller Studiengang</label>
 				              	<div class="col-sm-9">
 				              		<select type="text" id="inputHomeSemester" name="home_semester" class="form-control form-control-sm">
 				              			<option></option>
@@ -555,7 +556,7 @@
                       </div>
                                 
                       <div class="form-group row"> 
-				              	<label for="inputHomeCredits" class="col-sm-3 col-form-label col-form-label-sm">Summe bisher erworbener Kreditpunkte laut beigefügtem Transkript (Credits):</label>
+				              	<label for="inputHomeCredits" class="col-sm-3 col-form-label col-form-label-sm">Summe bisher erworbener Kreditpunkte laut beigefügtem Transkript</label>
 				              	<div class="col-sm-9">
 				              		<input type="number" id="inputHomeCredits" min="0" step="1" max="300" maxlength="3" name="home_credits" class="form-control form-control-sm" <?php if(isset($home_credits)) echo "value=\"$home_credits\""; ?>>
                           <div id="creditsFeedback" class="invalid-feedback"></div>
@@ -563,7 +564,7 @@
                       </div>
                     
                       <div class="form-group row">
-				              	<label for="inputHomeCGPA" class="col-sm-3 col-form-label col-form-label-sm">Durchschnittsnote laut beigefügtem Transkript (CGPA/ Average Grade)):</label>
+				              	<label for="inputHomeCGPA" class="col-sm-3 col-form-label col-form-label-sm">Durchschnittsnote laut beigefügtem Transkript</label>
 				              	<div class="col-sm-9">
 				              		<input type="text" id="inputHomeCGPA" min="1" max="4" step="0.1" maxlength="3" name="home_cgpa" class="form-control form-control-sm" <?php if(isset($home_cgpa)) echo "value=\"$home_cgpa\""; ?> >
                           <div id="cgpaFeedback" class="invalid-feedback"></div>
@@ -580,7 +581,7 @@
                     <div class="tab-pane fade" id="foreignstudy" role="tabpanel" aria-labelledby="tab4">
                       
                       <div class="form-group row">
-				              	<label for="inputIntention" class="col-sm-3 col-form-label col-form-label-sm">Programm (type of transfer):</label>
+				              	<label for="inputIntention" class="col-sm-3 col-form-label col-form-label-sm">Programm</label>
 				              	<div class="col-sm-9">
 				              		<select type="text" id="inputIntention" size="1" maxlength="20" name="intention" class="form-control form-control-sm" >
 				              			<option></option>
@@ -596,7 +597,7 @@
                       </div>
                       
                       <div class="form-group row">
-				              	<label for="inputStart" class="col-sm-3 col-form-label col-form-label-sm">Beginn des Austauschs (start of transfer):</label>
+				              	<label for="inputStart" class="col-sm-3 col-form-label col-form-label-sm">Beginn des Austauschs</label>
 				              	<div class="col-sm-9">
 				              		<select type="number" id="inputStart" size="1" maxlength="7" name="starting_semester" class="form-control form-control-sm" >
 				              			<option></option>
@@ -615,7 +616,7 @@
                       
                       <div class="form-group row"> 
 				              	<label for="inputForeignDegree" class="col-sm-3 col-form-label col-form-label-sm">Während des geplanten Auslandsemester werde ich
-				              	voraussichtlich Student sein in (abroad degree):</label>
+				              	voraussichtlich Student sein in</label>
 				              	<div class="col-sm-9">
 				              		<select type="text" id="inputForeignDegree" size="1" name="foreign_degree" class="form-control form-control-sm" >
 				              			<?php 
@@ -630,7 +631,7 @@
                       </div>
                       
                       <div class="form-group row">
-				              	<label for="inputFirstPrio" class="col-sm-3 col-form-label col-form-label-sm">1. Priorität (1. priority):</label>
+				              	<label for="inputFirstPrio" class="col-sm-3 col-form-label col-form-label-sm">1. Priorität</label>
 				              	<div class="col-sm-9">
 				              		<select type="number" id="inputFirstPrio" size="1" maxlength="20" name="firstprio" class="form-control form-control-sm" >
 				              			<option></option>
@@ -646,7 +647,7 @@
                       </div>
                       
                       <div class="form-group row">
-				              	<label for="inputSecondPrio" class="col-sm-3 col-form-label col-form-label-sm">2. Priorität (2. priority):</label>
+				              	<label for="inputSecondPrio" class="col-sm-3 col-form-label col-form-label-sm">2. Priorität</label>
 				              	<div class="col-sm-9">
 				              		<select type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio" class="form-control form-control-sm" >
 				              			<option></option>
@@ -662,7 +663,7 @@
                       </div>
                       
                       <div class="form-group row">
-				              	<label for="inputThirdPrio" class="col-sm-3 col-form-label col-form-label-sm">3. Priorität (3. priority):</label>
+				              	<label for="inputThirdPrio" class="col-sm-3 col-form-label col-form-label-sm">3. Priorität</label>
 				              	<div class="col-sm-9">
 				              		<select type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio" class="form-control form-control-sm">
 				              			<option></option>
