@@ -117,7 +117,7 @@ footer .mini-footer p a:hover {
 }
 
 .card.view-application-form {
-	max-width: 800px;
+	max-width: 1200px;
 	padding: 20px 25px 30px;
 	margin: 0 auto 25px;
 	margin-top: 20px;
@@ -231,11 +231,17 @@ form label {
 }
 
 .stepper {
+	display: flex;
+	align-items: center;
+}
+
+.stepper-item {
 	display: inline-flex;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	font-size: 18px;
+	padding: 20px;
+	font-size: 1rem;
 	font-weight: 400;
 	line-height: 1.5;
 	color: #6c757d;
@@ -243,15 +249,20 @@ form label {
 	text-decoration: none;
 	white-space: nowrap;
 	vertical-align: middle;
-	padding: 20px;
+	user-select: none;
+	background-color: transparent;
+	border: none;
+	border-radius: .25rem;
+	transition: background-color .15s ease-out, color .15s ease-out;
 }
 
 .stepper-line {
-	flex: 1 0 32px;
+	flex: 20 0 1px;
 	min-width: 1px;
 	min-height: 1px;
 	margin: auto;
 	background-color: rgba(0, 0, 0, .12);
+	flex-basis: 20px;
 }
 
 .stepper-circle {
@@ -288,12 +299,6 @@ form label {
 	background-color: #003d76;
 }
 
-.stepper-link {
-	border: none;
-	border-radius: .25rem;
-	transition: background-color .15s ease-out, color .15s ease-out;
-}
-
 .stepper-link:not(:disabled):not(.disabled) {
 	cursor: pointer;
 }
@@ -311,4 +316,23 @@ form label {
 .stepper-link:hover {
 	text-decoration: none;
 	background-color: rgba(0, 0, 0, .06);
+}
+
+@media (max-width: 1200px) {
+	.stepper-item {
+		flex-direction: column;
+		padding: 10px;
+	}
+
+	.stepper {
+		margin: 0 -10px;
+		text-align: center;
+	}
+}
+
+@media (max-width: 800px) {
+	.stepper-item.disabled .stepper-label,
+	.stepper-item.complete .stepper-label {
+		display: none;
+	}
 }

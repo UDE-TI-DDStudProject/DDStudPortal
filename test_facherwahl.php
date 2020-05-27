@@ -140,20 +140,20 @@ if(isset($_POST['save'])) {
 
             <div class="stepper">
               <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
-              <div class="stepper-item complete">
+              <div class="stepper-item complete" data-toggle="tooltip" data-placement="top" title="Bewerbungsformular">
                 <span class="stepper-circle">1</span>
                 <span class="stepper-label">Bewerbungsformular</span>
               </div>
               </a>
               <div class="stepper-line"></div>
               <a class="stepper-link" href="test_facherwahl.php?id=<?php echo $applicationid?>">
-              <div class="stepper-item active">
+              <div class="stepper-item active"  data-toggle="tooltip" data-placement="top" title="Fächerwahlliste">
                 <span class="stepper-circle">2</span>
                 <span class="stepper-label">Fächerwahlliste</span>
               </div>
               </a>
               <div class="stepper-line"></div>
-              <div class="stepper-item disabled">
+              <div class="stepper-item disabled"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
                 <span class="stepper-circle">3</span>
                 <span class="stepper-label">Bewerbung eingereicht</span>
               </div>
