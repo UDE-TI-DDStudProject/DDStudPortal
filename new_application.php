@@ -649,7 +649,7 @@
                       <div class="form-group row">
 				              	<label for="inputSecondPrio" class="col-sm-3 col-form-label col-form-label-sm">2. Priorität</label>
 				              	<div class="col-sm-9">
-				              		<select type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio" class="form-control form-control-sm" >
+				              		<select type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio" class="form-control form-control-sm" disabled>
 				              			<option></option>
 				              			<?php 
 				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,4)");
@@ -665,7 +665,7 @@
                       <div class="form-group row">
 				              	<label for="inputThirdPrio" class="col-sm-3 col-form-label col-form-label-sm">3. Priorität</label>
 				              	<div class="col-sm-9">
-				              		<select type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio" class="form-control form-control-sm">
+				              		<select type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio" class="form-control form-control-sm" disabled>
 				              			<option></option>
 				              			<?php 
 				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,4)");
@@ -742,6 +742,49 @@
             <?php } ?>
         </div>
 </main>
+
+<!-- priority select changed -->
+<script>
+$(document).ready(function(){
+  $("#inputFirstPrio").change(function(){
+    var selected = $(this).val();
+    $("#inputSecondPrio option:selected").prop("selected", false);
+    $("#inputThirdPrio option:selected").prop("selected", false);
+
+    if(selected!==""){
+      $("#inputSecondPrio").attr("disabled", false); 
+
+      $("#inputSecondPrio option[value=" + selected + "]").attr('disabled','disabled')
+          .siblings().removeAttr('disabled');
+
+      $("#inputThirdPrio option[value=" + selected + "]").attr('disabled','disabled')
+          .siblings().removeAttr('disabled');
+    }else{
+      $("#inputSecondPrio").attr("disabled", true); 
+      $("#inputThirdPrio").attr("disabled", true); 
+    }
+
+
+  });
+
+  $("#inputSecondPrio").change(function(){
+    var second = $(this).val();
+
+    $("#inputThirdPrio option:selected").prop("selected", false);
+    $("#inputThirdPrio option:disabled").removeAttr('disabled');
+
+    if(second!==""){
+      var first = $("#inputFirstPrio").val();
+      $("#inputThirdPrio").attr("disabled", false); 
+    
+      $("#inputThirdPrio option[value=" + first + "]").attr('disabled','disabled'); 
+      $("#inputThirdPrio option[value=" + second + "]").attr('disabled','disabled');
+    }else{
+      $("#inputThirdPrio").attr("disabled", true); 
+    }
+  });
+});
+</script>
 
 <!-- custom file browser show input -->
 <script>

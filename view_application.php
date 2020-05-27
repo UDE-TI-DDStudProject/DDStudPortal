@@ -254,8 +254,8 @@
           </a>
           <div class="stepper-line"></div>
           <div class="stepper-item disabled">
-            <span class="stepper-circle">2</span>
-            <span class="stepper-label">Bewerbung ist eingereicht</span>
+            <span class="stepper-circle">3</span>
+            <span class="stepper-label">Bewerbung eingereicht</span>
           </div>
         </div>
 

@@ -374,7 +374,7 @@
                 <nav aria-label="breadcrumb">
                   <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="test_status.php">Homepage</a></li>
-                    <li class="breadcrumb-item"><a href="view_application.php?id=<?php echo $applicationid;?>">View Application</a></li>
+                    <li class="breadcrumb-item"><a href="view_application.php?id=<?php //echo $applicationid;?>">View Application</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Edit Application</li>
                   </ol>
                 </nav>
@@ -799,6 +799,49 @@
             </form>
         </div>
 </main>
+
+<!-- priority select changed -->
+<script>
+$(document).ready(function(){
+  $("#inputFirstPrio").change(function(){
+    var selected = $(this).val();
+    $("#inputSecondPrio option:selected").prop("selected", false);
+    $("#inputThirdPrio option:selected").prop("selected", false);
+
+    if(selected!==""){
+      $("#inputSecondPrio").attr("disabled", false); 
+
+      $("#inputSecondPrio option[value=" + selected + "]").attr('disabled','disabled')
+          .siblings().removeAttr('disabled');
+
+      $("#inputThirdPrio option[value=" + selected + "]").attr('disabled','disabled')
+          .siblings().removeAttr('disabled');
+    }else{
+      $("#inputSecondPrio").attr("disabled", true); 
+      $("#inputThirdPrio").attr("disabled", true); 
+    }
+
+
+  });
+
+  $("#inputSecondPrio").change(function(){
+    var second = $(this).val();
+
+    $("#inputThirdPrio option:selected").prop("selected", false);
+    $("#inputThirdPrio option:disabled").removeAttr('disabled');
+
+    if(second!==""){
+      var first = $("#inputFirstPrio").val();
+      $("#inputThirdPrio").attr("disabled", false); 
+    
+      $("#inputThirdPrio option[value=" + first + "]").attr('disabled','disabled'); 
+      $("#inputThirdPrio option[value=" + second + "]").attr('disabled','disabled');
+    }else{
+      $("#inputThirdPrio").attr("disabled", true); 
+    }
+  });
+});
+</script>
 
 <!-- form validation -->
 <script>
