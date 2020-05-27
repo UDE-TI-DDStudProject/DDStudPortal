@@ -128,7 +128,6 @@ if(isset($_POST['save'])) {
 
 <?php 
     include("templates/testheaderlogin.php");
-    $readonly = true;
 ?>
 
 <main class="container-fluid flex-fill">
