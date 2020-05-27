@@ -128,6 +128,7 @@ if(isset($_POST['save'])) {
 
 <?php 
     include("templates/testheaderlogin.php");
+    $readonly = true;
 ?>
 
 <main class="container-fluid flex-fill">
@@ -278,7 +279,7 @@ if(isset($_POST['save'])) {
                                 <!--check previously selected equivalence-courses and disable declined courses-->
 		                    	<?php
 		                    		if(!$readonly){
-		                    			?><td align="center"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3") echo "disabled"; ?>></td>
+		                    			?><td align="center" id="<?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked"?>"> <input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3") echo "disabled"; ?>></td>
 		                    			<?php
 		                    		}else{
 		                    			?>
@@ -409,7 +410,7 @@ if(isset($_POST['save'])) {
                                 <!--check previously selected equivalence-courses and disable declined courses-->
 		                    	<?php
 		                    		if(!$readonly){
-		                    			?><td align="center"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3") echo "disabled"; ?>></td>
+		                    			?><td align="center" id="<?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked"?>"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3") echo "disabled"; ?>></td>
 		                    			<?php
 		                    		}else{
 		                    			?>
@@ -519,7 +520,7 @@ if(isset($_POST['save'])) {
                                 <!--check previously selected equivalence-courses and disable declined courses-->
 		                    	<?php
 		                    		if(!$readonly){
-		                    			?><td align="center"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3") echo "disabled"; ?>></td>
+		                    			?><td align="center" id="<?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked"?>"><input type="checkbox" name="kurse[]" value="<?php echo $row['equivalence_id'] ?>" <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3") echo "disabled"; ?>></td>
 		                    			<?php
 		                    		}else{
 		                    			?>
@@ -668,8 +669,11 @@ $(document).ready(function(){
 
   		doc.autoTable({ 
 			  html: table, 
-			  //html: '#courses', 
-			//   startY: 20,
+        didDrawCell: function(data){
+          if(data.cell.raw.id == "checked"){
+            doc.text("selected", data.cell.x + 2, data.cell.y + 5);
+          }
+        },
 			  didDrawPage: function (data) {
 					// Header
 				  	doc.setFontSize(20);
