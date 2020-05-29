@@ -52,7 +52,7 @@
             <div class="title-button">
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-success" name="newApplication">Neue Bewerbung</button>        
+                        <button type="submit" class="btn btn-success" name="newApplication">Neue Bewerbung</button>
                     </div>
                 </form>
             </div>
@@ -62,21 +62,21 @@
         <?php 
         if(isset($success_msg) && !empty($success_msg)):
         ?>
-        	<div class="alert alert-success">
-        		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        	  	<?php echo $success_msg; ?>
-        	</div>
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $success_msg; ?>
+        </div>
         <?php 
         endif;
         ?>
-        
+
         <?php 
         if(isset($error_msg) && !empty($error_msg)):
         ?>
-        	<div class="alert alert-danger">
-        		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        	  	<?php echo $error_msg; ?>
-        	</div>
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $error_msg; ?>
+        </div>
         <?php 
         endif;
         ?>
@@ -108,35 +108,37 @@
             }else{
                 ?>
 
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm" style="font-size: 18px;"> 
-                      <thead>
-                        <tr>
-                          <th scope="col">Bewerbtes Auslandsemester</th>
-                          <th scope="col">Eingereicht am</th>
-                          <th scope="col">Zuletzt bearbeitet am</th>
-                          <th scope="col">Aktueller Stand</th>
-                          <th scope="col"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                          <?php 
+        <div class="table-responsive">
+            <table class="table table-hover table-sm" style="font-size: 18px;">
+                <thead>
+                    <tr>
+                        <th scope="col">Bewerbtes Auslandsemester</th>
+                        <th scope="col">Eingereicht am</th>
+                        <th scope="col">Zuletzt bearbeitet am</th>
+                        <th scope="col">Aktueller Stand</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
                             foreach($applications as $application){?>
-                            
-                                <tr class="<?php if($application['application_status_id']==1) echo "table-primary"; else if($application['application_status_id']==2) echo"table-success"; else if($application['application_status_id']==3) echo"table-danger"; ?>">
-                                    <td><?php echo $application['exchange_semester'] ?></td>
-                                    <td><?php echo $application['created_at'] ?></td>
-                                    <td><?php echo $application['updated_at'] ?></td>
-                                    <td><?php echo $application['application_status'] ?></td>
-                                    <td><a href="view_application.php?id=<?php echo $application['application_id']; ?>">Bewerbung öffnen</a></td>
-                                </tr>
-                            <?php }
-                          ?>
-                      </tbody>
-                    </table>
-                </div>
 
-            <?php    
+                    <tr
+                        class="<?php if($application['application_status_id']==1) echo "table-primary"; else if($application['application_status_id']==2) echo"table-success"; else if($application['application_status_id']==3) echo"table-danger"; ?>">
+                        <td><?php echo $application['exchange_semester'] ?></td>
+                        <td><?php echo $application['created_at'] ?></td>
+                        <td><?php echo $application['updated_at'] ?></td>
+                        <td><?php echo $application['application_status'] ?></td>
+                        <td><a href="view_application.php?id=<?php echo $application['application_id']; ?>">Bewerbung
+                                öffnen</a></td>
+                    </tr>
+                    <?php }
+                          ?>
+                </tbody>
+            </table>
+        </div>
+
+        <?php    
             }
         ?>
 

@@ -232,31 +232,31 @@
             </div>
 
             <div class="title-button">
-              <div class="text-right">
-                <button type="button" class="btn btn-outline-success btn-sm" id="print">Ausdrucken</button>
-              </div>
+                <div class="text-right">
+                    <button type="button" class="btn btn-outline-success btn-sm" id="print">Ausdrucken</button>
+                </div>
             </div>
         </div>
 
         <div class="stepper">
-          <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
-          <div class="stepper-item active">
-            <span class="stepper-circle">1</span>
-            <span class="stepper-label">Bewerbungsformular</span>
-          </div>
-          </a>
-          <div class="stepper-line"></div>
-          <a class="stepper-link" href="test_facherwahl.php?id=<?php echo $applicationid?>">
-          <div class="stepper-item complete">
-            <span class="stepper-circle">2</span>
-            <span class="stepper-label">Fächerwahlliste</span>
-          </div>
-          </a>
-          <div class="stepper-line"></div>
-          <div class="stepper-item disabled">
-            <span class="stepper-circle">3</span>
-            <span class="stepper-label">Bewerbung eingereicht</span>
-          </div>
+            <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
+                <div class="stepper-item active">
+                    <span class="stepper-circle">1</span>
+                    <span class="stepper-label">Bewerbungsformular</span>
+                </div>
+            </a>
+            <div class="stepper-line"></div>
+            <a class="stepper-link" href="test_facherwahl.php?id=<?php echo $applicationid?>">
+                <div class="stepper-item complete">
+                    <span class="stepper-circle">2</span>
+                    <span class="stepper-label">Fächerwahlliste</span>
+                </div>
+            </a>
+            <div class="stepper-line"></div>
+            <div class="stepper-item disabled">
+                <span class="stepper-circle">3</span>
+                <span class="stepper-label">Bewerbung eingereicht</span>
+            </div>
         </div>
 
         <!-- <div class="page-navigation">
@@ -272,10 +272,10 @@
         <?php 
         if(isset($success_msg) && !empty($success_msg)):
         ?>
-        	<div class="alert alert-success">
-        		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        	  	<?php echo $success_msg; ?>
-        	</div>
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $success_msg; ?>
+        </div>
         <?php 
         endif;
         ?>
@@ -283,10 +283,10 @@
         <?php 
         if(isset($error_msg) && !empty($error_msg)):
         ?>
-        	<div class="alert alert-danger">
-        		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-        	  	<?php echo $error_msg; ?>
-        	</div>
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $error_msg; ?>
+        </div>
         <?php 
         endif;
         ?>
@@ -294,142 +294,152 @@
         <div class="container">
 
 
-        <div class="table-responsive">
-            <table class="table table-borderless table-hover table-sm" id="application">
-              <tbody>
-              <tr class="d-flex">
-                  <td class="col-sm-3">Eingereicht am</td>
-                  <td class="col-sm-9"><?php if(isset($submitted)) echo $submitted ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Salutation</td>
-                  <td class="col-sm-9"><?php if(isset($salutation)) echo $salutation['name'] ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Vorname</td>
-                  <td class="col-sm-9"><?php if(isset($firstname)) echo $firstname ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Nachname</td>
-                  <td class="col-sm-9"><?php if(isset($lastname)) echo $lastname ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">E-Mail</td>
-                  <td class="col-sm-9"><?php if(isset($email)) echo $email ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Nationalität</td>
-                  <td class="col-sm-9"><?php if(isset($nationality)) echo $nationality ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Geburtsdatum</td>
-                  <td class="col-sm-9"><?php if(isset($birthday)) echo $birthday ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Straße und Haus-Nr.</td>
-                  <td class="col-sm-9"><?php if(isset($home_street)) echo $home_street ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">PLZ</td>
-                  <td class="col-sm-9"><?php if(isset($home_zip)) echo $home_zip ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Ort</td>
-                  <td class="col-sm-9"><?php if(isset($home_city)) echo $home_city ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Bundesland</td>
-                  <td class="col-sm-9"><?php if(isset($home_state)) echo $home_state ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Land</td>
-                  <td class="col-sm-9"><?php if(isset($home_country)) echo $home_country ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Telefonnummer</td>
-                  <td class="col-sm-9"><?php if(isset($home_phone)) echo $home_phone ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Aktuelle Universität</td>
-                  <td class="col-sm-9"><?php if(isset($home_university)) echo $home_university ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Derzeit angestrebter Abschluss</td>
-                  <td class="col-sm-9"><?php if(isset($home_degree)) echo $home_degree ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Aktueller Studiengang</td>
-                  <td class="col-sm-9"><?php if(isset($home_course)) echo $home_course ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Matrikelnummer</td>
-                  <td class="col-sm-9"><?php if(isset($home_matno)) echo $home_matno ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Monat/Jahr der Einschreibung in aktuellen Studiengang</td>
-                  <td class="col-sm-9"><?php if(isset($home_enrollment)) echo $home_enrollment ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Fachsemester aktueller Studiengang (semester):</td>
-                  <td class="col-sm-9"><?php if(isset($home_semester)) echo $home_semester ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Summe bisher erworbener Kreditpunkte laut beigefügtem Transkript</td>
-                  <td class="col-sm-9"><?php if(isset($home_credits)) echo $home_credits ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Durchschnittsnote laut beigefügtem Transkript</td>
-                  <td class="col-sm-9"><?php if(isset($home_cgpa)) echo $home_cgpa ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Programm</td>
-                  <td class="col-sm-9"><?php if(isset($intention)) echo $intention ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Beginn des Austauschs</td>
-                  <td class="col-sm-9"><?php if(isset($starting_semester)) echo $starting_semester ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Während des geplanten Auslandsemester werde ich voraussichtlich Student sein in</td>
-                  <td class="col-sm-9"><?php if(isset($foreign_degree)) echo $foreign_degree ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">1. Priorität</td>
-                  <td class="col-sm-9"><?php if(isset($first_uni)) echo $first_uni ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">2. Priorität</td>
-                  <td class="col-sm-9"><?php if(isset($second_uni)) echo $second_uni ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">3. Priorität</td>
-                  <td class="col-sm-9"><?php if(isset($third_uni)) echo $third_uni ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Fächerwahlliste</td>
-                  <td class="col-sm-9"><?php if(isset($F_name)) { ?> <a href="<?php echo $F_files[0]; ?>"><?php echo $F_name ?></a> <?php } else echo "-" ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Motivationsschreiben</td>
-                  <td class="col-sm-9"><?php if(isset($M_name)) { ?> <a href="<?php echo $M_files[0]; ?>"><?php echo $M_name ?></a> <?php } else echo "-" ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Lebenslauf</td>
-                  <td class="col-sm-9"><?php if(isset($L_name)) { ?> <a href="<?php echo $L_files[0]; ?>"><?php echo $L_name ?></a> <?php } else echo "-" ?></td>
-                </tr>
-                <tr class="d-flex">
-                  <td class="col-sm-3">Transkript</td>
-                  <td class="col-sm-9"><?php if(isset($T_name)) { ?> <a href="<?php echo $T_files[0]; ?>"><?php echo $T_name ?></a> <?php } else echo "-" ?></td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="text-right">
-                <form action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $applicationid; ?>" method="post">
-                <button type="submit" class="btn btn-primary btn-sm" name="edit" <?php if($readonly) echo "disabled" ?>>Editieren</button>
-                <button type="submit" class="btn btn-danger btn-sm" name="delete">Löschen</button>
-                </form>
+            <div class="table-responsive">
+                <table class="table table-borderless table-hover table-sm" id="application">
+                    <tbody>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Eingereicht am</td>
+                            <td class="col-sm-9"><?php if(isset($submitted)) echo $submitted ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Salutation</td>
+                            <td class="col-sm-9"><?php if(isset($salutation)) echo $salutation['name'] ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Vorname</td>
+                            <td class="col-sm-9"><?php if(isset($firstname)) echo $firstname ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Nachname</td>
+                            <td class="col-sm-9"><?php if(isset($lastname)) echo $lastname ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">E-Mail</td>
+                            <td class="col-sm-9"><?php if(isset($email)) echo $email ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Nationalität</td>
+                            <td class="col-sm-9"><?php if(isset($nationality)) echo $nationality ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Geburtsdatum</td>
+                            <td class="col-sm-9"><?php if(isset($birthday)) echo $birthday ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Straße und Haus-Nr.</td>
+                            <td class="col-sm-9"><?php if(isset($home_street)) echo $home_street ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">PLZ</td>
+                            <td class="col-sm-9"><?php if(isset($home_zip)) echo $home_zip ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Ort</td>
+                            <td class="col-sm-9"><?php if(isset($home_city)) echo $home_city ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Bundesland</td>
+                            <td class="col-sm-9"><?php if(isset($home_state)) echo $home_state ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Land</td>
+                            <td class="col-sm-9"><?php if(isset($home_country)) echo $home_country ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Telefonnummer</td>
+                            <td class="col-sm-9"><?php if(isset($home_phone)) echo $home_phone ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Aktuelle Universität</td>
+                            <td class="col-sm-9"><?php if(isset($home_university)) echo $home_university ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Derzeit angestrebter Abschluss</td>
+                            <td class="col-sm-9"><?php if(isset($home_degree)) echo $home_degree ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Aktueller Studiengang</td>
+                            <td class="col-sm-9"><?php if(isset($home_course)) echo $home_course ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Matrikelnummer</td>
+                            <td class="col-sm-9"><?php if(isset($home_matno)) echo $home_matno ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Monat/Jahr der Einschreibung in aktuellen Studiengang</td>
+                            <td class="col-sm-9"><?php if(isset($home_enrollment)) echo $home_enrollment ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Fachsemester aktueller Studiengang (semester):</td>
+                            <td class="col-sm-9"><?php if(isset($home_semester)) echo $home_semester ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Summe bisher erworbener Kreditpunkte laut beigefügtem Transkript</td>
+                            <td class="col-sm-9"><?php if(isset($home_credits)) echo $home_credits ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Durchschnittsnote laut beigefügtem Transkript</td>
+                            <td class="col-sm-9"><?php if(isset($home_cgpa)) echo $home_cgpa ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Programm</td>
+                            <td class="col-sm-9"><?php if(isset($intention)) echo $intention ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Beginn des Austauschs</td>
+                            <td class="col-sm-9"><?php if(isset($starting_semester)) echo $starting_semester ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Während des geplanten Auslandsemester werde ich voraussichtlich Student
+                                sein in</td>
+                            <td class="col-sm-9"><?php if(isset($foreign_degree)) echo $foreign_degree ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">1. Priorität</td>
+                            <td class="col-sm-9"><?php if(isset($first_uni)) echo $first_uni ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">2. Priorität</td>
+                            <td class="col-sm-9"><?php if(isset($second_uni)) echo $second_uni ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">3. Priorität</td>
+                            <td class="col-sm-9"><?php if(isset($third_uni)) echo $third_uni ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Fächerwahlliste</td>
+                            <td class="col-sm-9"><?php if(isset($F_name)) { ?> <a
+                                    href="<?php echo $F_files[0]; ?>"><?php echo $F_name ?></a> <?php } else echo "-" ?>
+                            </td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Motivationsschreiben</td>
+                            <td class="col-sm-9"><?php if(isset($M_name)) { ?> <a
+                                    href="<?php echo $M_files[0]; ?>"><?php echo $M_name ?></a> <?php } else echo "-" ?>
+                            </td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Lebenslauf</td>
+                            <td class="col-sm-9"><?php if(isset($L_name)) { ?> <a
+                                    href="<?php echo $L_files[0]; ?>"><?php echo $L_name ?></a> <?php } else echo "-" ?>
+                            </td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Transkript</td>
+                            <td class="col-sm-9"><?php if(isset($T_name)) { ?> <a
+                                    href="<?php echo $T_files[0]; ?>"><?php echo $T_name ?></a> <?php } else echo "-" ?>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="text-right">
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $applicationid; ?>" method="post">
+                        <button type="submit" class="btn btn-primary btn-sm" name="edit"
+                            <?php if($readonly) echo "disabled" ?>>Editieren</button>
+                        <button type="submit" class="btn btn-danger btn-sm" name="delete">Löschen</button>
+                    </form>
+                </div>
             </div>
-        </div>
         </div>
     </div>
 </main>
@@ -447,65 +457,71 @@
 
 <!-- print list -->
 <script>
-$(document).ready(function(){
-	$("#print").click(function(){
+$(document).ready(function() {
+    $("#print").click(function() {
 
-		var submitteddate = $(".submitted-date").attr('id');
-		var Matriculationnummer = $("#matno").attr('class');
+        var submitteddate = $(".submitted-date").attr('id');
+        var Matriculationnummer = $("#matno").attr('class');
 
-		var doc = new jsPDF('p', 'mm', 'a4');
-		var totalPagesExp = '{total_pages_count_string}';
-		var img = new Image();
-    	img.src = 'screenshots/UDE-Logo.jpeg';
-		
-		var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-		var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+        var doc = new jsPDF('p', 'mm', 'a4');
+        var totalPagesExp = '{total_pages_count_string}';
+        var img = new Image();
+        img.src = 'screenshots/UDE-Logo.jpeg';
 
-		var d = new Date();
-		var date  =  d.getDate() + "." + (d.getMonth()+1) +  "." +  d.getFullYear();
+        var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-  		doc.autoTable({ 
-			  html: "#application", 
-			  //html: '#courses', 
-			//   startY: 20,
-			  didDrawPage: function (data) {
-					// Header
-				  	doc.setFontSize(20);
-      				doc.setFontStyle('normal');
-					doc.addImage(img, 'JPEG', pageWidth - data.settings.margin.right - 36, 15, 36, 14);
-      				doc.text('Application', pageWidth / 2, 30, 'center');
-					doc.setFontSize(10);
-					doc.text('Submitted on: ' + submitteddate, data.settings.margin.left  , 20 , 'left');
-					doc.text('Matriculationnummer: ' + Matriculationnummer.toString(), data.settings.margin.left  , 25 , 'left');
-					// doc.text('Nachname: ' + surname, data.settings.margin.left  , 25 , 'left');
-					// doc.text('Vorname: ' + firstname, data.settings.margin.left , 30 , 'left');
-      				// doc.text('Home-Uni: ' + homeUni + '	     Foreign-Uni: ' +  foreignUni, pageWidth / 2, 40 , 'center');
-					
+        var d = new Date();
+        var date = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
 
-  				    // Footer
-  				    var str = 'Page ' + doc.internal.getNumberOfPages();
-  				    // Total page number plugin only available in jspdf v1.0+
-  				    if (typeof doc.putTotalPages === 'function') {
-  				      str = str + ' of ' + totalPagesExp;
-  				    }
-  				    doc.setFontSize(10);
-				  
-  				    // jsPDF 1.4+ uses getWidth, <1.4 uses .width
-  				    var pageSize = doc.internal.pageSize;
-  				    var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-  				    doc.text(str, pageWidth - data.settings.margin.right - 20 , pageHeight - 10 , 'left');
-  				    doc.text(date, data.settings.margin.left, pageHeight - 10);
-  				  },
-  			  margin: { top: 50 },
-  		});
-			  
-  		// Total page number plugin only available in jspdf v1.0+
-  		if (typeof doc.putTotalPages === 'function') {
-  		  doc.putTotalPages(totalPagesExp);
-  		}
+        doc.autoTable({
+            html: "#application",
+            //html: '#courses', 
+            //   startY: 20,
+            didDrawPage: function(data) {
+                // Header
+                doc.setFontSize(20);
+                doc.setFontStyle('normal');
+                doc.addImage(img, 'JPEG', pageWidth - data.settings.margin.right - 36, 15,
+                    36, 14);
+                doc.text('Application', pageWidth / 2, 30, 'center');
+                doc.setFontSize(10);
+                doc.text('Submitted on: ' + submitteddate, data.settings.margin.left, 20,
+                    'left');
+                doc.text('Matriculationnummer: ' + Matriculationnummer.toString(), data
+                    .settings.margin.left, 25, 'left');
+                // doc.text('Nachname: ' + surname, data.settings.margin.left  , 25 , 'left');
+                // doc.text('Vorname: ' + firstname, data.settings.margin.left , 30 , 'left');
+                // doc.text('Home-Uni: ' + homeUni + '	     Foreign-Uni: ' +  foreignUni, pageWidth / 2, 40 , 'center');
 
-  		doc.save(Matriculationnummer + '_' +'Application'+ '_' + date +'.pdf');
-	});
+
+                // Footer
+                var str = 'Page ' + doc.internal.getNumberOfPages();
+                // Total page number plugin only available in jspdf v1.0+
+                if (typeof doc.putTotalPages === 'function') {
+                    str = str + ' of ' + totalPagesExp;
+                }
+                doc.setFontSize(10);
+
+                // jsPDF 1.4+ uses getWidth, <1.4 uses .width
+                var pageSize = doc.internal.pageSize;
+                var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                doc.text(str, pageWidth - data.settings.margin.right - 20, pageHeight - 10,
+                    'left');
+                doc.text(date, data.settings.margin.left, pageHeight - 10);
+            },
+            margin: {
+                top: 50
+            },
+        });
+
+        // Total page number plugin only available in jspdf v1.0+
+        if (typeof doc.putTotalPages === 'function') {
+            doc.putTotalPages(totalPagesExp);
+        }
+
+        doc.save(Matriculationnummer + '_' + 'Application' + '_' + date + '.pdf');
+    });
 });
 </script>
 
