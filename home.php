@@ -73,7 +73,8 @@
             </p>
 
             <?php if(!is_checked_in()): ?>
-            <p><a class="btn btn-primary btn-lg" href="test_register.php" role="button">Jetzt registrieren</a></p>
+            <p><a class="btn btn-primary btn-lg" href="register.php" role="button">Jetzt
+                    registrieren</a></p>
             <?php endif; ?>
         </div>
 
