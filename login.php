@@ -78,7 +78,7 @@
             <button type="submit" class="btn btn-primary btn-block" id="btnLogin" name="loginMain">Login</button>
         </form>
         <br>
-        <small><a href="passwortvergessen.php">Passwort vergessen</a></small>
+        <small><a href="forgetpassword.php">Passwort vergessen</a></small>
         <small><a href="register.php">Registieren</a></small>
     </div>
 </main>

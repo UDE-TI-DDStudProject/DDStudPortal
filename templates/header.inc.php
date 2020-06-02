@@ -123,7 +123,7 @@
                                 </form>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="register.php">Registrieren</a>
-                                <a class="dropdown-item" href="passwortvergessen.php">Passwort vergessen?</a>
+                                <a class="dropdown-item" href="forgetpassword.php">Passwort vergessen?</a>
                             </div>
                         </li>
                     </ul>
