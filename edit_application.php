@@ -22,6 +22,23 @@
     $lastname = $user["lastname"];
     $email = $user["email"];
 
+    //check if application exists
+    if(isset($applicationid)){
+        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id");
+        $result = $statement->execute(array('id' => $applicationid));
+        $application = $statement->fetch();
+
+        if(!isset($application) || empty($application['application_id'])){
+            $error_msg = "Application does not exist!";
+            $error = true;
+            $showForm = false;
+        }else{
+            $showForm = true;
+            $error = false;
+        }
+    } 
+
+    if(!$error){
     //get salutation name
     if(isset($salutationid)){
       $statement = $pdo->prepare("SELECT * FROM salutation WHERE salutation_id = :id");
@@ -105,6 +122,7 @@
         }
       }
     }
+}
 ?>
 
 <!-- cancel -->
@@ -409,6 +427,8 @@
         <?php 
             endif;
             ?>
+
+        <?php if(isset($showForm) && $showForm == true) { ?>
         <!-- tab navigation -->
         <nav class="nav-application-form">
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -922,6 +942,7 @@
                 </div>
             </div>
         </form>
+        <?php } ?>
     </div>
 </main>
 
