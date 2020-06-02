@@ -32,6 +32,20 @@
     $lastname = $user["lastname"];
     $email = $user["email"];
 
+    //check if application exists
+    if(isset($applicationid)){
+        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id");
+        $result = $statement->execute(array('id' => $applicationid));
+        $application = $statement->fetch();
+
+        if(!isset($application) || empty($application['application_id'])){
+            $error_msg = "Application does not exist!";
+            $showForm = false;
+        }else{
+            $showForm = true;
+        }
+    } 
+
     //get salutation name
     if(isset($salutationid)){
         $statement = $pdo->prepare("SELECT * FROM salutation WHERE salutation_id = :id");
@@ -143,7 +157,7 @@
 	if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste")) {
       $facherwahlliste = true;
       $F_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
-      if(file_exists($F_files[0])){
+      if(!empty($F_files) && file_exists($F_files[0])){
         $F_name = basename($F_files[0]);
       }
     }else{
@@ -152,7 +166,7 @@
     if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben")) {
       $Motivationsschreiben = true;
       $M_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
-      if(file_exists($M_files[0])){
+      if(!empty($M_files) && file_exists($M_files[0])){
         $M_name = basename($M_files[0]);
       }
     }else{
@@ -161,7 +175,7 @@
     if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf")) {
       $Lebenslauf = true;
       $L_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
-      if(file_exists($L_files[0])){
+      if(!empty($L_files) && file_exists($L_files[0])){
         $L_name = basename($L_files[0]);
       }
     }else{
@@ -170,7 +184,7 @@
     if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript")) {
       $Transkript = true;
       $T_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript"."/". '*', GLOB_MARK);
-      if(file_exists($T_files[0])){
+      if(!empty($T_files) && file_exists($T_files[0])){
         $T_name = basename($T_files[0]);
       }
 	}else{
@@ -208,7 +222,7 @@
             $result = $statement->fetch();
 
             $pdo->commit();
-            header("location: test_status.php?application_removed=1");
+            header("location: status.php?application_removed=1");
             exit;
 
         }catch (PDOException $e){
@@ -293,7 +307,7 @@
 
         <div class="container">
 
-
+            <?php if(isset($showForm) && $showForm == true) { ?>
             <div class="table-responsive">
                 <table class="table table-borderless table-hover table-sm" id="application">
                     <tbody>
@@ -440,6 +454,7 @@
                     </form>
                 </div>
             </div>
+            <?php } ?>
         </div>
     </div>
 </main>

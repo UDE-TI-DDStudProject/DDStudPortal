@@ -148,15 +148,23 @@
     
     //ab hier priority DB
     $first_uni = trim($_POST['firstprio']);
-    $second_uni = trim($_POST['secondprio']);
-    $third_uni = trim($_POST['thirdprio']);
+    if(isset($_POST['secondprio']) && !empty($_POST['secondprio'])){
+        $second_uni = trim($_POST['secondprio']);
+    }else{
+        $second_uni = 'NULL';
+    }
+    if(isset($_POST['thirdprio']) && !empty($_POST['thirdprio'])){
+        $third_uni = trim($_POST['thirdprio']);
+    }else{
+        $third_uni = 'NULL';
+    }
 
     if(!$error){
       //Check if all required fields are filled
       if(!isset($nationality) or !isset($birthday)
       or !isset($home_street) or !isset($home_zip) or !isset($home_city) or !isset($home_state) or !isset($home_country) or !isset($home_phone)
       or !isset($home_degree) or !isset($home_university) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
-      or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) or !isset($second_uni) or !isset($third_uni)){
+      or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) ){
         $error_msg = "Please fill in all required fields!";
         $error = true;
       }
@@ -798,7 +806,7 @@
                             Priorität</label>
                         <div class="col-sm-9">
                             <select type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio"
-                                class="form-control form-control-sm">
+                                class="form-control form-control-sm" disabled>
                                 <option></option>
                                 <?php 
 				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,5)");
@@ -818,7 +826,7 @@
                             Priorität</label>
                         <div class="col-sm-9">
                             <select type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio"
-                                class="form-control form-control-sm">
+                                class="form-control form-control-sm" disabled>
                                 <option></option>
                                 <?php 
 				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,5)");

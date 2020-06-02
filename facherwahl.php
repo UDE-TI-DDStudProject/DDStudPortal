@@ -288,15 +288,27 @@ if(isset($_POST['save'])) {
 		                    }
                         
                     
+                            // select equivalences that dont have specific courses, then union with equivalence that valid for this course
                             $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title ,
-                            s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
+                            s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
                             FROM equivalent_subjects es
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id
-                            ORDER BY es.status_id, es.equivalence_id");
+                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id AND 
+                            NOT EXISTS (SELECT * FROM equivalence_course ec WHERE ec.equivalence_id = es.equivalence_id) 
+                            UNION ALL
+                            SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
+                            s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
+                            FROM equivalence_course ec 
+                            LEFT JOIN equivalent_subjects es ON es.equivalence_id = ec.equivalence_id
+                            LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
+                            LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
+                            LEFT JOIN status st ON st.status_id = es.status_id
+                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id AND ec.course_id = $home_course
+                            ORDER BY status_id, equivalence_id");
 
 		                    $result = $statement->execute();
                         
@@ -412,8 +424,8 @@ if(isset($_POST['save'])) {
                         
                             // select equivalences that dont have specific courses, then union with equivalence that valid for this course
                             $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title ,
-                            s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
+                            s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
                             FROM equivalent_subjects es
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
@@ -422,8 +434,8 @@ if(isset($_POST['save'])) {
                             NOT EXISTS (SELECT * FROM equivalence_course ec WHERE ec.equivalence_id = es.equivalence_id) 
                             UNION ALL
                             SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title ,
-                            s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
+                            s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
                             FROM equivalence_course ec 
                             LEFT JOIN equivalent_subjects es ON es.equivalence_id = ec.equivalence_id
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
@@ -555,15 +567,27 @@ if(isset($_POST['save'])) {
 		                    }
                         
                     
+                            // select equivalences that dont have specific courses, then union with equivalence that valid for this course
                             $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            s1.subject_code as home_subject_code, s1.subject_credits as home_subject_credits, s1.subject_title as home_subject_title ,
-                            s2.subject_credits as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
+                            s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
                             FROM equivalent_subjects es
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id
-                            ORDER BY es.status_id, es.equivalence_id");
+                            WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id AND 
+                            NOT EXISTS (SELECT * FROM equivalence_course ec WHERE ec.equivalence_id = es.equivalence_id) 
+                            UNION ALL
+                            SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
+                            s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
+                            FROM equivalence_course ec 
+                            LEFT JOIN equivalent_subjects es ON es.equivalence_id = ec.equivalence_id
+                            LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
+                            LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
+                            LEFT JOIN status st ON st.status_id = es.status_id
+                            WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id AND ec.course_id = $home_course
+                            ORDER BY status_id, equivalence_id");
 
 		                    $result = $statement->execute();
                         

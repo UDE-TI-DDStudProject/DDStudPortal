@@ -92,18 +92,35 @@
     
     //ab hier priority DB
     $first_uni = trim($_POST['firstprio']);
-    $second_uni = trim($_POST['secondprio']);
-    $third_uni = trim($_POST['thirdprio']);
+    if(isset($_POST['secondprio']) && !empty($_POST['secondprio'])){
+        $second_uni = trim($_POST['secondprio']);
+    }else{
+        $second_uni = 'NULL';
+    }
+    if(isset($_POST['thirdprio']) && !empty($_POST['thirdprio'])){
+        $third_uni = trim($_POST['thirdprio']);
+    }else{
+        $third_uni = 'NULL';
+    }
+
 
     if(!$error){
       //Check if all required fields are filled
       if(!isset($nationality) or !isset($birthday)
       or !isset($home_street) or !isset($home_zip) or !isset($home_city) or !isset($home_state) or !isset($home_country) or !isset($home_phone)
       or !isset($home_degree) or !isset($home_university) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
-      or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) or !isset($second_uni) or !isset($third_uni)){
+      or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) ){
         $error_msg = "Please fill in all required fields!";
         $error = true;
       }
+    }
+
+    //check files
+    if(!$error){
+        if($_FILES["Fächerwahlliste"]["size"] == 0 || $_FILES["Motivationsschreiben"]["size"] == 0 || $_FILES["Lebenslauf"]["size"] == 0 || $_FILES["Transkript"]["size"] == 0){
+            $error_msg = "Please upload all required documents!";
+            $error = true;
+        }
     }
 
     //check deadline
@@ -123,7 +140,7 @@
       }
     }
 
-    if(!$error && isset($_POST['abschicken'])){
+    if(!$error){
       try {
         //check error in qeuries and throw exception if error found
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -218,9 +235,9 @@
           third_uni_id)
         VALUES (
           '$applicationid',
-          '$first_uni',
-          '$second_uni',
-          '$third_uni'
+          $first_uni,
+          $second_uni,
+          $third_uni
           )");
         $statement7->execute();
   
