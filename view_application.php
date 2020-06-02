@@ -181,7 +181,7 @@
 
 <?php 
     if(isset($_POST['edit'])){
-        header('location: test_application.php?id='.$applicationid);
+        header('location: edit_application.php?id='.$applicationid);
         exit;
     }
     else if(isset($_POST['delete'])){
@@ -219,7 +219,7 @@
 ?>
 
 <?php     
-    include("templates/testheaderlogin.php");  
+    include("templates/headerlogin.inc.php");  
 ?>
 
 <main class="container-fluid flex-fill">
@@ -246,7 +246,7 @@
                 </div>
             </a>
             <div class="stepper-line"></div>
-            <a class="stepper-link" href="test_facherwahl.php?id=<?php echo $applicationid?>">
+            <a class="stepper-link" href="facherwahl.php?id=<?php echo $applicationid?>">
                 <div class="stepper-item complete">
                     <span class="stepper-circle">2</span>
                     <span class="stepper-label">Fächerwahlliste</span>
@@ -527,5 +527,5 @@ $(document).ready(function() {
 
 
 <?php 
-    include("templates/testfooter.php");
+    include("templates/footer.inc.php");
 ?>

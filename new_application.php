@@ -10,7 +10,7 @@
     $user_id = $user['user_id'];
 
     if(!isset($user)){
-        header("location: testlogin.php");
+        header("location: login.php");
         exit;
     }
 
@@ -320,7 +320,7 @@
 ?>
 
 <?php 
-    include("templates/testheaderlogin.php");
+    include("templates/headerlogin.inc.php");
 ?>
 
 <main class="container-fluid flex-fill">
@@ -970,5 +970,5 @@ $(document).ready(function() {
 </script>
 
 <?php 
-    include("templates/testfooter.php");
+    include("templates/footer.inc.php");
 ?>

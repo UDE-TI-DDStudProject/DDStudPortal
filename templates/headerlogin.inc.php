@@ -14,7 +14,7 @@
         <!-- Bootstrap 4 core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <!-- style.css -->
-        <link rel="stylesheet" href="css/test.css">
+        <link rel="stylesheet" href="css/style.css">
         <!-- <link rel="stylesheet" href="css/test1.css"> -->
         <!-- <link rel="stylesheet" href="css/testlayout.css"> -->
 
@@ -101,7 +101,7 @@
           </div>
         </li> -->
                         <li class="nav-item">
-                            <a class="nav-link" href="test_status.php"><i class="fas fa-pen"></i>Bewerbung</a>
+                            <a class="nav-link" href="status.php"><i class="fas fa-pen"></i>Bewerbung</a>
                         </li>
                         <!-- Dropdown menu Account-->
                         <li class="nav-item dropdown">
@@ -111,7 +111,7 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                                 <!-- <a class="dropdown-item" href="test_status.php"><i class="fas fa-home"></i> Profile Homepage</a> -->
-                                <a class="dropdown-item" href="test_setup.php"><i class="fas fa-cog"></i>
+                                <a class="dropdown-item" href="settings.php"><i class="fas fa-cog"></i>
                                     Einstellungen</a>
                                 <a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i>
                                     Logout</a>
