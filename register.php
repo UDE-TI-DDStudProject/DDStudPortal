@@ -64,7 +64,7 @@
         $result = $statement->execute(array('salutationid' => $salutationid, 'email' => $email, 'passwort' => $passwort_hash, 'vorname' => $vorname, 'nachname' => $nachname));
 
         if($result) {
-          $success_message = 'Du wurdest erfolgreich registriert. <a href="testlogin.php">Zum Login</a>';
+          $success_message = 'Du wurdest erfolgreich registriert. <a href="login.php">Zum Login</a>';
         } else {
           $error_message = 'Beim Abspeichern ist leider ein Fehler aufgetreten';
         }
@@ -88,8 +88,7 @@
         </div>";
         ?>
         <img class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png">
-        <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" class="needs-validation" id="registerForm"
-            novalidate>
+        <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" id="registerForm">
             <div class="form-group">
                 <select class="form-control" id="inputSalutation" name="salutation" placeholder="salutation">
                     <?php
