@@ -149,15 +149,15 @@ if(isset($_POST['save'])) {
             </div>
         </div>
 
-        <!-- <div class="stepper">
-              <a class="stepper-link" href="view_application.php?id=<?php //echo $applicationid?>">
+        <div class="stepper">
+              <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
               <div class="stepper-item complete" data-toggle="tooltip" data-placement="top" title="Bewerbungsformular">
                 <span class="stepper-circle">1</span>
                 <span class="stepper-label">Bewerbungsformular</span>
               </div>
               </a>
               <div class="stepper-line"></div>
-              <a class="stepper-link" href="test_facherwahl.php?id=<?php //echo $applicationid?>">
+              <a class="stepper-link" href="facherwahl.php?id=<?php echo $applicationid?>">
               <div class="stepper-item active"  data-toggle="tooltip" data-placement="top" title="Fächerwahlliste">
                 <span class="stepper-circle">2</span>
                 <span class="stepper-label">Fächerwahlliste</span>
@@ -168,7 +168,7 @@ if(isset($_POST['save'])) {
                 <span class="stepper-circle">3</span>
                 <span class="stepper-label">Bewerbung eingereicht</span>
               </div>
-            </div> -->
+            </div>
 
         <!-- <div class="page-navigation">
                 <nav aria-label="breadcrumb">
@@ -243,8 +243,9 @@ if(isset($_POST['save'])) {
                     <button type="button" class="btn btn-success" id="print" name="1">Ausdrucken</button>
                 </div>
 
-                <!-- radio button -->
-                <div class="radio-group">
+                <div class="list-filter">
+                <!-- checkbox button -->
+                
                     <div class="form-check form-check-inline">
                         <input name="degree1" class="form-check-input" type="checkbox" id="degree1" value="degree"
                             checked>
@@ -254,6 +255,17 @@ if(isset($_POST['save'])) {
                         <input name="master1" class="form-check-input" type="checkbox" id="master1" value="master"
                             checked>
                         <label class="form-check-label" for="inlineCheckbox2">Master</label>
+                    </div>
+                
+
+                    <!-- radio button -->
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="forCourse" id="mycourse1" value="mycourse" checked>
+                      <label class="form-check-label" for="mycourse">Meine Studiengang</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="forCourse" id="allcourse1" value="allcourse">
+                      <label class="form-check-label" for="allcourse">Alle Studiengänge</label>
                     </div>
                 </div>
 
@@ -269,6 +281,7 @@ if(isset($_POST['save'])) {
                                     <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
                                     <th scope="col" width="11%" align="center">Credits Partner-Uni</th>
                                     <th scope="col" width="25%" align="center">Kurs Partner-Uni</th>
+                                    <th scope="col" width="25%" align="center">Gültig Für</th>
                                     <th scope="col" width="5%" align="center">Status</th>
                                     <th scope="col" width="5%" align="center">Zuletzt Aktualisiert</th>
                                 </tr>
@@ -289,6 +302,28 @@ if(isset($_POST['save'])) {
                         
                     
                             // select equivalences that dont have specific courses, then union with equivalence that valid for this course
+                            // $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
+                            // s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            // ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
+                            // FROM equivalent_subjects es
+                            // LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
+                            // LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
+                            // LEFT JOIN status st ON st.status_id = es.status_id
+                            // WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id AND 
+                            // NOT EXISTS (SELECT * FROM equivalence_course ec WHERE ec.equivalence_id = es.equivalence_id) 
+                            // UNION ALL
+                            // SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
+                            // s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            // ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
+                            // FROM equivalence_course ec 
+                            // LEFT JOIN equivalent_subjects es ON es.equivalence_id = ec.equivalence_id
+                            // LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
+                            // LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
+                            // LEFT JOIN status st ON st.status_id = es.status_id
+                            // WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id AND ec.course_id = $home_course
+                            // ORDER BY status_id, equivalence_id");
+
+		                    //get all equivalence
                             $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
                             s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
                             ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
@@ -296,51 +331,71 @@ if(isset($_POST['save'])) {
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id AND 
-                            NOT EXISTS (SELECT * FROM equivalence_course ec WHERE ec.equivalence_id = es.equivalence_id) 
-                            UNION ALL
-                            SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
-                            ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
-                            FROM equivalence_course ec 
-                            LEFT JOIN equivalent_subjects es ON es.equivalence_id = ec.equivalence_id
-                            LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
-                            LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
-                            LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id AND ec.course_id = $home_course
-                            ORDER BY status_id, equivalence_id");
-
-		                    $result = $statement->execute();
+                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id");
                         
-		                    while($row = $statement->fetch()) {
-		                    	?>
-
-                                <tr id="<?php echo $row['valid_degree_id']; ?>"
-                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
+                            $result = $statement->execute();
+                            
+                            while($row = $statement->fetch()) {
+                            
+                                //check course validity
+                                $statement1 = $pdo->prepare("SELECT cs.course_id, cs.name FROM equivalence_course ec 
+                                LEFT JOIN course cs ON cs.course_id = ec.course_id 
+                                WHERE ec.equivalence_id = :id");
+                            
+                                $result1 = $statement1->execute(array('id'=>$row['equivalence_id']));
+                                $validcourses = array();
+                                $validcoursesids = array();
+                                while($row1 = $statement1->fetch()){
+                                    array_push($validcourses, $row1['name']);
+                                    array_push($validcoursesids, $row1['course_id']);
+                                }
+                                if(count($validcourses) == 0){
+                                    $forAll = true;
+                                }else{
+                                    $forAll = false;
+                                    $validcoursesname = implode(",", $validcourses); //convert array to string
+                            
+                                    // equivalence is not for all courses, check if it is valid for user's home course
+                                    if(in_array($home_course, $validcoursesids)){
+                                        $available = true;        
+                                    }else{
+                                        $available = false;
+                                    }
+                                }
+                        
+                                
+                                ?>
+                            
+                                <tr id="<?php echo $row['valid_degree_id']; ?>" 
+                                    class="<?php if($forAll==false && $available==false) echo "table-secondary"; else if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
                                     <!--check previously selected equivalence-courses and disable declined courses-->
                                     <?php
-		                    		if(!$readonly){
-		                    			?><td align="center"
+                                    if(!$readonly){
+                                        ?><td align="center"
                                         id="<?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked"?>">
                                         <input type="checkbox" name="kurse[]"
                                             value="<?php echo $row['equivalence_id'] ?>"
-                                            <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3") echo "disabled"; ?>>
+                                            <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3" || ($forAll == false && $available == false)) echo "disabled"; ?>>
                                     </td>
                                     <?php
-		                    		}else{
-		                    			?>
+                                    }else{
+                                        ?>
                                     <!-- <td align="center"><i <?php // if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "class='glyphicon glyphicon-ok'" ?>></i></td> -->
                                     <td align="center">
                                         <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "selected" ?>
                                     </td>
                                     <?php
-		                    		}
-		                    	?>
+                                    }
+                                ?>
                                     <td align="center" valign="middle"><?php echo $row['home_subject_code'] ?></td>
                                     <td align="center"><?php echo $row['home_subject_credits'] ?></td>
                                     <td align="center"><?php echo $row['home_subject_title'] ?></td>
                                     <td align="center"><?php echo $row['foreign_subject_credits'] ?></td>
                                     <td align="center"><?php echo $row['foreign_subject_title'] ?></td>
+                                    <td align="center"><?php if($forAll==true) {
+                                                                echo "alle";
+                                                                }else{ ?>
+                                                                <button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="<?php echo $validcoursesname;?>">hier klicken</button><?php } ?></td>
                                     <td align="center"><?php echo $row['status'] ?></td>
                                     <td align="center"><?php echo $row['updated_at'] ?></td>
                                 </tr>
@@ -548,6 +603,7 @@ if(isset($_POST['save'])) {
                                     <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
                                     <th scope="col" width="11%" align="center">Credits Partner-Uni</th>
                                     <th scope="col" width="25%" align="center">Kurs Partner-Uni</th>
+                                    <th scope="col" width="25%" align="center">Gültig Für</th>
                                     <th scope="col" width="5%" align="center">Status</th>
                                     <th scope="col" width="5%" align="center">Zuletzt Aktualisiert</th>
                                 </tr>
@@ -589,13 +645,52 @@ if(isset($_POST['save'])) {
                             WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id AND ec.course_id = $home_course
                             ORDER BY status_id, equivalence_id");
 
+                            //get all equivalence
+                            $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
+                            s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
+                            FROM equivalent_subjects es
+                            LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
+                            LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
+                            LEFT JOIN status st ON st.status_id = es.status_id
+                            WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id");
+
 		                    $result = $statement->execute();
                         
 		                    while($row = $statement->fetch()) {
-		                    	?>
 
-                                <tr id="<?php echo $row['valid_degree_id']; ?>"
-                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
+                                //check course validity
+                                $statement1 = $pdo->prepare("SELECT cs.course_id, cs.name FROM equivalence_course ec 
+                                LEFT JOIN course cs ON cs.course_id = ec.course_id 
+                                WHERE ec.equivalence_id = :id");
+
+                                $result1 = $statement1->execute(array('id'=>$row['equivalence_id']));
+                                $validcourses = array();
+                                $validcoursesids = array();
+                                while($row1 = $statement1->fetch()){
+                                    array_push($validcourses, $row1['name']);
+                                    array_push($validcoursesids, $row1['course_id']);
+                                }
+                                if(count($validcourses) == 0){
+                                    $forAll = true;
+                                }else{
+                                    $forAll = false;
+                                    $validcoursesname = implode(",", $validcourses); //convert array to string
+
+                                    // equivalence is not for all courses, check if it is valid for user's home course
+                                    if(in_array($home_course, $validcoursesids)){
+                                        $available = true;        
+                                    }else{
+                                        $available = false;
+                                    }
+                                }
+
+                                
+                                
+                                ?>
+
+                                <tr id="<?php echo $row['valid_degree_id']; ?>" 
+                                    class="<?php if($forAll==false && $available==false) echo "table-secondary"; else if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
                                     <!--check previously selected equivalence-courses and disable declined courses-->
                                     <?php
 		                    		if(!$readonly){
@@ -603,7 +698,7 @@ if(isset($_POST['save'])) {
                                         id="<?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked"?>">
                                         <input type="checkbox" name="kurse[]"
                                             value="<?php echo $row['equivalence_id'] ?>"
-                                            <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3") echo "disabled"; ?>>
+                                            <?php if(in_array($row['equivalence_id'], $selectedCourses, true)) echo "checked" ; if($row['status_id'] == "3" || ($forAll == false && $available == false)) echo "disabled"; ?>>
                                     </td>
                                     <?php
 		                    		}else{
@@ -620,6 +715,10 @@ if(isset($_POST['save'])) {
                                     <td align="center"><?php echo $row['home_subject_title'] ?></td>
                                     <td align="center"><?php echo $row['foreign_subject_credits'] ?></td>
                                     <td align="center"><?php echo $row['foreign_subject_title'] ?></td>
+                                    <td align="center"><?php if($forAll==true) {
+                                                                echo "alle";
+                                                                }else{ ?>
+                                                                <button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="<?php echo $validcoursesname;?>">hier klicken</button><?php } ?></td>
                                     <td align="center"><?php echo $row['status'] ?></td>
                                     <td align="center"><?php echo $row['updated_at'] ?></td>
                                 </tr>
@@ -701,6 +800,16 @@ $(document).ready(function() {
         var rows = $('#courses3 tr');
 
         if ($("#master3").prop("checked") == true) {
+            rows.filter('#2').show();
+        } else {
+            rows.filter('#2').hide();
+        }
+    });
+
+    $("#mycourse1").click(function() {
+        var rows = $('#courses1 tr');
+
+        if ($("#mycourse1").prop("checked") == true) {
             rows.filter('#2').show();
         } else {
             rows.filter('#2').hide();
