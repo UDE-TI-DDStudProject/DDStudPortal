@@ -53,7 +53,7 @@
         if(count($periods)==0){
             $error = true;
             $show = false;
-            $error_msg = "Es gibt zurzeit keine offene Bewerbungen!";
+            $error_msg = "Derzeit ist keine Bewerbung möglich.";
             // $error_msg = "There is currently no open application!";
         }
     }
@@ -118,7 +118,7 @@
     //check files
     if(!$error){
         if($_FILES["Fächerwahlliste"]["size"] == 0 || $_FILES["Motivationsschreiben"]["size"] == 0 || $_FILES["Lebenslauf"]["size"] == 0 || $_FILES["Transkript"]["size"] == 0){
-            $error_msg = "Please upload all required documents!";
+            $error_msg = "Bitte alle Dokumente anfügen!";
             $error = true;
         }
     }
@@ -135,7 +135,8 @@
 
         if(((strtotime(date('Y-m-d h:i:sa')) - strtotime($deadline))/60/60/24) >= 0){
           $error = true;
-          $error_msg = "Selected period is not available!";
+        //   $error_msg = "Selected period is not available!";
+          $error_msg = "Der Bewerbungszeitraum zu dem ausgewählten Semester ist schon beendet! Es ist nicht mehr möglich, eine Bewerbung für dieses Semester abschicken!";
         }
       }
     }

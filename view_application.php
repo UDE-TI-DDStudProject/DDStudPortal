@@ -8,12 +8,12 @@
     $user_id = $user['user_id'];
 
     if(!isset($user)){
-        header("location: testlogin.php");
+        header("location: login.php");
         exit;
     }
 
     if(!isset($_GET['id'])){
-        header("location: test_status.php");
+        header("location: status.php");
         exit;
     }
 
@@ -198,37 +198,37 @@
         header('location: edit_application.php?id='.$applicationid);
         exit;
     }
-    else if(isset($_POST['delete'])){
-        try {
-            //check error in qeuries and throw exception if error found
-            $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-            $pdo->setAttribute( PDO::ATTR_EMULATE_PREPARES, FALSE );
-            $pdo->beginTransaction();
+    else if(isset($_GET['delete'])){
+            try {
+                //check error in qeuries and throw exception if error found
+                $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+                $pdo->setAttribute( PDO::ATTR_EMULATE_PREPARES, FALSE );
+                $pdo->beginTransaction();
 
-            $statement = $pdo->prepare("DELETE FROM $homestudyDB WHERE application_id = :id");
-            $result = $statement->execute(array('id' => $application['application_id']));
-            $result = $statement->fetch();
-    
-            $statement = $pdo->prepare("DELETE FROM $priorityDB WHERE application_id = :id");
-            $result = $statement->execute(array('id' => $application['application_id']));
-            $result = $statement->fetch();
-    
-            $statement = $pdo->prepare("DELETE FROM $applicationDB WHERE application_id = :id");
-            $result = $statement->execute(array('id' => $application['application_id']));
-            $result = $statement->fetch();
+                $statement = $pdo->prepare("DELETE FROM $homestudyDB WHERE application_id = :id");
+                $result = $statement->execute(array('id' => $application['application_id']));
+                $result = $statement->fetch();
+            
+                $statement = $pdo->prepare("DELETE FROM $priorityDB WHERE application_id = :id");
+                $result = $statement->execute(array('id' => $application['application_id']));
+                $result = $statement->fetch();
+            
+                $statement = $pdo->prepare("DELETE FROM $applicationDB WHERE application_id = :id");
+                $result = $statement->execute(array('id' => $application['application_id']));
+                $result = $statement->fetch();
 
-            $statement = $pdo->prepare("DELETE FROM $homeaddressDB WHERE address_id = :id");
-            $result = $statement->execute(array('id' => $application['home_address_id']));
-            $result = $statement->fetch();
+                $statement = $pdo->prepare("DELETE FROM $homeaddressDB WHERE address_id = :id");
+                $result = $statement->execute(array('id' => $application['home_address_id']));
+                $result = $statement->fetch();
 
-            $pdo->commit();
-            header("location: status.php?application_removed=1");
-            exit;
+                $pdo->commit();
+                header("location: status.php?application_removed=1");
+                exit;
 
-        }catch (PDOException $e){
-            $pdo->rollback();
-            $error_msg = $e->getMessage();
-          }
+            }catch (PDOException $e){
+                $pdo->rollback();
+                $error_msg = $e->getMessage();
+            }
     }
 ?>
 
@@ -449,8 +449,8 @@
                 <div class="text-right">
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $applicationid; ?>" method="post">
                         <button type="submit" class="btn btn-primary btn-sm" name="edit"
-                            <?php if($readonly) echo "disabled" ?>>Editieren</button>
-                        <button type="submit" class="btn btn-danger btn-sm" name="delete">Löschen</button>
+                            <?php if($readonly) echo "disabled" ?>>Bearbeiten</button>
+                        <button type="button" class="btn btn-danger btn-sm" name="delete" id="delete">Löschen</button>
                     </form>
                 </div>
             </div>
@@ -540,6 +540,33 @@ $(document).ready(function() {
 });
 </script>
 
+<!-- <script>
+
+$(document).ready(function(){
+
+    $("#delete").click(function(){
+        // var confirm = confirm("Möchtest du die Bewerbung löschen");
+
+        $.confirm({
+    title: 'Möchtest du die Bewerbung löschen?',
+    buttons: {
+        confirm: function () {
+            $.alert('Confirmed!');
+        },
+        cancel: function () {
+            $.alert('Canceled!');
+        }
+    }
+    });
+
+
+});
+        // if (confirm) {
+        //     var pageURL = $(location).attr("href");
+        //     windows.location(pageURL + "&delete=1");
+        // }
+});
+</script> -->
 
 <?php 
     include("templates/footer.inc.php");

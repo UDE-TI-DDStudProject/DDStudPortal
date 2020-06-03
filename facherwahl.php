@@ -142,7 +142,7 @@ if(isset($_POST['save'])) {
             <div class="title-button">
                 <form action="view_application.php?id=<?php echo $applicationid?>" method="post">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-primary btn-sm" name="backToHomepage">Zurück zum
+                        <button type="submit" class="btn btn-outline-primary btn-sm" name="backToHomepage">Zurück zur
                             Übersicht</button>
                     </div>
                 </form>

@@ -102,9 +102,9 @@
 
         <?php 
             if(!isset($applications)){
-                echo "<p>Keine Applikation</p>";
+                echo "<p>Noch keine Bewerbung vorhanden</p>";
             }else if(count($applications)==0){
-                echo "<p>Keine Applikation</p>";
+                echo "<p>Noch keine Bewerbung vorhanden</p>";
             }else{
                 ?>
 
@@ -112,7 +112,7 @@
             <table class="table table-hover table-sm" style="font-size: 18px;">
                 <thead>
                     <tr>
-                        <th scope="col">Bewerbtes Auslandsemester</th>
+                        <th scope="col">Angestrebtes Auslandsemester</th>
                         <th scope="col">Eingereicht am</th>
                         <th scope="col">Zuletzt bearbeitet am</th>
                         <th scope="col">Aktueller Stand</th>
