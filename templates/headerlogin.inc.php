@@ -20,6 +20,8 @@
 
         <!-- jQuery -->
         <script src="js/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 
         <!-- form validate -->
         <script src="js/form-validate"></script>
@@ -48,7 +50,7 @@
                         alt="">
                 </a>
                 <!-- Exchange Logo hyperlink -->
-                <a class="navbar-brand" href="test_homepage.php">
+                <a class="navbar-brand" href="index.php">
                     <img src="screenshots/worldwide.png" width="30" height="30" class="d-inline-block align-center"
                         alt="">
                     Südostasien
