@@ -291,18 +291,18 @@ form label {
 	margin: .25rem;
 }
 
-.stepper-item.active .stepper-circle {
+.stepper-item.complete .stepper-circle {
 	background-color: #40ac6d;
 }
 
-.stepper-item.active .stepper-label {
+.stepper-item.complete .stepper-label {
 	color: #40ac6d;
 }
 
-.stepper-item.complete .stepper-label {
+.stepper-item.active .stepper-label {
 	color: #003d76;
 }
-.stepper-item.complete .stepper-circle {
+.stepper-item.active .stepper-circle {
 	background-color: #003d76;
 }
 

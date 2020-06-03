@@ -199,6 +199,7 @@
         exit;
     }
     else if(isset($_GET['delete'])){
+
             try {
                 //check error in qeuries and throw exception if error found
                 $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -239,6 +240,27 @@
 <main class="container-fluid flex-fill">
     <div class="card view-application-form">
 
+    <div class="stepper">
+              <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
+              <div class="stepper-item active" data-toggle="tooltip" data-placement="top" title="Bewerbungsformular">
+                <span class="stepper-circle">1</span>
+                <span class="stepper-label">Bewerbungsformular</span>
+              </div>
+              </a>
+              <div class="stepper-line"></div>
+              <a class="stepper-link" href="facherwahl.php?id=<?php echo $applicationid?>">
+              <div class="stepper-item complete"  data-toggle="tooltip" data-placement="top" title="Fächerwahlliste">
+                <span class="stepper-circle">2</span>
+                <span class="stepper-label">Fächerwahlliste</span>
+              </div>
+              </a>
+              <div class="stepper-line"></div>
+              <div class="stepper-item<?php if($readonly) echo "complete"; else echo "disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
+                <span class="stepper-circle">3</span>
+                <span class="stepper-label">Bewerbung eingereicht</span>
+              </div>
+            </div>
+
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
@@ -252,26 +274,7 @@
             </div>
         </div>
 
-        <div class="stepper">
-            <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
-                <div class="stepper-item active">
-                    <span class="stepper-circle">1</span>
-                    <span class="stepper-label">Bewerbungsformular</span>
-                </div>
-            </a>
-            <div class="stepper-line"></div>
-            <a class="stepper-link" href="facherwahl.php?id=<?php echo $applicationid?>">
-                <div class="stepper-item complete">
-                    <span class="stepper-circle">2</span>
-                    <span class="stepper-label">Fächerwahlliste</span>
-                </div>
-            </a>
-            <div class="stepper-line"></div>
-            <div class="stepper-item disabled">
-                <span class="stepper-circle">3</span>
-                <span class="stepper-label">Bewerbung eingereicht</span>
-            </div>
-        </div>
+
 
         <!-- <div class="page-navigation">
             <nav aria-label="breadcrumb">
@@ -540,33 +543,17 @@ $(document).ready(function() {
 });
 </script>
 
-<!-- <script>
-
+<!-- ask for confirmation upon delete application -->
+<script>
 $(document).ready(function(){
-
     $("#delete").click(function(){
-        // var confirm = confirm("Möchtest du die Bewerbung löschen");
-
-        $.confirm({
-    title: 'Möchtest du die Bewerbung löschen?',
-    buttons: {
-        confirm: function () {
-            $.alert('Confirmed!');
-        },
-        cancel: function () {
-            $.alert('Canceled!');
+        if(confirm("Möchtest du die Bewerbung löschen")){
+            var pageURL = $(location).attr("href");
+            $(location).prop('href', pageURL + "&delete=1");
         }
-    }
     });
-
-
 });
-        // if (confirm) {
-        //     var pageURL = $(location).attr("href");
-        //     windows.location(pageURL + "&delete=1");
-        // }
-});
-</script> -->
+</script>
 
 <?php 
     include("templates/footer.inc.php");

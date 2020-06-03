@@ -133,6 +133,28 @@ if(isset($_POST['save'])) {
 <main class="container-fluid flex-fill">
     <div class="card auswahl-form">
 
+    
+    <div class="stepper">
+              <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
+              <div class="stepper-item complete" data-toggle="tooltip" data-placement="top" title="Bewerbungsformular">
+                <span class="stepper-circle">1</span>
+                <span class="stepper-label">Bewerbungsformular</span>
+              </div>
+              </a>
+              <div class="stepper-line"></div>
+              <a class="stepper-link" href="facherwahl.php?id=<?php echo $applicationid?>">
+              <div class="stepper-item active"  data-toggle="tooltip" data-placement="top" title="Fächerwahlliste">
+                <span class="stepper-circle">2</span>
+                <span class="stepper-label">Fächerwahlliste</span>
+              </div>
+              </a>
+              <div class="stepper-line"></div>
+              <div class="stepper-item<?php if($readonly) echo "complete"; else echo "disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
+                <span class="stepper-circle">3</span>
+                <span class="stepper-label">Bewerbung eingereicht</span>
+              </div>
+            </div>
+
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
@@ -149,26 +171,6 @@ if(isset($_POST['save'])) {
             </div>
         </div>
 
-        <div class="stepper">
-              <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
-              <div class="stepper-item complete" data-toggle="tooltip" data-placement="top" title="Bewerbungsformular">
-                <span class="stepper-circle">1</span>
-                <span class="stepper-label">Bewerbungsformular</span>
-              </div>
-              </a>
-              <div class="stepper-line"></div>
-              <a class="stepper-link" href="facherwahl.php?id=<?php echo $applicationid?>">
-              <div class="stepper-item active"  data-toggle="tooltip" data-placement="top" title="Fächerwahlliste">
-                <span class="stepper-circle">2</span>
-                <span class="stepper-label">Fächerwahlliste</span>
-              </div>
-              </a>
-              <div class="stepper-line"></div>
-              <div class="stepper-item disabled"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
-                <span class="stepper-circle">3</span>
-                <span class="stepper-label">Bewerbung eingereicht</span>
-              </div>
-            </div>
 
         <!-- <div class="page-navigation">
                 <nav aria-label="breadcrumb">
