@@ -370,7 +370,7 @@ if(isset($_POST['save'])) {
                                 ?>
                             
                                 <tr id="<?php echo $row['valid_degree_id']; ?>" name="<?php if($forAll ==true) echo "valid"; else if(isset($available) && $available == true) echo "valid"; else echo "invalid"; ?>"
-                                    class="<?php if($forAll==false && $available==false) echo "table-secondary"; else if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
+                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
                                     <!--check previously selected equivalence-courses and disable declined courses-->
                                     <?php
                                     if(!$readonly){
@@ -559,7 +559,7 @@ if(isset($_POST['save'])) {
 
 
                                 <tr id="<?php echo $row['valid_degree_id']; ?>" name="<?php if($forAll ==true) echo "valid"; else if(isset($available) && $available == true) echo "valid"; else echo "invalid"; ?>"
-                                    class="<?php if($forAll==false && $available==false) echo "table-secondary"; else if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
+                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
                                     <!--check previously selected equivalence-courses and disable declined courses-->
                                     <?php
                                     if(!$readonly){
@@ -749,7 +749,7 @@ if(isset($_POST['save'])) {
                                 ?>
 
                                 <tr id="<?php echo $row['valid_degree_id']; ?>" name="<?php if($forAll ==true) echo "valid"; else if(isset($available) && $available == true) echo "valid"; else echo "invalid"; ?>"
-                                    class="<?php if($forAll==false && $available==false) echo "table-secondary"; else if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
+                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
                                     <!--check previously selected equivalence-courses and disable declined courses-->
                                     <?php
                                     if(!$readonly){
