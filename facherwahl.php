@@ -263,7 +263,7 @@ if(isset($_POST['save'])) {
                     <!-- radio button -->
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="forCourse" id="mycourse1" value="mycourse" checked>
-                      <label class="form-check-label" for="mycourse">Meine Studiengang</label>
+                      <label class="form-check-label" for="mycourse">Mein Studiengang</label>
                     </div>
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="forCourse" id="allcourse1" value="allcourse">
@@ -333,7 +333,8 @@ if(isset($_POST['save'])) {
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id");
+                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id
+                            ORDER BY s1.subject_title ASC");
                         
                             $result = $statement->execute();
                             
@@ -450,7 +451,7 @@ if(isset($_POST['save'])) {
                     <!-- radio button -->
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="forCourse" id="mycourse2" value="mycourse" checked>
-                      <label class="form-check-label" for="mycourse">Meine Studiengang</label>
+                      <label class="form-check-label" for="mycourse">Mein Studiengang</label>
                     </div>
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="forCourse" id="allcourse2" value="allcourse">
@@ -518,7 +519,8 @@ if(isset($_POST['save'])) {
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $second_uni_id");
+                            WHERE s1.university_id = $home_university AND s2.university_id = $second_uni_id 
+                            ORDER BY s1.subject_title ASC");
 
 		                    $result = $statement->execute();
                         
@@ -638,7 +640,7 @@ if(isset($_POST['save'])) {
                     <!-- radio button -->
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="forCourse" id="mycourse3" value="mycourse" checked>
-                      <label class="form-check-label" for="mycourse">Meine Studiengang</label>
+                      <label class="form-check-label" for="mycourse">Mein Studiengang</label>
                     </div>
                     <div class="form-check form-check-inline">
                       <input class="form-check-input" type="radio" name="forCourse" id="allcourse3" value="allcourse">
@@ -708,7 +710,8 @@ if(isset($_POST['save'])) {
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id");
+                            WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id 
+                            ORDER BY s1.subject_title ASC");
 
 		                    $result = $statement->execute();
                         
