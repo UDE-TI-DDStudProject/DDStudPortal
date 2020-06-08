@@ -46,6 +46,28 @@
 
     //get home uni
     if(isset($application)){
+        $statement = $pdo->prepare("SELECT count(distinct(sj.university_id)) as submmited_count FROM applied_equivalence ae 
+        LEFT JOIN equivalent_subjects es on es.equivalence_id = ae.equivalence_id
+        LEFT JOIN subject sj on sj.subject_id = es.foreign_subject_id 
+        WHERE ae.application_id = :id");
+        $result = $statement->execute(array('id' => $applicationid));
+        $submitted = $statement->fetch();
+        $submittedCount = $submitted['submmited_count'];
+
+        $statement = $pdo->prepare("SELECT CASE WHEN second_uni_id IS NULL AND third_uni_id IS NULL THEN 1 
+                WHEN third_uni_id IS NULL THEN 2 
+                ELSE 3 END AS prior_count 
+                FROM priority WHERE application_id = :id");
+        $result = $statement->execute(array('id' => $applicationid));
+        $priority = $statement->fetch();
+        $priorityCount = $priority['prior_count'];
+
+        if($submittedCount==$priorityCount){
+            $application_completed = true;
+        }else{
+            $application_completed = false;
+        }
+
         $statement = $pdo->prepare("SELECT sh.*, v1.name as homeUni FROM study_home sh
                                     LEFT JOIN university v1 on v1.university_id = sh.home_university_id  
                                     WHERE application_id = :id");
@@ -149,9 +171,9 @@ if(isset($_POST['save'])) {
               </div>
               </a>
               <div class="stepper-line"></div>
-              <div class="stepper-item<?php if($readonly) echo "complete"; else echo "disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
+              <div class="stepper-item<?php if(isset($application_completed) && $application_completed==true) echo " complete"; else echo " disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
                 <span class="stepper-circle">3</span>
-                <span class="stepper-label">Bewerbung eingereicht</span>
+                <span class="stepper-label">Bewerbung vollständigt</span>
               </div>
             </div>
 

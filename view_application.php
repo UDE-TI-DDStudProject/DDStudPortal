@@ -46,12 +46,36 @@
         }
     } 
 
+    //if application exists, check if user has already submit facherwahlliste
+    if($showForm){
+        $statement = $pdo->prepare("SELECT count(distinct(sj.university_id)) as submmited_count FROM applied_equivalence ae 
+                                    LEFT JOIN equivalent_subjects es on es.equivalence_id = ae.equivalence_id
+                                    LEFT JOIN subject sj on sj.subject_id = es.foreign_subject_id 
+                                    WHERE ae.application_id = :id");
+        $result = $statement->execute(array('id' => $applicationid));
+        $submitted = $statement->fetch();
+        $submittedCount = $submitted['submmited_count'];
+
+        $statement = $pdo->prepare("SELECT CASE WHEN second_uni_id IS NULL AND third_uni_id IS NULL THEN 1 
+                                    WHEN third_uni_id IS NULL THEN 2 
+                                    ELSE 3 END AS prior_count 
+                                    FROM priority WHERE application_id = :id");
+        $result = $statement->execute(array('id' => $applicationid));
+        $priority = $statement->fetch();
+        $priorityCount = $priority['prior_count'];
+
+        if($submittedCount==$priorityCount){
+            $application_completed = true;
+        }else{
+            $application_completed = false;
+        }
+    }
+
     //get salutation name
-    if(isset($salutationid)){
+    if(isset($salutationid) && $showForm==true){
         $statement = $pdo->prepare("SELECT * FROM salutation WHERE salutation_id = :id");
         $result = $statement->execute(array('id' => $salutationid));
         $salutation = $statement->fetch();
-    }
     
     //set database table variables
     $studentDB = "student";
@@ -190,7 +214,7 @@
 	}else{
         $Transkript = false;
     }
-
+}
 ?>
 
 <?php 
@@ -249,15 +273,15 @@
               </a>
               <div class="stepper-line"></div>
               <a class="stepper-link" href="facherwahl.php?id=<?php echo $applicationid?>">
-              <div class="stepper-item complete"  data-toggle="tooltip" data-placement="top" title="Fächerwahlliste">
+              <div class="stepper-item<?php if(isset($application_completed) && $application_completed==true) echo " complete"; else echo " next"; ?>"  data-toggle="tooltip" data-placement="top" title="Fächerwahlliste">
                 <span class="stepper-circle">2</span>
                 <span class="stepper-label">Fächerwahlliste</span>
               </div>
               </a>
               <div class="stepper-line"></div>
-              <div class="stepper-item<?php if($readonly) echo "complete"; else echo "disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
+              <div class="stepper-item<?php if(isset($application_completed) && $application_completed==true) echo " complete"; else echo " disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
                 <span class="stepper-circle">3</span>
-                <span class="stepper-label">Bewerbung eingereicht</span>
+                <span class="stepper-label">Bewerbung vollständigt</span>
               </div>
             </div>
 

@@ -14,8 +14,8 @@
         <!-- Bootstrap 4 core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <!-- style.css -->
-        <link rel="stylesheet" href="css/style.css">
-        <!-- <link rel="stylesheet" href="css/test1.css"> -->
+        <!-- <link rel="stylesheet" href="css/style.css"> -->
+        <link rel="stylesheet" href="css/style1.css">
         <!-- <link rel="stylesheet" href="css/testlayout.css"> -->
 
         <!-- jQuery -->
