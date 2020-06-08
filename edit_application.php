@@ -298,72 +298,91 @@
     			mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/");
       }
 
-      if(file_exists($_FILES['Fächerwahlliste']['tmp_name']) && is_uploaded_file($_FILES['Fächerwahlliste']['tmp_name']) && $_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024) {
-        if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/")) {
-          //remove files in this folder
-          $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/". '*', GLOB_MARK);
-          foreach ($files as $file) {
-              if (is_dir($file)) {
-                  self::deleteDir($file);
-              } else {
-                  unlink($file);
+      if(file_exists($_FILES['Fächerwahlliste']['tmp_name']) && is_uploaded_file($_FILES['Fächerwahlliste']['tmp_name'])) {
+          if($_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024){
+            if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/")) {
+                //remove files in this folder
+                $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/". '*', GLOB_MARK);
+                foreach ($files as $file) {
+                    if (is_dir($file)) {
+                        self::deleteDir($file);
+                    } else {
+                        unlink($file);
+                    }
+                }
+              }else{
+                mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/"); 
               }
+              move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
+          }else{
+            $error_msg = "Die datei darf nicht größer als 2MB sein!";	
           }
-        }else{
-          mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/"); 
-        }
-        move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
       }
 
-      if(file_exists($_FILES['Motivationsschreiben']['tmp_name']) && is_uploaded_file($_FILES['Motivationsschreiben']['tmp_name']) && $_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024) {
-        if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/")) {
-          //remove files in this folder
-          $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/". '*', GLOB_MARK);
-          foreach ($files as $file) {
-              if (is_dir($file)) {
-                  self::deleteDir($file);
-              } else {
-                  unlink($file);
+      if(file_exists($_FILES['Motivationsschreiben']['tmp_name']) && is_uploaded_file($_FILES['Motivationsschreiben']['tmp_name'])) {
+        if($_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024){
+            if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/")) {
+                //remove files in this folder
+                $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/". '*', GLOB_MARK);
+                foreach ($files as $file) {
+                    if (is_dir($file)) {
+                        self::deleteDir($file);
+                    } else {
+                        unlink($file);
+                    }
+                }
+              }else{
+                mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/"); 
               }
-          }
+              move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
         }else{
-          mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/"); 
+          $error_msg = "Die datei darf nicht größer als 2MB sein!";	
         }
-        move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
+
       }
 
-      if(file_exists($_FILES['Lebenslauf']['tmp_name']) && is_uploaded_file($_FILES['Lebenslauf']['tmp_name']) && $_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024) {
-        if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/")) {
-          //remove files in this folder
-          $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/". '*', GLOB_MARK);
-          foreach ($files as $file) {
-              if (is_dir($file)) {
-                  self::deleteDir($file);
-              } else {
-                  unlink($file);
+      if(file_exists($_FILES['Lebenslauf']['tmp_name']) && is_uploaded_file($_FILES['Lebenslauf']['tmp_name'])) {
+        if($_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024){
+            if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/")) {
+                //remove files in this folder
+                $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/". '*', GLOB_MARK);
+                foreach ($files as $file) {
+                    if (is_dir($file)) {
+                        self::deleteDir($file);
+                    } else {
+                        unlink($file);
+                    }
+                }
+              }else{
+                mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/"); 
               }
-          }
+              move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
         }else{
-          mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/"); 
-        }
-        move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
+            $error_msg = "Die datei darf nicht größer als 2MB sein!";	
+          }
+
       }
 
-      if(file_exists($_FILES['Transkript']['tmp_name']) && is_uploaded_file($_FILES['Transkript']['tmp_name']) && $_FILES['Transkript']['size'] <=  2 * 1024 * 1024) {
-        if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/")) {
-          //remove files in this folder
-          $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/". '*', GLOB_MARK);
-          foreach ($files as $file) {
-              if (is_dir($file)) {
-                  self::deleteDir($file);
-              } else {
-                  unlink($file);
+      if(file_exists($_FILES['Transkript']['tmp_name']) && is_uploaded_file($_FILES['Transkript']['tmp_name'])) {
+        if($_FILES['Transkript']['size'] <=  2 * 1024 * 1024){
+            if(is_dir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/")) {
+                //remove files in this folder
+                $files = glob( "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/". '*', GLOB_MARK);
+                foreach ($files as $file) {
+                    if (is_dir($file)) {
+                        self::deleteDir($file);
+                    } else {
+                        unlink($file);
+                    }
+                }
+              }else{
+                mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/"); 
               }
-          }
+              move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
         }else{
-          mkdir("$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/"); 
-        }
-        move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
+            $error_msg = "Die datei darf nicht größer als 2MB sein!";	
+          }
+
       }        
 		}
   }

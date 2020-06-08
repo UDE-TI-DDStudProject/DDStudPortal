@@ -307,25 +307,25 @@
 			if($_FILES['Fächerwahlliste']['size'] <=  2 * 1024 * 1024){
 				move_uploaded_file($_FILES["Fächerwahlliste"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Fächerwahlliste"."/".$matno["home_matno"]."_"  .$_FILES['Fächerwahlliste']['name']);
 			}else{
-				//
-			}
+                $error_msg = "Die datei darf nicht größer als 2MB sein!";			
+            }
 
 			if($_FILES['Motivationsschreiben']['size'] <=  2 * 1024 * 1024){
 				move_uploaded_file($_FILES["Motivationsschreiben"]["tmp_name"], "$file_server/".$priority["name"]."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Motivationsschreiben"."/".$matno["home_matno"]."_"  .$_FILES['Motivationsschreiben']['name']);
 			}else{
-				//
+				$error_msg = "Die datei darf nicht größer als 2MB sein!";	
 			}
 
 			if($_FILES['Lebenslauf']['size'] <=  2 * 1024 * 1024){
 				move_uploaded_file($_FILES["Lebenslauf"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Lebenslauf"."/".$matno["home_matno"]."_"  .$_FILES['Lebenslauf']['name']);
 			}else{
-				//
+				$error_msg = "Die datei darf nicht größer als 2MB sein!";	
 			}
 
 			if($_FILES['Transkript']['size'] <=  2 * 1024 * 1024){
 				move_uploaded_file($_FILES["Transkript"]["tmp_name"], "$file_server/".$priority["name"] ."/".$user["lastname"]."_"  .$firstname_short."_"  .$matno["home_matno"]."/Transkript"."/".$matno["home_matno"]."_"  .$_FILES['Transkript']['name']);
 			}else{
-				//
+				$error_msg = "Die datei darf nicht größer als 2MB sein!";	
 			}
         }
         
