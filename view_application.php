@@ -281,7 +281,7 @@
               <div class="stepper-line"></div>
               <div class="stepper-item<?php if(isset($application_completed) && $application_completed==true) echo " complete"; else echo " disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
                 <span class="stepper-circle">3</span>
-                <span class="stepper-label">Bewerbung vollständigt</span>
+                <span class="stepper-label">Bewerbung vollständig</span>
               </div>
             </div>
 

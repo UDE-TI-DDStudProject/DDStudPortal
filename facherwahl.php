@@ -173,7 +173,7 @@ if(isset($_POST['save'])) {
               <div class="stepper-line"></div>
               <div class="stepper-item<?php if(isset($application_completed) && $application_completed==true) echo " complete"; else echo " disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
                 <span class="stepper-circle">3</span>
-                <span class="stepper-label">Bewerbung vollständigt</span>
+                <span class="stepper-label">Bewerbung vollständig</span>
               </div>
             </div>
 
@@ -393,7 +393,7 @@ if(isset($_POST['save'])) {
                                 ?>
                             
                                 <tr id="<?php echo $row['valid_degree_id']; ?>" name="<?php if($forAll ==true) echo "valid"; else if(isset($available) && $available == true) echo "valid"; else echo "invalid"; ?>"
-                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
+                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger"; if(in_array($row['equivalence_id'], $selectedCourses, true)) echo " table-info";?>">
                                     <!--check previously selected equivalence-courses and disable declined courses-->
                                     <?php
                                     if(!$readonly){
@@ -1044,10 +1044,19 @@ $(document).ready(function() {
 });
 </script>
 
+<!-- change row color upon checked -->
 <script>
-// $(document).ready(function(){
-//     $('[data-toggle="popover"]').popover();
-// });
+$(document).ready(function(){
+    $('input[name="kurse[]"]').click(function(){
+        if($(this).prop("checked") == true){
+            var parent_tr = $(this).closest('tr'); //find innermost parent
+            $(parent_tr).addClass("table-info"); //change row color
+        }else{
+             var parent_tr = $(this).closest('tr'); //find innermost parent
+             $(parent_tr).removeClass("table-info"); //change row color
+        }
+    });
+});
 </script>
 
 <?php 
