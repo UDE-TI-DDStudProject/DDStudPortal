@@ -267,7 +267,8 @@
     <div class="stepper">
               <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
               <div class="stepper-item active" data-toggle="tooltip" data-placement="top" title="Bewerbungsformular">
-                <span class="stepper-circle">1</span>
+                <div class="stepper-circle"></div>
+                <!-- <span class="stepper-circle"><span class="stepper-svg"></span></span> -->
                 <span class="stepper-label">Bewerbungsformular</span>
               </div>
               </a>

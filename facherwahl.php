@@ -159,7 +159,8 @@ if(isset($_POST['save'])) {
     <div class="stepper">
               <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
               <div class="stepper-item complete" data-toggle="tooltip" data-placement="top" title="Bewerbungsformular">
-                <span class="stepper-circle">1</span>
+                <!-- <span class="stepper-circle">1</span> -->
+                <div class="stepper-circle"></div>
                 <span class="stepper-label">Bewerbungsformular</span>
               </div>
               </a>
