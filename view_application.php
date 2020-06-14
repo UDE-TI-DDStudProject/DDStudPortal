@@ -267,7 +267,7 @@
     <div class="stepper">
               <a class="stepper-link" href="view_application.php?id=<?php echo $applicationid?>">
               <div class="stepper-item active" data-toggle="tooltip" data-placement="top" title="Bewerbungsformular">
-                <div class="stepper-circle"></div>
+                <div class="stepper-circle">✓</div>
                 <!-- <span class="stepper-circle"><span class="stepper-svg"></span></span> -->
                 <span class="stepper-label">Bewerbungsformular</span>
               </div>
@@ -275,13 +275,13 @@
               <div class="stepper-line"></div>
               <a class="stepper-link" href="facherwahl.php?id=<?php echo $applicationid?>">
               <div class="stepper-item<?php if(isset($application_completed) && $application_completed==true) echo " complete"; else echo " next"; ?>"  data-toggle="tooltip" data-placement="top" title="Fächerwahlliste">
-                <span class="stepper-circle">2</span>
+                <span class="stepper-circle"><?php if(isset($application_completed) && $application_completed==true) echo "✓"; else echo "!"; ?></span>
                 <span class="stepper-label">Fächerwahlliste</span>
               </div>
               </a>
               <div class="stepper-line"></div>
               <div class="stepper-item<?php if(isset($application_completed) && $application_completed==true) echo " complete"; else echo " disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
-                <span class="stepper-circle">3</span>
+                <span class="stepper-circle"><?php if(isset($application_completed) && $application_completed==true) echo "✓"; else echo "-"; ?></span>
                 <span class="stepper-label">Bewerbung vollständig</span>
               </div>
             </div>
