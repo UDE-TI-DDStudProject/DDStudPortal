@@ -7,7 +7,7 @@
     $user = check_user();
 
     if(isset($user)){
-        header("location: status.php");
+        header("location: status_application.php");
         exit;
     }
 

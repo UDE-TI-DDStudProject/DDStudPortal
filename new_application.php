@@ -65,14 +65,14 @@
 
             $error_msg = "Derzeit ist keine Bewerbung möglich, weil die Bewerbungsfrist ist geschlossen. ";
 
-            header("location: status.php?message=".$error_msg);
+            header("location: status_application.php?message=".$error_msg);
             exit;
             // $error_msg = "There is currently no open application!";
         }else{
             if(count($openperiods)==0){
                 $error_msg = "Du hast schon eine Bewerbung zu der aktuellen Bewerbungsfrist abgeschickt! ";
 
-                header("location: status.php?message=".$error_msg);
+                header("location: status_application.php?message=".$error_msg);
                 exit;
             }
         }

@@ -103,7 +103,7 @@
           </div>
         </li> -->
                         <li class="nav-item">
-                            <a class="nav-link" href="status.php"><i class="fas fa-pen"></i>Bewerbung</a>
+                            <a class="nav-link" href="status_application.php"><i class="fas fa-pen"></i>Bewerbung</a>
                         </li>
                         <!-- Dropdown menu Account-->
                         <li class="nav-item dropdown">

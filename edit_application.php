@@ -12,7 +12,7 @@
     }
 
     if(!isset($_GET['id'])){
-      header("location: status.php");
+      header("location: status_application.php");
       exit;
     }
 

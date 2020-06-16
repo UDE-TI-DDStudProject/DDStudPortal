@@ -13,7 +13,7 @@
     }
 
     if(!isset($_GET['id'])){
-        header("location: status.php");
+        header("location: status_application.php");
         exit;
     }
 
@@ -247,7 +247,7 @@
                 $result = $statement->fetch();
 
                 $pdo->commit();
-                header("location: status.php?application_removed=1");
+                header("location: status_application.php?application_removed=1");
                 exit;
 
             }catch (PDOException $e){
