@@ -1007,6 +1007,26 @@ $(document).ready(function() {
 });
 </script>
 
+<!-- before submit check file size -->
+<script>
+$(document).ready(function() {
+
+    $("#applicationForm").submit(function(e) {
+
+        //check file size
+        $("#applicationForm").find("input[type=file]").each(function(index, field){
+            const file = field.files[0];
+            var filename = field.name;
+            if(file.size > 2 * 1024 * 1024 ) {
+               alert(filename + ' must be less than 2MB.');
+               e.preventDefault();
+            }    
+        });
+    });
+
+});
+</script>
+
 <?php 
     include("templates/footer.inc.php");
 ?>
