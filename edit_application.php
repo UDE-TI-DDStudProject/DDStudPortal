@@ -229,7 +229,9 @@
         $statement5 = $pdo->prepare("UPDATE $applicationDB SET
           exchange_period_id=:periodid, 
           intention_id=:intentionid, 
-          applied_degree_id=:degreeid WHERE application_id = :applicationid");
+          applied_degree_id=:degreeid,
+          updated_at=now()   
+          WHERE application_id = :applicationid");
         $statement5->execute(array('periodid'=>$starting_semester, 'intentionid'=>$intention, 'degreeid'=>$foreign_degree, 'applicationid'=>$applicationid ));
 
       
