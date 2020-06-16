@@ -40,21 +40,41 @@
     if(isset($user)){
         //get all available exchange period
         $statement = $pdo->prepare("SELECT * FROM exchange_period ep 
-                                    WHERE not exists (SELECT ap.exchange_period_id FROM student st
-                                    LEFT JOIN application ap on ap.student_id = st.student_id 
-                                    WHERE st.user_id = :id and ap.exchange_period_id = ep.period_id)
-                                    and now() between ep.application_begin and ep.application_end");
-        $result = $statement->execute(array('id'=> $user['user_id']));
+                                    WHERE now() between ep.application_begin and ep.application_end");
+        $result = $statement->execute();
         $periods = array();
         while($row = $statement->fetch()){
             array_push($periods, $row);
         }
 
+        //check if there is already an application for this available period
+        $statement = $pdo->prepare("SELECT * FROM exchange_period ep 
+                                    WHERE not exists (SELECT ap.exchange_period_id FROM student st
+                                    LEFT JOIN application ap on ap.student_id = st.student_id 
+                                    WHERE st.user_id = :id and ap.exchange_period_id = ep.period_id)
+                                    and now() between ep.application_begin and ep.application_end");
+        $result = $statement->execute(array('id'=> $user['user_id']));
+        $openperiods = array();
+        while($row = $statement->fetch()){
+            array_push($openperiods, $row);
+        }
+
         if(count($periods)==0){
             $error = true;
             $show = false;
-            $error_msg = "Derzeit ist keine Bewerbung möglich.";
+
+            $error_msg = "Derzeit ist keine Bewerbung möglich, weil die Bewerbungsfrist ist geschlossen. ";
+
+            header("location: status.php?message=".$error_msg);
+            exit;
             // $error_msg = "There is currently no open application!";
+        }else{
+            if(count($openperiods)==0){
+                $error_msg = "Du hast schon eine Bewerbung zu der aktuellen Bewerbungsfrist abgeschickt! ";
+
+                header("location: status.php?message=".$error_msg);
+                exit;
+            }
         }
     }
 ?>

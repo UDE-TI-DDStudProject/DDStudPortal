@@ -16,6 +16,10 @@
         $success_msg = "Application is removed successfully.";
     }
 
+    if(isset($_GET['message'])){
+        $error_msg = $_GET['message'];
+    }
+
     $studentDB = "student";
     $applicationDB = "application";
 
