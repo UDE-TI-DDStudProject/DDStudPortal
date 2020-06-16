@@ -123,6 +123,7 @@
     /* Ergebnis der vom Studenten ausgewählten Kurse */
 if(isset($_POST['save'])) {
 		if(!empty($_POST['kurse'])) {
+            $error = false;
 			/*DELETE all old entries of students in database table 'student_selectedsubjects' then INSERT newly checked equivalent-courses into database*/
 				$stmtDelete = $pdo->prepare("DELETE FROM applied_equivalence WHERE application_id = $applicationid ");
 				$stmtInsert = $pdo->prepare("INSERT INTO applied_equivalence (equivalence_id, application_id) VALUES (?, $applicationid)");
@@ -141,10 +142,42 @@ if(isset($_POST['save'])) {
 
 				}catch (Exception $e){
 					$pdo->rollback();
-					throw $e;
+                    throw $e;
+                    $error = true;
 					$error_msg = $e->get_message();
 				}
-			}
+            }
+            
+        if($error==false){
+            $statement = $pdo->prepare("SELECT count(distinct(sj.university_id)) as submmited_count FROM applied_equivalence ae 
+            LEFT JOIN equivalent_subjects es on es.equivalence_id = ae.equivalence_id
+            LEFT JOIN subject sj on sj.subject_id = es.foreign_subject_id 
+            WHERE ae.application_id = :id");
+            $result = $statement->execute(array('id' => $applicationid));
+            $submitted = $statement->fetch();
+            $submittedCount = $submitted['submmited_count'];
+    
+            $statement = $pdo->prepare("SELECT CASE WHEN second_uni_id IS NULL AND third_uni_id IS NULL THEN 1 
+                    WHEN third_uni_id IS NULL THEN 2 
+                    ELSE 3 END AS prior_count 
+                    FROM priority WHERE application_id = :id");
+            $result = $statement->execute(array('id' => $applicationid));
+            $priority = $statement->fetch();
+            $priorityCount = $priority['prior_count'];
+    
+            if($submittedCount==$priorityCount){
+                $application_completed = true;
+            }else{
+                $application_completed = false;
+            }
+
+            if($application_completed==true){
+                $success_msg = "Deine Bewerbung ist erfolgreich eingereicht! Siehe deine Bewerbung <a href=\"view_application.php?id=$applicationid\">hier</a>";
+
+                header("location: message.php?success=".$success_msg);
+                exit;
+            }
+        }
 	}
 ?>
 
