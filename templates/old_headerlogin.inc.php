@@ -53,7 +53,7 @@
                 <a class="navbar-brand" href="index.php">
                     <img src="screenshots/worldwide.png" width="30" height="30" class="d-inline-block align-center"
                         alt="">
-                    Studis Raus! - Südostasien
+                    Südostasien
                 </a>
                 <!-- Menu hamburger icon at mobile size -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
@@ -68,21 +68,10 @@
           <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
         </li> -->
                         <!-- Dropdown menu Information-->
-						<li class="nav-item dropdown">
+                        <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-university"></i> Die Partneruniversitäten
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="#">UKM - Malaysia</a>
-                                <a class="dropdown-item" href="#">UI - Indonesien</a>
-                                <a class="dropdown-item" href="#">NTU - Singapur</a>
-                            </div>
-                        </li> 
-						<li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-info-circle"></i> Das Auslandssemester
+                                <i class="fas fa-info-circle"></i> Informationen
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <h6 class="dropdown-header">Application</h6>
@@ -96,8 +85,7 @@
                                 <a class="dropdown-item" href="#">During Exchange</a>
                                 <a class="dropdown-item" href="#">After Exchange</a>
                             </div>
-                        </li> 
-
+                        </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="new_application.php"><i class="fas fa-pen"></i> Neue Bewerbung</a>
                         </li> -->
@@ -114,9 +102,8 @@
             <a class="dropdown-item" href="#"><i class="fas fa-plane-arrival"></i> After Departure</a>
           </div>
         </li> -->
-		
                         <li class="nav-item">
-                            <a class="nav-link" href="new_application.php"><i class="fas fa-pen"></i> Neue Bewerbung</a>
+                            <a class="nav-link" href="status_application.php"><i class="fas fa-pen"></i>Bewerbung</a>
                         </li>
                         <!-- Dropdown menu Account-->
                         <li class="nav-item dropdown">
@@ -126,16 +113,10 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                                 <!-- <a class="dropdown-item" href="test_status.php"><i class="fas fa-home"></i> Profile Homepage</a> -->
-								<a class="dropdown-item" href="#"><i class="fas fa-globe"></i>
-									Mein Auslandssemester</a>
-                                <!-- learning agreement, visa ... under mein Auslandssemester -->
-								<a class="dropdown-item" href="status.php"><i class="fas fa-pen"></i>
-									Meine Bewerbungen</a>
-								<a class="dropdown-item" href="settings.php"><i class="fas fa-cog"></i>
+                                <a class="dropdown-item" href="settings.php"><i class="fas fa-cog"></i>
                                     Einstellungen</a>
                                 <a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i>
                                     Logout</a>
-								
                             </div>
                         </li>
                     </ul>

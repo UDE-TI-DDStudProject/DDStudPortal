@@ -62,6 +62,34 @@
             </div>
         </div>
 
+        <!-- get all applications -->
+        <?php 
+            if(isset($studentid) && !empty($studentid)){
+                $statement = $pdo->prepare("SELECT CASE WHEN ra.application_status_id IS NULL THEN 'under review' ELSE st.name END as application_status, 
+                                        CASE WHEN ra.application_status_id IS NULL THEN -1 ELSE st.status_id END as application_status_id,      
+                                            ap.application_id, ap.created_at, ap.updated_at, ep.exchange_semester 
+                                            FROM $applicationDB ap 
+                                            LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
+                                            LEFT JOIN reviewed_application ra on ra.application_id = ap.application_id 
+                                            LEFT JOIN status st on st.status_id = ra.application_status_id 
+                                            WHERE student_id = $studentid");
+                $result = $statement->execute();
+                $applications = array();
+                while($row = $statement->fetch()){ 
+                    array_push($applications, $row);
+                }
+            }
+        ?>
+
+
+        <?php 
+            if(!isset($applications)){
+                $info_msg = "Noch keine Bewerbung vorhanden.";
+            }else if(count($applications)==0){
+                $info_msg =  "Noch keine Bewerbung vorhanden.";
+            }
+                ?>
+
         <!-- show message -->
         <?php 
         if(isset($success_msg) && !empty($success_msg)):
@@ -85,32 +113,17 @@
         endif;
         ?>
 
-        <!-- get all applications -->
         <?php 
-            if(isset($studentid) && !empty($studentid)){
-                $statement = $pdo->prepare("SELECT CASE WHEN ra.application_status_id IS NULL THEN 'under review' ELSE st.name END as application_status, 
-                                        CASE WHEN ra.application_status_id IS NULL THEN -1 ELSE st.status_id END as application_status_id,      
-                                            ap.application_id, ap.created_at, ap.updated_at, ep.exchange_semester 
-                                            FROM $applicationDB ap 
-                                            LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
-                                            LEFT JOIN reviewed_application ra on ra.application_id = ap.application_id 
-                                            LEFT JOIN status st on st.status_id = ra.application_status_id 
-                                            WHERE student_id = $studentid");
-                $result = $statement->execute();
-                $applications = array();
-                while($row = $statement->fetch()){ 
-                    array_push($applications, $row);
-                }
-            }
+        if(isset($info_msg) && !empty($info_msg)):
+        ?>
+        <div class="alert alert-primary">
+            <?php echo $info_msg; ?>
+        </div>
+        <?php 
+        endif;
         ?>
 
-        <?php 
-            if(!isset($applications)){
-                echo "<p>Noch keine Bewerbung vorhanden</p>";
-            }else if(count($applications)==0){
-                echo "<p>Noch keine Bewerbung vorhanden</p>";
-            }else{
-                ?>
+        <?php if(isset($applications) && count($applications)> 0) {?>
 
         <div class="table-responsive">
             <table class="table table-hover table-sm" style="font-size: 18px;">

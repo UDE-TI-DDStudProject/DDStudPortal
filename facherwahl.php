@@ -124,7 +124,7 @@
 if(isset($_POST['save'])) {
 		if(!empty($_POST['kurse'])) {
             $error = false;
-			/*DELETE all old entries of students in database table 'student_selectedsubjects' then INSERT newly checked equivalent-courses into database*/
+            /*DELETE all old entries of students in database table 'student_selectedsubjects' then INSERT newly checked equivalent-courses into database*/
 				$stmtDelete = $pdo->prepare("DELETE FROM applied_equivalence WHERE application_id = $applicationid ");
 				$stmtInsert = $pdo->prepare("INSERT INTO applied_equivalence (equivalence_id, application_id) VALUES (?, $applicationid)");
 
@@ -135,6 +135,7 @@ if(isset($_POST['save'])) {
 					$stmtDelete->execute();
 					foreach ($_POST['kurse'] as $value)
 					{
+                        
 						$stmtInsert->execute(array($value));
 					}
 					$pdo->commit();
@@ -177,6 +178,14 @@ if(isset($_POST['save'])) {
                 header("location: message.php?success=".$success_msg);
                 exit;
             }
+        }
+
+        if($_POST['save'] == "uni1"){
+            $activeUni = 1;
+        }else if($_POST['save']== "uni2"){
+            $activeUni = 2;
+        }else if($_POST['save'] == "uni3"){
+            $activeUni = 3;
         }
 	}
 ?>
@@ -285,6 +294,9 @@ if(isset($_POST['save'])) {
             </li>
         </ul>
 
+        <form action="<?php echo $_SERVER['PHP_SELF'];?>?id=<?php echo $applicationid;?>"
+                    method="post">
+
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade<?php if($activeUni == 1) echo" show active"?>" id="pills-first" role="tabpanel"
                 aria-labelledby="pills-first-tab">
@@ -327,8 +339,6 @@ if(isset($_POST['save'])) {
                     </div>
                 </div>
 
-                <form action="<?php echo $_SERVER['PHP_SELF'];?>?id=<?php echo $applicationid."&uni=1";?>"
-                    method="post">
                     <div class="table-responsive">
                         <table class="table table-hover table-sm" id="courses1">
                             <thead>
@@ -465,9 +475,8 @@ if(isset($_POST['save'])) {
 
                     <!-- save -->
                     <div class="text-right">
-                        <button type="submit" class="btn btn-primary" name="save">Speichern</button>
+                        <button type="submit" class="btn btn-primary" name="save" value="uni1" >Speichern</button>
                     </div>
-                </form>
 
 
                 <?php
@@ -516,8 +525,8 @@ if(isset($_POST['save'])) {
                     </div>
                 </div>
 
-                <form action="<?php echo $_SERVER['PHP_SELF'];?>?id=<?php echo $applicationid."&uni=2";?>"
-                    method="post">
+                <!-- <form action="<?php echo $_SERVER['PHP_SELF'];?>?id=<?php echo $applicationid."&uni=2";?>"
+                    method="post"> -->
                     <div class="table-responsive">
                         <table class="table table-hover table-sm" id="courses2">
                             <thead>
@@ -617,7 +626,7 @@ if(isset($_POST['save'])) {
 
 
                                 <tr id="<?php echo $row['valid_degree_id']; ?>" name="<?php if($forAll ==true) echo "valid"; else if(isset($available) && $available == true) echo "valid"; else echo "invalid"; ?>"
-                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
+                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger"; if(in_array($row['equivalence_id'], $selectedCourses, true)) echo " table-info";?>">
                                     <!--check previously selected equivalence-courses and disable declined courses-->
                                     <?php
                                     if(!$readonly){
@@ -655,9 +664,9 @@ if(isset($_POST['save'])) {
 
                     <!-- save -->
                     <div class="text-right">
-                        <button type="submit" class="btn btn-primary" name="save">Speichern</button>
+                        <button type="submit" class="btn btn-primary" name="save" value="uni2">Speichern</button>
                     </div>
-                </form>
+                <!-- </form> -->
 
 
                 <?php
@@ -706,8 +715,8 @@ if(isset($_POST['save'])) {
                     </div>
                 </div>
 
-                <form action="<?php echo $_SERVER['PHP_SELF'];?>?id=<?php echo $applicationid."&uni=3";?>"
-                    method="post">
+                <!-- <form action="<?php echo $_SERVER['PHP_SELF'];?>?id=<?php echo $applicationid."&uni=3";?>"
+                    method="post"> -->
                     <div class="table-responsive">
                         <table class="table table-hover table-sm" id="courses3">
                             <thead>
@@ -808,7 +817,7 @@ if(isset($_POST['save'])) {
                                 ?>
 
                                 <tr id="<?php echo $row['valid_degree_id']; ?>" name="<?php if($forAll ==true) echo "valid"; else if(isset($available) && $available == true) echo "valid"; else echo "invalid"; ?>"
-                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger";?>">
+                                    class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger"; if(in_array($row['equivalence_id'], $selectedCourses, true)) echo " table-info";?>">
                                     <!--check previously selected equivalence-courses and disable declined courses-->
                                     <?php
                                     if(!$readonly){
@@ -846,9 +855,9 @@ if(isset($_POST['save'])) {
 
                     <!-- save -->
                     <div class="text-right">
-                        <button type="submit" class="btn btn-primary" name="save">Speichern</button>
+                        <button type="submit" class="btn btn-primary" name="save" value="uni3">Speichern</button>
                     </div>
-                </form>
+                <!-- </form> -->
 
 
                 <?php
@@ -856,6 +865,11 @@ if(isset($_POST['save'])) {
                 ?>
             </div>
         </div>
+
+        <!-- <div class="text-right">
+            <button type="submit" class="btn btn-primary" name="save">Speichern</button>
+        </div> -->
+        </form>
     </div>
 </main>
 
