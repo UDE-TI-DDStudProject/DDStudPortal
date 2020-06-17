@@ -21,10 +21,11 @@
 
     //get exchange data
     if(isset($exchangeid) && !empty($exchangeid)){
-        $statement = $pdo->prepare("SELECT ep.exchange_semester, ep.semester_begin, ep.semester_end, ex.exchange_id, ap.exchange_period_id, ex.foreign_uni_id    
+        $statement = $pdo->prepare("SELECT ep.exchange_semester, ep.semester_begin, ep.semester_end, ex.exchange_id, ap.exchange_period_id, ex.foreign_uni_id , uni.name as uni_name    
                                     FROM exchange ex 
                                     LEFT JOIN application ap on ap.application_id = ex.application_id  
                                     LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
+                                    LEFT JOIN university uni on uni.university_id = ex.foreign_uni_id
                                     WHERE ex.exchange_id = $exchangeid");
         $result = $statement->execute();
         $exchangedata = $statement->fetch();
@@ -95,7 +96,16 @@
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
-                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Meine Auslandssemesters
+                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Auslandssemester - Checklist
+            </div>
+
+            <div class="title-button">
+            <form action="status_foreignsemester.php" method="post">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-primary btn-sm" name="backToOverview">Zurück zur
+                            Auslandssemesters Übersicht</button>
+                    </div>
+                </form>
             </div>
 
         </div>
@@ -133,13 +143,38 @@
         endif;
         ?>
 
+        <!-- display exchange semester data -->
+        <div class="table-responsive">
+                <table class="table table-borderless table-hover table-sm" id="application" style="font-size:18px">
+                    <tbody>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Auslandssemester</td>
+                            <td class="col-sm-9"><?php if(isset($exchangedata)) echo $exchangedata['exchange_semester'] ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Semesterbeginn</td>
+                            <td class="col-sm-9"><?php if(isset($exchangedata)) echo $exchangedata['semester_begin'] ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Semesterende</td>
+                            <td class="col-sm-9"><?php if(isset($exchangedata)) echo $exchangedata['semester_end'] ?></td>
+                        </tr>
+                        <tr class="d-flex">
+                            <td class="col-sm-3">Partner-Universität</td>
+                            <td class="col-sm-9"><?php if(isset($exchangedata)) echo $exchangedata['uni_name'] ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $exchangeid;?>" method="post">
 
         <?php if(isset($checklist) && count($checklist) > 0) { ?>
         <div class="table-responsive">
-            <table class="table table-hover table-sm" style="font-size: 18px;">
+            <table class="table table-hover table-sm" style="font-size: 18px; text-align:center;">
                 <thead>
                     <tr>
+                        <th scope="col"></th>
                         <th scope="col">To-do</th>
                         <th scope="col">Deadline</th>
                         <th scope="col">Done</th>
@@ -147,10 +182,14 @@
                 </thead>
                 <tbody>
                     <?php 
+                    
+                    $count = 0;
                     foreach($checklist as $checklistitem){
+                        $count += 1;
                     ?>
 
                     <tr>
+                        <td><?php echo $count?></td>
                         <td><a class="btn btn-link" data-toggle="collapse" href="#step<?php echo $checklistitem['step_id'];?>" role="button" aria-expanded="false" aria-controls="step<?php echo $checklistitem['step_id'];?>"><?php echo $checklistitem['step_name'] ?></a>
                         <div class="collapse" id="step<?php echo $checklistitem['step_id'];?>">
                           <div class="card card-body">
