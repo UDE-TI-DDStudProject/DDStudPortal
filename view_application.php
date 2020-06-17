@@ -142,7 +142,7 @@
     $home_credits =  $homestudy['credits'];
     $home_cgpa =  $homestudy['cgpa'];
 
-    $statement = $pdo->prepare("SELECT uni1.name as uni1, uni2.name as uni2, uni3.name as uni3 FROM priority  pr
+    $statement = $pdo->prepare("SELECT uni1.university_id as uni1id, uni1.name as uni1, uni2.name as uni2, uni3.name as uni3 FROM priority  pr
                                 LEFT JOIN university uni1 on uni1.university_id = pr.first_uni_id 
                                 LEFT JOIN university uni2 on uni2.university_id = pr.second_uni_id 
                                 LEFT JOIN university uni3 on uni3.university_id = pr.third_uni_id 
@@ -150,6 +150,7 @@
     $result = $statement->execute(array('id' => $application['application_id']));
     $priority = $statement->fetch();
 
+    $foreign_uni_id = $priority['uni1id'];
     $first_uni = $priority['uni1'];
     $second_uni = $priority['uni2'];
     $third_uni = $priority['uni3'];
@@ -254,6 +255,27 @@
                 $pdo->rollback();
                 $error_msg = $e->getMessage();
             }
+    }else if(isset($_POST['exchange'])){
+        $statement = $pdo->prepare("SELECT * FROM exchange WHERE application_id = :id");
+        $result = $statement->execute(array('id' => $application['application_id']));
+        $exchange = $statement->fetch();
+        $exchangeid = $exchange['exchange_id'];
+
+        if(empty($exchangeid)){
+            $statement = $pdo->prepare("INSERT INTO exchange(application_id, foreign_uni_id) VALUES(:id, :foreign_uni_id)");
+            $result = $statement->execute(array('id' => $application['application_id'], 'foreign_uni_id'=> $foreign_uni_id));
+
+            $statement = $pdo->prepare("SELECT * FROM exchange WHERE application_id = :id");
+            $result = $statement->execute(array('id' => $application['application_id']));
+            $exchange = $statement->fetch();
+            $exchangeid = $exchange['exchange_id'];
+        }
+
+        if(!empty($exchangeid)){
+            header("location: exchange_checklist.php?id=".$exchangeid);
+            exit;
+        }
+
     }
 ?>
 
@@ -476,6 +498,7 @@
                 </table>
                 <div class="text-right">
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $applicationid; ?>" method="post">
+                    <button type="submit" class="btn btn-primary btn-sm" name="exchange" >Add to Exchange</button>
                         <button type="submit" class="btn btn-primary btn-sm" name="edit"
                             <?php if($readonly) echo "disabled" ?>>Bearbeiten</button>
                         <button type="button" class="btn btn-danger btn-sm" name="delete" id="delete">Löschen</button>
