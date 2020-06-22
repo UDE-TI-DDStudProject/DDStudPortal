@@ -375,3 +375,7 @@ form label {
 	width: 20rem;
 	font-size: 12px;
 }
+
+.form-control-sm {
+	font-size: 16px;
+}

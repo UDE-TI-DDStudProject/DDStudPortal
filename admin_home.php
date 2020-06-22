@@ -55,7 +55,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Fächerwahlliste bearbeiten</h5>
                     <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="edit_equivalence_list.php" class="btn btn-primary">Klick hier</a>
+                    <a href="admin_edit_equivalence_list.php" class="btn btn-primary">Klick hier</a>
                 </div>
             </div>
 
@@ -65,6 +65,24 @@
                     <h5 class="card-title">Kursplätze bearbeiten</h5>
                     <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
                     <a href="admin_edit_equivalence_quota.php" class="btn btn-primary">Klick hier</a>
+                </div>
+            </div>
+
+            <!-- See all bewerbungen -->
+            <div class="card dashboard-item">
+                <div class="card-body">
+                    <h5 class="card-title">Alle Bewerbungen</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="admin_edit_applications.php" class="btn btn-primary">Klick hier</a>
+                </div>
+            </div>
+
+            <!-- See Exchange Facherwahlliste  -->
+            <div class="card dashboard-item">
+                <div class="card-body">
+                    <h5 class="card-title">Fächerwahlliste</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="admin_overview_exchange_equivalence.php" class="btn btn-primary">Klick hier</a>
                 </div>
             </div>
         

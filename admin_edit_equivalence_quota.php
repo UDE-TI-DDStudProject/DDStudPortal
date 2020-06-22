@@ -214,7 +214,7 @@
         <form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post">
             
         <div class="table-responsive">
-                <table class="table table-hover table-sm" id="equivalence_quota" style="text-align:center;">
+                <table class="table table-hover table-sm" id="equivalence_quota" style="text-align:center;font-size:16px">
                     <thead>
                         <tr style="background-color: #003D76; color: white;">
                             <th scope="col" width="8%" align="center">Anzahl eingeben</th>
@@ -320,9 +320,13 @@
 <script>
 $(document).ready(function(){
     $("#filter-form").submit(function(){
-        if(!confirm("Diese Seite wird erneut aktualisieren. Die nicht gespeicherte Daten werden verloren sein. Weiter?")){
-            e.preventDefault();
+        if($("#equivalence_quota").length)
+        {
+            if(!confirm("Diese Seite wird erneut aktualisieren. Die nicht gespeicherte Daten werden verloren sein. Weiter?")){
+                e.preventDefault();
+            }
         }
+
     });
 });
 </script>
