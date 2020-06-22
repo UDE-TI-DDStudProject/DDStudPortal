@@ -262,6 +262,9 @@
         $exchangeid = $exchange['exchange_id'];
 
         if(empty($exchangeid)){
+            // $statement = $pdo->prepare("INSERT INTO reviewed_application(application_id, application_status_id, reviewed_by_user_id) VALUES(:application_id, 1, :reviewed_by_user_id)");
+            // $result = $statement->execute(array('id' => $application['application_id'], 'reviewed_by_user_id'=> $user_id));
+
             $statement = $pdo->prepare("INSERT INTO exchange(application_id, foreign_uni_id) VALUES(:id, :foreign_uni_id)");
             $result = $statement->execute(array('id' => $application['application_id'], 'foreign_uni_id'=> $foreign_uni_id));
 
@@ -302,10 +305,12 @@
               </div>
               </a>
               <div class="stepper-line"></div>
+              <a class="stepper-link" href="application_complete.php?id=<?php echo $applicationid?>">
               <div class="stepper-item<?php if(isset($application_completed) && $application_completed==true) echo " complete"; else echo " disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
                 <span class="stepper-circle"><?php if(isset($application_completed) && $application_completed==true) echo "✓"; else echo "-"; ?></span>
                 <span class="stepper-label">Bewerbung vollständig</span>
               </div>
+              </a>
             </div>
 
         <div class="title-row" style="display: flex; justify-content: space-between;">

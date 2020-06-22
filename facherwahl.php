@@ -173,9 +173,7 @@ if(isset($_POST['save'])) {
             }
 
             if($application_completed==true){
-                $success_msg = "Deine Bewerbung ist erfolgreich eingereicht! Siehe deine Bewerbung <a href=\"view_application.php?id=$applicationid\">hier</a>";
-
-                header("location: application_complete.php?id=".$applicationid."&success=".$success_msg);
+                header("location: application_complete.php?id=".$applicationid);
                 exit;
             }
         }
@@ -214,10 +212,12 @@ if(isset($_POST['save'])) {
               </div>
               </a>
               <div class="stepper-line"></div>
+              <a class="stepper-link" href="application_complete.php?id=<?php echo $applicationid?>">
               <div class="stepper-item<?php if(isset($application_completed) && $application_completed==true) echo " complete"; else echo " disabled"; ?>"  data-toggle="tooltip" data-placement="top" title="Bewerbung eingereicht">
                 <span class="stepper-circle"><?php if(isset($application_completed) && $application_completed==true) echo "✓"; else echo "-"; ?></span>
                 <span class="stepper-label">Bewerbung vollständig</span>
               </div>
+              </a>
             </div>
 
         <div class="title-row" style="display: flex; justify-content: space-between;">

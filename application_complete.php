@@ -94,11 +94,30 @@
 
         <!-- page title -->
         <div class="page-title">
-            <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Application Status
+            <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Bewerbungsstatus
         </div>
 
         <!-- show message -->
         <?php 
+            if(isset($application_completed)  && $application_completed==true):
+                ?>
+            <div class="alert alert-success">
+                <?php echo "Deine Bewerbung ist erfolgreich eingereicht! Siehe alle Bewerbungen <a href=\"status_application.php\">hier</a>"; ?>
+            </div>
+            <?php 
+                endif;
+        ?>
+
+        <?php 
+            if(isset($application_completed)  && $application_completed==false):
+                ?>
+            <div class="alert alert-danger">
+                <?php echo "Deine Bewerbung ist nicht vollständig! Weiter zur <a href=\"facherwahl.php?id=$applicationid\">Fächerwahlliste</a>"; ?>
+            </div>
+            <?php 
+                endif;
+        ?>
+        <!-- <?php 
             if(isset($success_msg) && !empty($success_msg)):
             ?>
         <div class="alert alert-success">
@@ -117,7 +136,7 @@
         </div>
         <?php 
             endif;
-            ?>
+            ?> -->
 
     </div>
 </main>

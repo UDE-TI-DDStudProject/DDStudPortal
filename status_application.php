@@ -67,11 +67,12 @@
             if(isset($studentid) && !empty($studentid)){
                 $statement = $pdo->prepare("SELECT CASE WHEN ra.application_status_id IS NULL THEN 'under review' ELSE st.name END as application_status, 
                                         CASE WHEN ra.application_status_id IS NULL THEN -1 ELSE st.status_id END as application_status_id,      
-                                            ap.application_id, ap.created_at, ap.updated_at, ep.exchange_semester 
+                                            ap.application_id, ap.created_at, ap.updated_at, ep.exchange_semester, ra.comment, ex.exchange_id
                                             FROM $applicationDB ap 
                                             LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
                                             LEFT JOIN reviewed_application ra on ra.application_id = ap.application_id 
                                             LEFT JOIN status st on st.status_id = ra.application_status_id 
+                                            LEFT JOIN exchange ex on ex.application_id = ap.application_id 
                                             WHERE student_id = $studentid");
                 $result = $statement->execute();
                 $applications = array();
@@ -133,6 +134,7 @@
                         <th scope="col">Eingereicht am</th>
                         <th scope="col">Zuletzt bearbeitet am</th>
                         <th scope="col">Aktueller Stand</th>
+                        <th scope="col">Hinweis</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
@@ -146,6 +148,7 @@
                         <td><?php echo $application['created_at'] ?></td>
                         <td><?php echo $application['updated_at'] ?></td>
                         <td><?php echo $application['application_status'] ?></td>
+                        <td><?php echo $application['comment'] ?><?php if($application['application_status_id']==2):?> Zur <a href="exchange_checklist.php?id=<?php echo $application['exchange_id']; ?>">Auslandssemester</a><?php endif ?></td>
                         <td><a href="view_application.php?id=<?php echo $application['application_id']; ?>">Bewerbung
                                 öffnen</a></td>
                     </tr>

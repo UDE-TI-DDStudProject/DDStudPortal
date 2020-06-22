@@ -847,7 +847,7 @@
                             Priorität</label>
                         <div class="col-sm-9">
                             <select type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio"
-                                class="form-control form-control-sm" disabled>
+                                class="form-control form-control-sm">
                                 <option></option>
                                 <?php 
 				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,5)");
@@ -867,7 +867,7 @@
                             Priorität</label>
                         <div class="col-sm-9">
                             <select type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio"
-                                class="form-control form-control-sm" disabled>
+                                class="form-control form-control-sm" <?php if(empty($second_uni)) echo"disabled";?>>
                                 <option></option>
                                 <?php 
 				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,5)");
