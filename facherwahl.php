@@ -175,7 +175,7 @@ if(isset($_POST['save'])) {
             if($application_completed==true){
                 $success_msg = "Deine Bewerbung ist erfolgreich eingereicht! Siehe deine Bewerbung <a href=\"view_application.php?id=$applicationid\">hier</a>";
 
-                header("location: message.php?success=".$success_msg);
+                header("location: application_complete.php?id=".$applicationid."&success=".$success_msg);
                 exit;
             }
         }
