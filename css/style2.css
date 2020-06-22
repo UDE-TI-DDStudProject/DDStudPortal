@@ -274,6 +274,7 @@ form label {
 
 .stepper-circle {
 	display: inline-flex;
+	content: '✔';
 	align-content: center;
 	justify-content: center;
 	width: 1.5em;
@@ -284,12 +285,16 @@ form label {
 	color: #fff;
 	background-color: #6c757d;
 	border-radius: 1em;
+	/* background: url(../screenshots/check.svg) no-repeat center center;
+	background-size: contain; */
+	/* background-size: 100px 82px; */
 }
 
-.stepper-circle {
-	width: 200px;
-	height: 164px;
-	background: url(../screenshots/check.svg);
+.stepper-svg {
+	/* display: block;
+	width: 100px;
+	height: 80px;
+	background: url(../screenshots/check.svg) no-repeat; */
 }
 
 .stepper-label {
@@ -355,4 +360,18 @@ form label {
 	.stepper-item.complete .stepper-label {
 		display: none;
 	}
+}
+
+.admin-dashboard {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+.dashboard-item {
+	margin: 20px 20px 20px 20px;
+	padding: 5px 5px 5px 5px;
+	width: 20rem;
+	font-size: 12px;
 }

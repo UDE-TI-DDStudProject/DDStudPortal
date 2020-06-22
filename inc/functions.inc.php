@@ -47,6 +47,54 @@ function check_user() {
 }
 
 /**
+ * Checks that the admin is logged in. 
+ * @return Returns the row of the logged in user
+ */
+function check_admin() {
+	global $pdo;
+	
+	if(!isset($_SESSION['userid']) && isset($_COOKIE['identifier']) && isset($_COOKIE['securitytoken'])) {
+		$identifier = $_COOKIE['identifier'];
+		$securitytoken = $_COOKIE['securitytoken'];
+		
+		$statement = $pdo->prepare("SELECT * FROM securitytoken WHERE identifier = ?");
+		$result = $statement->execute(array($identifier));
+		$securitytoken_row = $statement->fetch();
+	
+		if(sha1($securitytoken) !== $securitytoken_row['securitytoken']) {
+			//Vermutlich wurde der Security Token gestohlen
+			//Hier ggf. eine Warnung o.ä. anzeigen
+			
+		} else { //Token war korrekt
+			//Setze neuen Token
+			$neuer_securitytoken = random_string();
+			$insert = $pdo->prepare("UPDATE securitytoken SET securitytoken = :securitytoken WHERE identifier = :identifier");
+			$insert->execute(array('securitytoken' => sha1($neuer_securitytoken), 'identifier' => $identifier));
+			setcookie("identifier",$identifier,time()+(3600*24*365)); //1 Jahr Gültigkeit
+			setcookie("securitytoken",$neuer_securitytoken,time()+(3600*24*365)); //1 Jahr Gültigkeit
+	
+			//Logge den Benutzer ein
+			$_SESSION['userid'] = $securitytoken_row['user_id'];
+		}
+	}
+	
+	
+	if(!isset($_SESSION['userid'])) {
+		return null;
+	}else{
+		$statement = $pdo->prepare("SELECT * FROM user WHERE user_id = :id and user_group_id = 2");
+		$result = $statement->execute(array('id' => $_SESSION['userid']));
+		$user = $statement->fetch();
+
+		if(empty($user['user_id'])){
+			return null;
+		}else{
+			return $user;
+		}
+	}
+}
+
+/**
  * Returns true when the user is checked in, else false
  */
 function is_checked_in() {
