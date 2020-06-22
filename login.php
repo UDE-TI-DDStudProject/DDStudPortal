@@ -36,7 +36,7 @@
                 setcookie("securitytoken",$securitytoken,time()+(3600*24*365)); //Valid for 1 year
             }
         
-            header("location: status.php");
+            header("location: status_application.php");
             exit;
         } else {
             $error_message =  "E-Mail oder Passwort war ungültig!";
