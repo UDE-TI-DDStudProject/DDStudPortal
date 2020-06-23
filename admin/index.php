@@ -28,7 +28,7 @@
             </div>
 
             <div class="title-button">
-                <form action="../logout.php" method="post">
+                <form action="logout.php" method="post">
                     <div class="text-right">
                         <button type="submit" class="btn btn-outline-secondary btn-sm" name="logout"> ausloggen</button>
                     </div>

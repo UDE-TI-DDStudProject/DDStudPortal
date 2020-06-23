@@ -94,7 +94,7 @@
 ?>
 
 <?php     
-    include("../templates/headerlogin.inc.php");  
+    include("templates/headerlogin.inc.php");  
 ?>
 
 <main class="container-fluid flex-fill">
@@ -325,5 +325,5 @@ $(document).ready(function(){
 </script>
 
 <?php 
-    include("../templates/footer.inc.php");
+    include("templates/footer.inc.php");
 ?>
