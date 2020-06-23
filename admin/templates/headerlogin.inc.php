@@ -14,7 +14,7 @@
         <!-- Bootstrap 4 core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <!-- style.css -->
-        <link rel="stylesheet" href="../css/style2.css">
+        <link rel="stylesheet" href="../css/style.css">
 
         <!-- jQuery -->
         <script src="../js/jquery.min.js"></script>
@@ -101,40 +101,8 @@
                         </li> -->
                     </ul>
                     <ul class="navbar-nav ml-auto">
-                        <!-- Dropdown menu Account-->
-                        <!-- <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="far fa-file"></i> Application
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#"><i class="fas fa-bell"></i> Application status</a>
-            <a class="dropdown-item" href="#"><i class="fas fa-plane-departure"></i> Before Departure</a>
-            <a class="dropdown-item" href="#"><i class="fas fa-plane-arrival"></i> After Departure</a>
-          </div>
-        </li> -->
-		
                         <li class="nav-item">
-                            <a class="nav-link" href="new_application.php"><i class="fas fa-pen"></i> Neue Bewerbung</a>
-                        </li>
-                        <!-- Dropdown menu Account-->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-alt"></i> Account
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                                <!-- <a class="dropdown-item" href="test_status.php"><i class="fas fa-home"></i> Profile Homepage</a> -->
-								<a class="dropdown-item" href="status_foreignsemester.php"><i class="fas fa-globe"></i>
-									Mein Auslandssemester</a>
-                                <!-- learning agreement, visa ... under mein Auslandssemester -->
-								<a class="dropdown-item" href="status_application.php"><i class="fas fa-pen"></i>
-									Meine Bewerbungen</a>
-								<a class="dropdown-item" href="settings.php"><i class="fas fa-cog"></i>
-                                    Einstellungen</a>
-                                <a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i>
-                                    Logout</a>
-								
-                            </div>
+                            <a class="nav-link" href="logout.php">Logout</a>
                         </li>
                     </ul>
                 </div>

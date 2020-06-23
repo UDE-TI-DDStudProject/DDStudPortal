@@ -27,60 +27,51 @@
                 <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Wilkommen zum Admin-Dashboard
             </div>
 
-            <div class="title-button">
+            <!-- <div class="title-button">
                 <form action="logout.php" method="post">
                     <div class="text-right">
                         <button type="submit" class="btn btn-outline-secondary btn-sm" name="logout"> ausloggen</button>
                     </div>
                 </form>
-            </div>
+            </div> -->
         </div>
 
         <!-- dashboard -->
         <div class="admin-dashboard">
-            <!-- add admin to admin_list -->
-            <div class="card dashboard-item">
-                <div class="card-body">
-                    <h5 class="card-title">Neuen Admin eintragen</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="add_admin.php" class="btn btn-primary">Klick hier</a>
-                </div>
-            </div>
-
-            <!-- edit facherwahlliste -->
-            <div class="card dashboard-item">
-                <div class="card-body">
-                    <h5 class="card-title">Fächerwahlliste bearbeiten</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a>
-                </div>
-            </div>
 
             <!-- edit facherwahlliste quota -->
-            <div class="card dashboard-item">
-                <div class="card-body">
-                    <h5 class="card-title">Kursplätze bearbeiten</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a>
-                </div>
+            <div class="dashboard-flex-item">
+                <h5 class="card-title">Kursplätze bearbeiten</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a>
             </div>
 
-            <!-- See all bewerbungen -->
-            <div class="card dashboard-item">
-                <div class="card-body">
-                    <h5 class="card-title">Offene Bewerbungen</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="open_applications.php" class="btn btn-primary">Klick hier</a>
-                </div>
+             <!-- See all bewerbungen -->
+            <div class="dashboard-flex-item">
+                <h5 class="card-title">Offene Bewerbungen</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <a href="open_applications.php" class="btn btn-primary">Klick hier</a>
             </div>
 
             <!-- See Exchange Facherwahlliste  -->
-            <div class="card dashboard-item">
-                <div class="card-body">
-                    <h5 class="card-title">Fächerwahlliste</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a>
-                </div>
+            <div class="dashboard-flex-item">
+                <h5 class="card-title">Fächerwahlliste</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a>
+            </div>
+
+            <!-- add admin to admin_list -->
+            <div class="dashboard-flex-item">
+                <h5 class="card-title">Neuen Admin eintragen</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <!-- <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a> -->
+            </div>
+
+            <!-- edit facherwahlliste -->
+            <div class="dashboard-flex-item">
+                <h5 class="card-title">Fächerwahlliste bearbeiten</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <!-- <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a> -->
             </div>
         
         </div>

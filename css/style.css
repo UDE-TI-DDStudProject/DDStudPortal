@@ -369,13 +369,23 @@ form label {
 	align-items: flex-start;
 }
 
-.dashboard-item {
-	margin: 20px 20px 20px 20px;
-	padding: 5px 5px 5px 5px;
-	width: 10rem;
-	font-size: 12px;
-}
-
 .form-control-sm {
 	font-size: 16px;
+}
+
+.dashboard-flex-item {
+	background-color: #fff;
+	padding: 30px;
+	width: 20rem;
+	margin: 20px;
+}
+
+.dashboard-flex-item p,
+.dashboard-flex-item a {
+	font-size: 16px;
+}
+
+.dashboard-flex-item a {
+	color: #fff;
+	background-color: #1f63a3;
 }
