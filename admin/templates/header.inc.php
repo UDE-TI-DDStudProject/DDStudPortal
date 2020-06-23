@@ -14,26 +14,14 @@
         <!-- Bootstrap 4 core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <!-- style.css -->
-        <!-- <link rel="stylesheet" href="css/style.css"> -->
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="./../css/style.css">
         <!-- <link rel="stylesheet" href="css/testlayout.css"> -->
 
         <!-- jQuery -->
-        <script src="js/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+        <script src="../js/jquery.min.js"></script>
 
         <!-- form validate -->
-        <script src="js/form-validate"></script>
-
-        <!-- jsPDF CDN -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.3/jspdf.plugin.autotable.min.js">
-        </script>
-
-        <!-- bootstrap stepper -->
-        <script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
+        <script src="../js/form-validate"></script>
 
     </head>
 
@@ -46,12 +34,12 @@
             <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #003D76;">
                 <!-- UDE Logo hyperlink -->
                 <a class="navbar-brand" href="#">
-                    <img src="screenshots/UDE-Logo1.png" width="150" height="70" class="d-inline-block align-top"
+                    <img src="../screenshots/UDE-Logo1.png" width="150" height="70" class="d-inline-block align-top"
                         alt="">
                 </a>
                 <!-- Exchange Logo hyperlink -->
                 <a class="navbar-brand" href="index.php">
-                    <img src="screenshots/worldwide.png" width="30" height="30" class="d-inline-block align-center"
+                    <img src="../screenshots/worldwide.png" width="30" height="30" class="d-inline-block align-center"
                         alt="">
                     Südostasien
                 </a>
@@ -71,7 +59,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-info-circle"></i> Informationen
+                                <i class="fas fa-user-alt"></i> Informationen
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <h6 class="dropdown-header">Application</h6>
@@ -86,37 +74,56 @@
                                 <a class="dropdown-item" href="#">After Exchange</a>
                             </div>
                         </li>
-                        <!-- <li class="nav-item">
-                            <a class="nav-link" href="new_application.php"><i class="fas fa-pen"></i> Neue Bewerbung</a>
-                        </li> -->
-                    </ul>
-                    <ul class="navbar-nav ml-auto">
-                        <!-- Dropdown menu Account-->
-                        <!-- <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="far fa-file"></i> Application
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#"><i class="fas fa-bell"></i> Application status</a>
-            <a class="dropdown-item" href="#"><i class="fas fa-plane-departure"></i> Before Departure</a>
-            <a class="dropdown-item" href="#"><i class="fas fa-plane-arrival"></i> After Departure</a>
-          </div>
-        </li> -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="status_application.php"><i class="fas fa-pen"></i>Bewerbung</a>
-                        </li>
-                        <!-- Dropdown menu Account-->
+                        <!-- Application Information-->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-alt"></i> Account
+                                <i class="fas fa-user-alt"></i> Application Process
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <h6 class="dropdown-header">Application</h6>
+                                <a class="dropdown-item" href="#">Exchange application</a>
+                                <a class="dropdown-item" href="#">Select courses</a>
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header">Exchange</h6>
+                                <a class="dropdown-item" href="#">Visa application</a>
+                            </div>
+                        </li>
+                        <!-- <li class="nav-item">
+          <a class="nav-link" href="#"><i class="fas fa-pen-square"></i> Apply now</a>
+        </li> -->
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Dropdown Login -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user-alt"></i> Login
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                                <!-- <a class="dropdown-item" href="test_status.php"><i class="fas fa-home"></i> Profile Homepage</a> -->
-                                <a class="dropdown-item" href="settings.php"><i class="fas fa-cog"></i>
-                                    Einstellungen</a>
-                                <a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i>
-                                    Logout</a>
+                                <form class="px-4 py-3" action="login.php" method="post">
+                                    <div class="form-group">
+                                        <label for="exampleDropdownFormEmail1">E-Mail</label>
+                                        <input name="email" type="email" class="form-control"
+                                            id="exampleDropdownFormEmail1" placeholder="E-Mail">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleDropdownFormPassword1">Passwort</label>
+                                        <input name="passwort" type="password" class="form-control"
+                                            id="exampleDropdownFormPassword1" placeholder="Passwort">
+                                    </div>
+                                    <div class="form-check">
+                                        <input name="rememberMe" type="checkbox" class="form-check-input"
+                                            id="dropdownCheck" checked>
+                                        <label class="form-check-label" for="dropdownCheck">
+                                            angemeldet bleiben
+                                        </label>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Anmelden</button>
+                                </form>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="register.php">Registrieren</a>
+                                <a class="dropdown-item" href="forgetpassword.php">Passwort vergessen?</a>
                             </div>
                         </li>
                     </ul>

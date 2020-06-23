@@ -1,7 +1,7 @@
 <?php 
     session_start();
-    require_once("inc/config.inc.php");
-    require_once("inc/functions.inc.php");
+    require_once("../inc/config.inc.php");
+    require_once("../inc/functions.inc.php");
 
     //redirect user to homepage if the user has already login
     $user = check_admin();
@@ -10,7 +10,7 @@
     $home_university = 4; 
 
     if(!isset($user)){
-        header("location: admin_login.php");
+        header("location: login.php");
         exit;
     }
 
@@ -87,7 +87,7 @@
 ?>
 
 <?php     
-    include("templates/headerlogin.inc.php");  
+    include("../templates/headerlogin.inc.php");  
 ?>
 
 <main class="container-fluid flex-fill">
@@ -97,11 +97,11 @@
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
-                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Äquivalenz-Kursplätze bearbeiten
+                <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Äquivalenz-Kursplätze bearbeiten
             </div>
 
             <div class="title-button">
-                <form action="admin_home.php" method="post">
+                <form action="index.php" method="post">
                     <div class="text-right">
                         <button type="submit" class="btn btn-outline-secondary btn-sm" name="logout"> Zurück zum Dashboard</button>
                     </div>
@@ -203,7 +203,7 @@
             </div>
             <div class="form-group row col-auto">
             <div class="col-auto">
-            <button type="submit" class="btn btn-primary btn-sm" name="save_filter" value="filterchanges" >Suchen</button>
+            <button type="submit" class="btn btn-primary btn-sm" name="save_filter" value="filterchanged" >Suchen</button>
             </div>
             </div>
           </div>
@@ -308,7 +308,7 @@
 
             <!-- save -->
             <div class="text-right">
-                <button type="submit" class="btn btn-primary" name="save_quota" value="quota-table" >Speichern</button>
+                <button type="submit" class="btn btn-primary" name="save_quota" value="quotachanged" >Speichern</button>
             </div>
         </form>
         <?php endif; ?>
@@ -333,5 +333,5 @@ $(document).ready(function(){
 
 
 <?php 
-    include("templates/footer.inc.php");
+    include("../templates/footer.inc.php");
 ?>

@@ -1,7 +1,7 @@
 <?php 
     session_start();
-    require_once("inc/config.inc.php");
-    require_once("inc/functions.inc.php");
+    require_once("../inc/config.inc.php");
+    require_once("../inc/functions.inc.php");
 
     //redirect user to homepage if the user has already login
     $user = check_admin();
@@ -10,9 +10,12 @@
     $home_university = 4; 
 
     if(!isset($user)){
-        header("location: admin_login.php");
+        header("location: login.php");
         exit;
     }
+
+    //set server location
+    $file_server = "../uploads";
 
     //after filter change
     if(isset($_GET['save_filter'])){
@@ -91,10 +94,82 @@
         }
     }
 
+    if(isset($_POST['finalize'])){
+        
+        //finalize reviewed applicatin to exchange list
+        $error = false;
+        $auslandssemester = $_GET['auslandssemester'];
+        $foreignuni = $_GET['foreignuni'];
+        $abschluss = $_GET['abschluss'];
+
+        if(empty($auslandssemester) || empty($foreignuni) || empty($abschluss)){
+            $error = true;
+            $error_msg = "Bitte alle Felder auswählen!";
+        }
+
+        if(!$error){
+
+            /*Begin transaction*/
+			try {
+
+				$pdo->beginTransaction();
+                //get approved applications
+                $statement = $pdo->prepare("SELECT ra.application_id FROM reviewed_application ra
+                                            LEFT JOIN application ap on ap.application_id = ra.application_id 
+                                            LEFT JOIN study_home sh on sh.application_id = ap.application_id 
+                                            WHERE ra.application_status_id = 2 and ap.exchange_period_id=:id and sh.home_degree_id = :home_degree");
+                $result = $statement->execute(array('id'=>$auslandssemester,'home_degree'=>$abschluss));
+                $approved_applications = array();
+                while($application = $statement->fetch()){
+                    array_push($approved_applications, $application['application_id']);
+                }
+
+                //get exchange applications
+                $statement = $pdo->prepare("SELECT ex.application_id FROM exchange ex
+                                            LEFT JOIN application ap on ap.application_id = ex.application_id 
+                                            LEFT JOIN study_home sh on sh.application_id = ap.application_id 
+                                            WHERE ap.exchange_period_id=:id and sh.home_degree_id = :home_degree");
+                $result = $statement->execute(array('id'=>$auslandssemester,'home_degree'=>$abschluss));
+                $exchange_applications = array();
+                while($application = $statement->fetch()){
+                    array_push($exchange_applications, $application['application_id']);
+                }
+
+                foreach($approved_applications as $application){
+                    if(!in_array($application, $exchange_applications)){
+                        //get application
+                        $statement = $pdo->prepare("SELECT first_uni_id FROM priority WHERE application_id = :application_id");
+                        $result = $statement->execute(array('application_id'=>$application));
+                        $foreign_uni = $statement->fetch();
+
+                        //add to exchange
+                        $statement = $pdo->prepare("INSERT INTO exchange(application_id, foreign_uni_id) VALUES(:application_id, :foreign_uni_id)");
+                        $result = $statement->execute(array('application_id'=>$application,'foreign_uni_id'=>$foreign_uni['first_uni_id']));
+                    }
+                }
+
+                foreach($exchange_applications as $exchange){
+                    if(!in_array($exchange, $approved_applications)){
+                        //remove exchange
+                        $statement = $pdo->prepare("DELETE FROM exchange WHERE application_id = :application_id");
+                        $result = $statement->execute(array('application_id'=>$application));
+                    }
+                }
+                $pdo->commit();
+                $success_msg = 'Liste gespeichert';
+        
+            }catch (Exception $e){
+                $pdo->rollback();
+                throw $e;
+                $error = true;
+                $error_msg = $e->get_message();
+            }
+        }
+    }
 ?>
 
 <?php     
-    include("templates/headerlogin.inc.php");  
+    include("../templates/headerlogin.inc.php");  
 ?>
 
 <main class="container-fluid flex-fill">
@@ -104,11 +179,11 @@
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
-                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Fächerwahlliste des Auslandssemesters
+                <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Offene Bewerbungen
             </div>
 
             <div class="title-button">
-                <form action="admin_home.php" method="post">
+                <form action="index.php" method="post">
                     <div class="text-right">
                         <button type="submit" class="btn btn-outline-secondary btn-sm" name="logout"> Zurück zum Dashboard</button>
                     </div>
@@ -177,7 +252,7 @@
             </div>
             </div>
             <div class="form-group row col-auto">
-            <label for="abschluss" class="col-auto col-form-label col-form-label-sm">Abschluss:</label>
+            <label for="abschluss" class="col-auto col-form-label col-form-label-sm">*Abschluss:</label>
             <div class="col-auto">
               <select class="form-control form-control-sm" placeholder="Abschluss" name="abschluss">
               <option></option>
@@ -218,6 +293,7 @@
                             <th scope="col" width="20%" align="center">1. Priorität</th>
                             <th scope="col" width="20%" align="center">2. Priorität</th>
                             <th scope="col" width="20%" align="center">3. Priorität</th>
+                            <th scope="col" width="20%" align="center">Dokumente</th>
                         </tr>
                     </thead>
 
@@ -227,11 +303,12 @@
 
 
                     //get all filtered equivalence
-                    $statement = $pdo->prepare("SELECT ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ap.success_factor, uni1.name as uni1, uni2.name as uni2, uni3.name as uni3 , ra.comment 
+                    $statement = $pdo->prepare("SELECT us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ap.success_factor, uni1.name as uni1, uni2.name as uni2, uni3.name as uni3 , ra.comment 
                                                 FROM application ap 
                                                 LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
                                                 LEFT JOIN reviewed_application ra on ra.application_id = ap.application_id 
                                                 LEFT JOIN student st on st.student_id = ap.student_id 
+                                                LEFT JOIN user us on us.user_id = st.user_id 
                                                 LEFT JOIN study_home sh on sh.application_id = ap.application_id 
                                                 LEFT JOIN priority pr on pr.application_id = ap.application_id 
                                                 LEFT JOIN university uni1 on uni1.university_id = pr.first_uni_id 
@@ -260,6 +337,43 @@
                         $statement1 = $pdo->prepare("SELECT * FROM reviewed_application WHERE application_id = :id");
                         $result1 = $statement1->execute(array(":id"=>$row['application_id']));
                         $reviewed = $statement1->fetch();
+
+                        //get 3 chars of first name
+                        $firstname_short = $row["firstname"];
+                        $lastname = $row["lastname"];
+                        $home_matno = $row["home_matno"];
+                        $first_uni = $row["uni1"];
+
+                        //get three characters of first name
+                        if(strlen($firstname_short) >= 3) {
+                            $firstname_short = substr($firstname_short, 0, 3);
+                        }
+                    
+                        //check uploaded document
+	                    if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste")) {
+                          $F_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
+                          if(!empty($F_files) && file_exists($F_files[0])){
+                            $F_name = basename($F_files[0]);
+                          }
+                        }
+                        if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben")) {
+                          $M_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
+                          if(!empty($M_files) && file_exists($M_files[0])){
+                            $M_name = basename($M_files[0]);
+                          }
+                        }
+                        if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf")) {
+                          $L_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
+                          if(!empty($L_files) && file_exists($L_files[0])){
+                            $L_name = basename($L_files[0]);
+                          }
+                        }
+                        if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript")) {
+                          $T_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript"."/". '*', GLOB_MARK);
+                          if(!empty($T_files) && file_exists($T_files[0])){
+                            $T_name = basename($T_files[0]);
+                          }
+	                    }
                         ?>
                     
 
@@ -283,6 +397,12 @@
                             <td align="center"><?php echo $row['uni1'] ?></td>
                             <td align="center"><?php echo $row['uni2'] ?></td>
                             <td align="center"><?php echo $row['uni3'] ?></td>
+                            <td align="center">
+                                <?php if(isset($T_name)): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $T_files[0]; ?>">Transkript</a><br><?php endif;?>
+                                <?php if(isset($L_name)): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $L_files[0]; ?>">Lebenslauf</a><br><?php endif;?>
+                                <?php if(isset($M_name)): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $M_files[0]; ?>">Motivationsschreiben</a><?php endif;?>
+                            </td>
+
                         </tr>
 
                         <?php
@@ -294,6 +414,7 @@
             <!-- save -->
             <div class="text-right">
                 <button type="submit" class="btn btn-primary" name="save_list" value="save_list" >Speichern</button>
+                <button type="submit" class="btn btn-success" name="finalize" value="finalize" >Zum Abschluss</button>
             </div>
         </form>
         <?php endif; ?>
@@ -301,7 +422,20 @@
     </div>
 </main>
 
+<!-- ask for confirmation upon filter change -->
+<script>
+// $(document).ready(function(){
+//     $("#filter-form").submit(function(){
+//         if($("#equivalence_quota").length)
+//         {
+//             if(!confirm("Diese Seite wird erneut aktualisieren. Die nicht gespeicherte Daten werden verloren sein. Weiter?")){
+//                 e.preventDefault();
+//             }
+//         }
 
+//     });
+// });
+</script>
 
 <!-- change row color upon checked -->
 <script>
@@ -325,5 +459,5 @@ $(document).ready(function(){
 </script>
 
 <?php 
-    include("templates/footer.inc.php");
+    include("../templates/footer.inc.php");
 ?>

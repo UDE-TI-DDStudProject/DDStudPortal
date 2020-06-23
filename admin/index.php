@@ -1,18 +1,15 @@
 <?php 
     session_start();
-    require_once("inc/config.inc.php");
-    require_once("inc/functions.inc.php");
+    require_once("../inc/config.inc.php");
+    require_once("../inc/functions.inc.php");
 
     //redirect user to homepage if the user has already login
     $user = check_admin();
 
     if(!isset($user)){
-        header("location: admin_login.php");
+        header("location: login.php");
         exit;
     }
-
-
-
 
 ?>
 
@@ -27,11 +24,11 @@
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
-                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Wilkommen zum Admin-Dashboard
+                <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Wilkommen zum Admin-Dashboard
             </div>
 
             <div class="title-button">
-                <form action="logout.php" method="post">
+                <form action="../logout.php" method="post">
                     <div class="text-right">
                         <button type="submit" class="btn btn-outline-secondary btn-sm" name="logout"> ausloggen</button>
                     </div>
@@ -55,7 +52,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Fächerwahlliste bearbeiten</h5>
                     <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="admin_edit_equivalence_list.php" class="btn btn-primary">Klick hier</a>
+                    <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a>
                 </div>
             </div>
 
@@ -64,16 +61,16 @@
                 <div class="card-body">
                     <h5 class="card-title">Kursplätze bearbeiten</h5>
                     <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="admin_edit_equivalence_quota.php" class="btn btn-primary">Klick hier</a>
+                    <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a>
                 </div>
             </div>
 
             <!-- See all bewerbungen -->
             <div class="card dashboard-item">
                 <div class="card-body">
-                    <h5 class="card-title">Alle Bewerbungen</h5>
+                    <h5 class="card-title">Offene Bewerbungen</h5>
                     <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="admin_edit_applications.php" class="btn btn-primary">Klick hier</a>
+                    <a href="open_applications.php" class="btn btn-primary">Klick hier</a>
                 </div>
             </div>
 
@@ -82,7 +79,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Fächerwahlliste</h5>
                     <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="admin_overview_exchange_equivalence.php" class="btn btn-primary">Klick hier</a>
+                    <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a>
                 </div>
             </div>
         

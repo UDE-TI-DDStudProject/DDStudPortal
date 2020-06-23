@@ -1,13 +1,13 @@
 <?php 
     session_start();
-    require_once("inc/config.inc.php");
-    require_once("inc/functions.inc.php");
+    require_once("../inc/config.inc.php");
+    require_once("../inc/functions.inc.php");
 
     //redirect user to homepage if the user has already login
     $user = check_admin();
 
     if(isset($user)){
-        header("location: admin_home.php");
+        header("location: index.php");
         exit;
     }
 
@@ -36,7 +36,7 @@
                 setcookie("securitytoken",$securitytoken,time()+(3600*24*365)); //Valid for 1 year
             }
         
-            header("location: admin_home.php");
+            header("location: index.php");
             exit;
         } else {
             $error_message =  "E-Mail oder Passwort war ungültig!";
@@ -46,7 +46,7 @@
 ?>
 
 <?php     
-    include("templates/header.inc.php");  
+    include("../templates/header.inc.php");  
 ?>
 
 <main class="container-fluid flex-fill">
@@ -54,7 +54,7 @@
 
         <!-- page title -->
         <div class="page-title">
-            <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Admin Login
+            <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Admin Login
         </div>
 
         <?php if(isset($error_message)) echo 
@@ -84,7 +84,7 @@
             <button type="submit" class="btn btn-primary btn-block" id="btnLogin" name="loginMain">Login</button>
         </form>
         <br>
-        <!-- <small><a href="forgetpassword.php">Passwort vergessen</a></small> -->
+        <small><a href="register.php">Registrieren</a></small>
     </div>
 </main>
 
@@ -107,5 +107,5 @@ $(document).ready(function() {
 </script>
 
 <?php 
-    include("templates/footer.inc.php");
+    include("../templates/footer.inc.php");
 ?>

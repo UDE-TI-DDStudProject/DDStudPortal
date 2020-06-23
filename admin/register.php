@@ -1,13 +1,13 @@
 <?php
     session_start();
-    require_once("inc/config.inc.php");
-    require_once("inc/functions.inc.php");
+    require_once("../inc/config.inc.php");
+    require_once("../inc/functions.inc.php");
 
     //redirect admin to login page if the user is not login
     $user = check_admin();
 
     if(isset($user)){
-        header("location: admin_home.php");
+        header("location: index.php");
         exit;
     }
 
@@ -76,7 +76,7 @@
         $result = $statement->execute(array('salutationid' => $salutationid, 'email' => $email, 'passwort' => $passwort_hash, 'vorname' => $vorname, 'nachname' => $nachname));
 
         if($result) {
-          $success_message = 'Du wurdest erfolgreich registriert. <a href="admin_login.php">Zum Login</a>';
+          $success_message = 'Du wurdest erfolgreich registriert. <a href="login.php">Zum Login</a>';
         } else {
           $error_message = 'Beim Abspeichern ist leider ein Fehler aufgetreten';
         }
@@ -86,7 +86,7 @@
 ?>
 
 <?php
-    include("templates/header.inc.php");
+    include("../templates/header.inc.php");
 ?>
 
 <main class="container-fluid flex-fill">
@@ -94,7 +94,7 @@
 
         <!-- page title -->
         <div class="page-title">
-            <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Admin Registrieren
+            <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Admin Registrieren
         </div>
 
         <?php if(isset($error_message)) echo
@@ -161,7 +161,7 @@
                 name="register">Registrieren</button>
         </form>
         <br>
-        <small><a href="admin_login.php">Login hier</a></small>
+        <small><a href="login.php">Login hier</a></small>
     </div>
 </main>
 
@@ -196,5 +196,5 @@ $(document).ready(function() {
 </script>
 
 <?php
-    include("templates/footer.inc.php");
+    include("../templates/footer.inc.php");
 ?>
