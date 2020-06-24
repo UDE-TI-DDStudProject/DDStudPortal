@@ -6,13 +6,17 @@
     //redirect user to homepage if the user has already login
     $user = check_admin();
 
-    // admin home university = UDE
-    $home_university = 4; 
-
     if(!isset($user)){
         header("location: login.php");
         exit;
     }
+
+        // admin home university = UDE
+        $home_university = 4; 
+
+
+     //set server location
+     $file_server = "../uploads";
 
     //after filter change
     if(isset($_GET['save_filter'])){
@@ -45,37 +49,20 @@
             $error_msg = "Bitte alle Felder auswählen!";
         }
 
-        if(!empty($_POST['reviewed']) && !$error) {
+        if(!empty($_POST['student_equivalence_status']) && !$error) {
 			/*Begin transaction*/
 			try {
 
 				$pdo->beginTransaction();
 
-				foreach ($_POST['reviewed'] as $application_id => $application_status){
-                    if(isset($_POST['reviewed']) && !empty($_POST['reviewed'])){
-                        if(isset($application_status) && !empty($application_status)){
+				foreach ($_POST['student_equivalence'] as $equivalence_id => $application_id){
 
-                            $statement = $pdo->prepare("SELECT * FROM reviewed_application WHERE application_id =:id");
-                            $result = $statement->execute(array('id'=>$application_id));
-                            $application = $statement->fetch();
-                        
-                            if(empty($application)){
-                                if(empty($_POST['comment'][$application_id])){
-                                    $statement1 = $pdo->prepare("INSERT INTO reviewed_application(application_id, application_status_id, reviewed_by_user_id) VALUES(:application_id, :application_status_id, :reviewed_by_user_id)");
-                                }else{
-                                    $comment = $_POST['comment'][$application_id];
-                                    $statement1 = $pdo->prepare("INSERT INTO reviewed_application(application_id, application_status_id, reviewed_by_user_id, comment) VALUES(:application_id, :application_status_id, :reviewed_by_user_id, '$comment')");
-                                }
-                            }else{
-                                if(empty($_POST['comment'][$application_id])){
-                                    $statement1 = $pdo->prepare("UPDATE reviewed_application set application_status_id = :application_status_id, reviewed_by_user_id = :reviewed_by_user_id WHERE application_id =:application_id");
-                                }else{
-                                    $comment = $_POST['comment'][$application_id];
-                                    $statement1 = $pdo->prepare("UPDATE reviewed_application set application_status_id = :application_status_id, reviewed_by_user_id = :reviewed_by_user_id, comment = '$comment' WHERE application_id =:application_id");
-                                }
-                            }    
-                            $result1 = $statement1->execute(array('application_id'=>$application_id, 'application_status_id'=>$application_status, 'reviewed_by_user_id'=>$user['user_id']));
-                        }
+                    if(isset($_POST['student_equivalence_status'][$equivalence_id.$application_id])){
+
+                        $equivalence_status = $_POST['student_equivalence_status'][$equivalence_id.$application_id];
+
+                        $statement = $pdo->prepare("UPDATE applied_equivalence SET application_status_id = $equivalence_status WHERE application_id =:application_id AND equivalence_id = :equivalence_id");
+                        $result = $statement->execute(array('application_id'=>$application_id, 'equivalence_id'=>$equivalence_id));
                     }
                 }
                 
@@ -202,22 +189,29 @@
 
         <!-- equivalence-table-form -->
         <?php if(isset($show_table)&& $show_table==true): ?>
+
+            <!-- checkbox button -->
+            <div class="form-check form-check-inline">
+                <input name="applied_only" class="form-check-input form-control-sm" type="checkbox" id="applied_only" value="applied_only">
+                <label class="form-check-label" for="applied_only" style="font-size:16px;">Nur bewerbte Äquavalenz zeigen</label>
+            </div>
+
         <form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post">
             
         <div class="table-responsive">
-                <table class="table table-hover table-sm" id="equivalence_quota" style="text-align:center;font-size:16px;">
+                <table class="table table-hover table-sm" id="equivalence_list" style="text-align:center;font-size:14px;">
                     <thead>
                         <tr style="background-color: #003D76; color: white;">
-                            <th scope="col" width="5%" align="center">annehmen</th>
-                            <th scope="col" width="5%" align="center">ablehnen</th>
-                            <th scope="col" width="50%" align="center">Hinweis</th>
-                            <th scope="col" width="10%" align="center">Matrikulationnummer</th>
-                            <th scope="col" width="15%" align="center">Studiengang</th>
-                            <th scope="col" width="10%" align="center">Fachsemester</th>
-                            <th scope="col" width="10%" align="center">Erfolgsfaktor</th>
-                            <th scope="col" width="20%" align="center">1. Priorität</th>
-                            <th scope="col" width="20%" align="center">2. Priorität</th>
-                            <th scope="col" width="20%" align="center">3. Priorität</th>
+                            <th scope="col" width="8%" align="center">Siehe Bewerbungen</th>
+                            <th scope="col" width="8%" align="center">Anzahl Bewerbungen</th>
+                            <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
+                            <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
+                            <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
+                            <th scope="col" width="11%" align="center">Credits Partner-Uni</th>
+                            <th scope="col" width="25%" align="center">Kurs Partner-Uni</th>
+                            <th scope="col" width="25%" align="center">Gültig Für</th>
+                            <th scope="col" width="5%" align="center">Status</th>
+                            <th scope="col" width="5%" align="center">Zuletzt Aktualisiert</th>
                         </tr>
                     </thead>
 
@@ -225,65 +219,188 @@
 
                     <?php
 
-
-                    //get all filtered equivalence
-                    $statement = $pdo->prepare("SELECT ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ap.success_factor, uni1.name as uni1, uni2.name as uni2, uni3.name as uni3 , ra.comment 
-                                                FROM application ap 
-                                                LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
-                                                LEFT JOIN reviewed_application ra on ra.application_id = ap.application_id 
-                                                LEFT JOIN student st on st.student_id = ap.student_id 
-                                                LEFT JOIN study_home sh on sh.application_id = ap.application_id 
-                                                LEFT JOIN priority pr on pr.application_id = ap.application_id 
-                                                LEFT JOIN university uni1 on uni1.university_id = pr.first_uni_id 
-                                                LEFT JOIN university uni2 on uni2.university_id = pr.second_uni_id 
-                                                LEFT JOIN university uni3 on uni3.university_id = pr.third_uni_id 
-                                                LEFT JOIN course cr on cr.course_id = sh.home_course_id 
-                                                WHERE ap.exchange_period_id = $auslandssemester and sh.home_degree_id = $abschluss and pr.first_uni_id = $foreignuni 
-                                                ORDER BY ap.success_factor DESC");
-                
-                    $result = $statement->execute();
+                            //get all equivalence
+                            $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
+                            s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
+                            ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at ,
+                            (SELECT COUNT(*) FROM applied_equivalence ae 
+                                                    LEFT JOIN application ap on ap.application_id = ae.application_id 
+                                                    WHERE ap.exchange_period_id = $auslandssemester AND ae.equivalence_id = es.equivalence_id) as applied_count,
+                            (SELECT quota FROM equivalence_quota eq WHERE eq.equivalence_id = es.equivalence_id and eq.exchange_period_id = $auslandssemester) as max_count                          
+                            FROM equivalent_subjects es
+                            LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
+                            LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
+                            LEFT JOIN status st ON st.status_id = es.status_id
+                            WHERE s1.university_id = $home_university AND s2.university_id = $foreignuni AND es.valid_degree_id = $abschluss 
+                            ORDER BY applied_count DESC, st.name ASC, s1.subject_title ASC");
+                        
+                            $result = $statement->execute();
                     
-                    // how many application per period should be approved
-                    $max_count = 10;
-                    $count = 0;
+                    while($equivalence = $statement->fetch()) {
 
-                    while($row = $statement->fetch()) {
-
-                        $count += 1;
-
-                        if($count <= $max_count){
-                            $suggested = true;
+                        //check course validity
+                        $statement1 = $pdo->prepare("SELECT cs.course_id, cs.name FROM equivalence_course ec 
+                        LEFT JOIN course cs ON cs.course_id = ec.course_id 
+                        WHERE ec.equivalence_id = :id");
+                    
+                        $result1 = $statement1->execute(array('id'=>$equivalence['equivalence_id']));
+                        $validcourses = array();
+                        $validcoursesids = array();
+                        while($row1 = $statement1->fetch()){
+                            array_push($validcourses, $row1['name']);
+                            array_push($validcoursesids, $row1['course_id']);
+                        }
+                        if(count($validcourses) == 0){
+                            $forAll = true;
                         }else{
-                            $suggested = false;
+                            $forAll = false;
+                            $validcoursesname = implode(",", $validcourses); //convert array to string
                         }
 
-                        $statement1 = $pdo->prepare("SELECT * FROM reviewed_application WHERE application_id = :id");
-                        $result1 = $statement1->execute(array(":id"=>$row['application_id']));
-                        $reviewed = $statement1->fetch();
+
                         ?>
                     
+                            <tr id="<?php if($equivalence['applied_count'] > 0) echo "1"; else echo "0"; ?>" >
+                                <td align="center"><a class="expand-btn" data-toggle="collapse" href="#row<?php echo $equivalence['equivalence_id']?>" role="button" aria-expanded="false" aria-controls="row<?php echo $equivalence['equivalence_id']?>"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td>
+                                <td align="center"><?php echo $equivalence['applied_count'] ?></td>
+                                <td align="center"><?php echo $equivalence['home_subject_code'] ?></td>
+                                <td align="center"><?php echo $equivalence['home_subject_credits'] ?></td>
+                                <td align="center"><?php echo $equivalence['home_subject_title'] ?></td>
+                                <td align="center"><?php echo $equivalence['foreign_subject_credits'] ?></td>
+                                <td align="center"><?php echo $equivalence['foreign_subject_title'] ?></td>
+                                <td align="center"><?php if($forAll) echo "alle"; else if(isset($validcoursesname))echo $validcoursesname ?></td>
+                                <td align="center"><?php echo $equivalence['status'] ?></td>
+                                <td align="center"><?php echo $equivalence['updated_at'] ?></td>
+                            </tr>
 
-                        <tr class="<?php if(!empty($reviewed) && $reviewed['application_status_id'] == 2) echo "table-success"; else if(!empty($reviewed) && $reviewed['application_status_id'] == 3) echo "table-danger"; else if($suggested) echo "table-info"; else echo "table-secondary"?>">
+                            <?php 
+                                //if at least one student applied for the equivalence, then create a row, in that row create a table to show all students that applied for this equivalence
+                                if($equivalence['applied_count']>0):?>
+                                    
+                                    <tr>
+                                        <td colspan="10"  class="collapse multi-collapse" id="row<?php echo $equivalence['equivalence_id']?>">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover table-sm" id="student_equivalence" style="text-align:center;font-size:14px;">
+                                                    <thead>
+                                                        <tr style="background-color: #0076e1; color: white;">
+                                                            <th scope="col" width="5%" align="center">annehmen</th>
+                                                            <th scope="col" width="5%" align="center">ablehnen</th>
+                                                            <th scope="col" width="10%" align="center">Matrikulationnummer</th>
+                                                            <th scope="col" width="15%" align="center">Studiengang</th>
+                                                            <th scope="col" width="10%" align="center">Fachsemester</th>
+                                                            <th scope="col" width="10%" align="center">Erfolgsfaktor</th>
+                                                            <th scope="col" width="10%" align="center">Dokumente</th>
+                                                        </tr>
+                                                    </thead>
 
-                            <td align="center">
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" name="reviewed[<?php echo $row['application_id'] ?>]" id="2" value="2" <?php if(!empty($reviewed) && $reviewed['application_status_id'] == 2) echo "checked" ?>>
-                                </div>
-                            </td>
-                            <td align="center">
-                                <div class="form-check form-check-inline">
-                                  <input class="form-check-input" type="radio" name="reviewed[<?php echo $row['application_id'] ?>]" id="3" value="3" <?php if(!empty($reviewed) && $reviewed['application_status_id'] == 3) echo "checked" ?>>
-                                </div>
-                            </td>
-                            <td align="center"><textarea class="form-control form-control-sm" cols="30" rows="2" name="comment[<?php echo $row['application_id']?>]" id="comment" ><?php if(isset($row['comment'])) echo $row['comment'];?></textarea></td>
-                            <td align="center"><?php echo $row['home_matno'] ?></td>
-                            <td align="center"><?php echo $row['home_course'] ?></td>
-                            <td align="center"><?php echo $row['home_semester'] ?></td>
-                            <td align="center"><?php echo $row['success_factor'] ?></td>
-                            <td align="center"><?php echo $row['uni1'] ?></td>
-                            <td align="center"><?php echo $row['uni2'] ?></td>
-                            <td align="center"><?php echo $row['uni3'] ?></td>
-                        </tr>
+                                                    <tbody>
+
+                                                        <?php
+                                                        //get all approved students that applied this equivalence
+                                                        $statement3 = $pdo->prepare("SELECT ae.application_status_id, us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ap.success_factor, uni1.name as uni1  
+                                                        FROM applied_equivalence ae 
+                                                        LEFT JOIN reviewed_application ra on ra.application_id = ae.application_id 
+                                                        LEFT JOIN application ap on ap.application_id = ra.application_id 
+                                                        LEFT JOIN student st on st.student_id = ap.student_id 
+                                                        LEFT JOIN user us on us.user_id = st.user_id 
+                                                        LEFT JOIN study_home sh on sh.application_id = ap.application_id 
+                                                        LEFT JOIN course cr on cr.course_id = sh.home_course_id 
+                                                        LEFT JOIN priority pr on pr.application_id = ap.application_id 
+                                                        LEFT JOIN university uni1 on uni1.university_id = pr.first_uni_id 
+                                                        WHERE ra.application_status_id = 2 AND ap.exchange_period_id = $auslandssemester and sh.home_degree_id = $abschluss and ae.equivalence_id = :id 
+                                                        ORDER BY ap.success_factor DESC");
+
+                                                        $result3 = $statement3->execute(array('id'=>$equivalence['equivalence_id']));
+
+                                                        // how many application per period should be approved
+                                                        $max_count = $equivalence['max_count'];
+                                                        $count = 0;
+
+                                                        while($student = $statement3->fetch()){
+                                                            $count += 1;
+                                                        
+                                                            if(empty($max_count)){
+                                                                $suggested = true;
+                                                            }else{
+                                                                if($count <= $max_count){
+                                                                    $suggested = true;
+                                                                }else{
+                                                                    $suggested = false;
+                                                                }
+                                                            }
+
+                                                            //get 3 chars of first name
+                                                            $firstname_short = $student["firstname"];
+                                                            $lastname = $student["lastname"];
+                                                            $home_matno = $student["home_matno"];
+                                                            $first_uni = $student["uni1"];
+
+                                                            //get three characters of first name
+                                                            if(strlen($firstname_short) >= 3) {
+                                                                $firstname_short = substr($firstname_short, 0, 3);
+                                                            }
+                                                        
+                                                            //check uploaded document
+	                                                        if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste")) {
+                                                              $F_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
+                                                              if(!empty($F_files) && file_exists($F_files[0])){
+                                                                $F_name = basename($F_files[0]);
+                                                              }
+                                                            }
+                                                            if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben")) {
+                                                              $M_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
+                                                              if(!empty($M_files) && file_exists($M_files[0])){
+                                                                $M_name = basename($M_files[0]);
+                                                              }
+                                                            }
+                                                            if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf")) {
+                                                              $L_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
+                                                              if(!empty($L_files) && file_exists($L_files[0])){
+                                                                $L_name = basename($L_files[0]);
+                                                              }
+                                                            }
+                                                            if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript")) {
+                                                              $T_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript"."/". '*', GLOB_MARK);
+                                                              if(!empty($T_files) && file_exists($T_files[0])){
+                                                                $T_name = basename($T_files[0]);
+                                                              }
+	                                                        }
+                                                            
+                                                            ?>
+
+                                                            <input type="hidden" name="student_equivalence[<?php echo $equivalence['equivalence_id'] ?>]" value="<?php echo $student['application_id']?>">
+
+
+                                                            <tr class="<?php if(!empty($student) && $student['application_status_id'] == 2) echo "table-success"; else if(!empty($student) && $student['application_status_id'] == 3) echo "table-danger"; else if($suggested) echo "table-info"; else echo "table-secondary"?>">
+                                                                <td align="center">
+                                                                    <div class="form-check form-check-inline">
+                                                                      <input class="form-check-input" type="radio" name="student_equivalence_status[<?php echo $equivalence['equivalence_id'].$student['application_id'] ?>]" id="2" value="2" <?php if(!empty($student) && $student['application_status_id'] == 2) echo "checked" ?>>
+                                                                    </div>
+                                                                </td>
+                                                                <td align="center">
+                                                                    <div class="form-check form-check-inline">
+                                                                      <input class="form-check-input" type="radio" name="student_equivalence_status[<?php echo  $equivalence['equivalence_id'].$student['application_id'] ?>]" id="3" value="3" <?php if(!empty($student) && $student['application_status_id'] == 3) echo "checked" ?>>
+                                                                    </div>
+                                                                </td>
+                                                                <td align="center"><?php echo $student['home_matno'] ?></td>
+                                                                <td align="center"><?php echo $student['home_course'] ?></td>
+                                                                <td align="center"><?php echo $student['home_semester'] ?></td>
+                                                                <td align="center"><?php echo $student['success_factor'] ?></td>
+                                                                <td align="center">
+                                                                    <?php if(isset($T_name)): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $T_files[0]; ?>">Transkript</a><br><?php endif;?>
+                                                                    <?php if(isset($L_name)): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $L_files[0]; ?>">Lebenslauf</a><br><?php endif;?>
+                                                                    <?php if(isset($M_name)): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $M_files[0]; ?>">Motivationsschreiben</a><?php endif;?>
+                                                                </td>
+                                                            </tr>
+
+                                                        <?php
+                                                        }?>  
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>    
 
                         <?php
                     }?>
@@ -320,6 +437,33 @@ $(document).ready(function(){
             $(parent_tr).removeClass(); //clear class
             $(parent_tr).addClass("table-danger"); //change row color
         }
+    });
+});
+</script>
+
+<!-- show/hide rows upon checkbox checked/unchecked -->
+<script>
+$(document).ready(function(){
+
+    $("#applied_only").click(function() {
+        var rows = $('#equivalence_list tr');
+
+        if ($("#applied_only").prop("checked") == true) {
+            rows.filter('#0').hide();
+        } else {
+            rows.filter('#0').show();
+        }
+    });
+});
+</script>
+
+
+<!--change button icon upon clicked-->
+<script>
+$(document).ready(function(){
+
+    $(".expand-btn").click(function() {
+         $(this).children(":first").toggleClass("fa-plus-circle fa-minus-circle");
     });
 });
 </script>

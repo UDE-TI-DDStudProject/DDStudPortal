@@ -57,7 +57,7 @@
             <div class="dashboard-flex-item">
                 <h5 class="card-title">Fächerwahlliste</h5>
                 <p class="card-text">Übersicht Fächerwahllisten aller Studierenden eines Semesters.</p>
-                <!-- <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a> -->
+                <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a>
             </div>
 
             <!-- add admin to admin_list -->
