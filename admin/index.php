@@ -42,28 +42,28 @@
             <!-- edit facherwahlliste quota -->
             <div class="dashboard-flex-item">
                 <h5 class="card-title">Kursplätze bearbeiten</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <p class="card-text">Maximale Kursplätze in Fächerwahllisten ändern.</p>
                 <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a>
             </div>
 
              <!-- See all bewerbungen -->
             <div class="dashboard-flex-item">
                 <h5 class="card-title">Offene Bewerbungen</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <p class="card-text">Übersicht Bewerbungen aller Studierenden eines Semesters.</p>
                 <a href="open_applications.php" class="btn btn-primary">Klick hier</a>
             </div>
 
             <!-- See Exchange Facherwahlliste  -->
             <div class="dashboard-flex-item">
                 <h5 class="card-title">Fächerwahlliste</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a>
+                <p class="card-text">Übersicht Fächerwahllisten aller Studierenden eines Semesters.</p>
+                <!-- <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a> -->
             </div>
 
             <!-- add admin to admin_list -->
             <div class="dashboard-flex-item">
                 <h5 class="card-title">Neuen Admin eintragen</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <p class="card-text">Neue E-Mail Adresse in Admin-Liste hinzufügen.</p>
                 <!-- <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a> -->
             </div>
 
