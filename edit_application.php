@@ -157,7 +157,7 @@
     $home_enrollment = trim($_POST['home_enrollment']);
     $home_semester = trim($_POST['home_semester']);
     $home_credits = trim($_POST['home_credits']);
-    $home_cgpa = Namen_bereinigen(trim($_POST['home_cgpa']));
+    $home_cgpa = str_replace(',', '.' ,trim($_POST['home_cgpa']));
     
     //ab hier Foreign_study für Student_new DB
     $intention = trim($_POST['intention']);
@@ -750,7 +750,7 @@
                         <label for="inputHomeCGPA" class="col-sm-3 col-form-label col-form-label-sm">Durchschnittsnote
                             laut beigefügtem Transkript</label>
                         <div class="col-sm-9">
-                            <input  type="text" id="inputHomeCGPA"  maxlength="3" pattern="[0-9]+([\.,][0-9]+)?"
+                            <input  type="text" id="inputHomeCGPA"  maxlength="3" pattern="^[1-9]\d*((\.|,)\d+)?$"
                                  name="home_cgpa" class="form-control form-control-sm"
                                 <?php if(isset($home_cgpa)) echo "value=\"$home_cgpa\""; ?>>
                             <div id="cgpaFeedback" class="invalid-feedback"></div>
