@@ -193,7 +193,7 @@
             <!-- checkbox button -->
             <div class="form-check form-check-inline">
                 <input name="applied_only" class="form-check-input form-control-sm" type="checkbox" id="applied_only" value="applied_only">
-                <label class="form-check-label" for="applied_only" style="font-size:16px;">Nur bewerbte Äquavalenz zeigen</label>
+                <label class="form-check-label" for="applied_only" style="font-size:16px;">Nur ausgewählte Äquivalenz zeigen</label>
             </div>
 
         <form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post">
@@ -203,6 +203,7 @@
                     <thead>
                         <tr style="background-color: #003D76; color: white;">
                             <th scope="col" width="8%" align="center">Siehe Bewerbungen</th>
+                            <th scope="col" width="8%" align="center">Anzahl Kurspläzen</th>
                             <th scope="col" width="8%" align="center">Anzahl Bewerbungen</th>
                             <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
                             <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
@@ -223,16 +224,17 @@
                             $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
                             s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
                             ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at ,
-                            (SELECT COUNT(*) FROM applied_equivalence ae 
-                                                    LEFT JOIN application ap on ap.application_id = ae.application_id 
+                            (SELECT COUNT(*) FROM exchange_equivalence ae 
+                                                    LEFT JOIN exchange ex on ex.exchange_id = ae.exchange_id 
+                                                    LEFT JOIN application ap on ap.application_id = ex.application_id 
                                                     WHERE ap.exchange_period_id = $auslandssemester AND ae.equivalence_id = es.equivalence_id) as applied_count,
-                            (SELECT quota FROM equivalence_quota eq WHERE eq.equivalence_id = es.equivalence_id and eq.exchange_period_id = $auslandssemester) as max_count                          
+                            (SELECT quota FROM equivalence_quota eq WHERE eq.equivalence_id = es.equivalence_id and eq.exchange_period_id = $auslandssemester) as max_count 
                             FROM equivalent_subjects es
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $foreignuni AND es.valid_degree_id = $abschluss 
-                            ORDER BY applied_count DESC, st.name ASC, s1.subject_title ASC");
+                            WHERE s1.university_id = $home_university AND s2.university_id = $foreignuni 
+                            ORDER BY  st.name ASC, s1.subject_title ASC");
                         
                             $result = $statement->execute();
                     
@@ -260,8 +262,10 @@
 
                         ?>
                     
-                            <tr id="<?php if($equivalence['applied_count'] > 0) echo "1"; else echo "0"; ?>" >
+                            <tr id="<?php if($equivalence['applied_count'] > 0) echo "1"; else echo "0"; ?>" 
+                                class="<?php if(!empty($equivalence['max_count']) && ($equivalence['max_count'] < $equivalence['applied_count'])) echo "table-warning"?>" >
                                 <td align="center"><a class="expand-btn" data-toggle="collapse" href="#row<?php echo $equivalence['equivalence_id']?>" role="button" aria-expanded="false" aria-controls="row<?php echo $equivalence['equivalence_id']?>"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td>
+                                <td align="center"><?php echo $equivalence['max_count'] ?></td>
                                 <td align="center"><?php echo $equivalence['applied_count'] ?></td>
                                 <td align="center"><?php echo $equivalence['home_subject_code'] ?></td>
                                 <td align="center"><?php echo $equivalence['home_subject_credits'] ?></td>
@@ -278,7 +282,7 @@
                                 if($equivalence['applied_count']>0):?>
                                     
                                     <tr>
-                                        <td colspan="10"  class="collapse multi-collapse" id="row<?php echo $equivalence['equivalence_id']?>">
+                                        <td colspan="11"  class="collapse multi-collapse" id="row<?php echo $equivalence['equivalence_id']?>">
                                             <div class="table-responsive">
                                                 <table class="table table-hover table-sm" id="student_equivalence" style="text-align:center;font-size:14px;">
                                                     <thead>
@@ -297,9 +301,11 @@
 
                                                         <?php
                                                         //get all approved students that applied this equivalence
-                                                        $statement3 = $pdo->prepare("SELECT ae.application_status_id, us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ap.success_factor, uni1.name as uni1  
+                                                        $statement3 = $pdo->prepare("SELECT eq.equivalence_id, ae.application_status_id, us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ap.success_factor, uni1.name as uni1  
                                                         FROM applied_equivalence ae 
                                                         LEFT JOIN reviewed_application ra on ra.application_id = ae.application_id 
+                                                        LEFT JOIN exchange ex on ex.application_id = ra.application_id 
+                                                        LEFT JOIN exchange_equivalence eq on eq.exchange_id = ex.exchange_id and eq.equivalence_id = ae.equivalence_id 
                                                         LEFT JOIN application ap on ap.application_id = ra.application_id 
                                                         LEFT JOIN student st on st.student_id = ap.student_id 
                                                         LEFT JOIN user us on us.user_id = st.user_id 

@@ -735,12 +735,23 @@
                         </div>
                     </div>
 
+                    <!-- <div class="form-group row">
+                        <label for="inputHomeCGPA" class="col-sm-3 col-form-label col-form-label-sm">Durchschnittsnote
+                            laut beigefügtem Transkript</label>
+                        <div class="col-sm-9">
+                            <input  type="number" id="inputHomeCGPA" min="1" max="4" step="0.1" maxlength="3" placeholder="Use period as decimal separator."
+                                 name="home_cgpa" class="form-control form-control-sm"
+                                <?php if(isset($home_cgpa)) echo "value=\"$home_cgpa\""; ?>>
+                            <div id="cgpaFeedback" class="invalid-feedback"></div>
+                        </div>
+                    </div> -->
+
                     <div class="form-group row">
                         <label for="inputHomeCGPA" class="col-sm-3 col-form-label col-form-label-sm">Durchschnittsnote
                             laut beigefügtem Transkript</label>
                         <div class="col-sm-9">
-                            <input type="text" id="inputHomeCGPA" min="1" max="4" step="0.1" maxlength="3"
-                                name="home_cgpa" class="form-control form-control-sm"
+                            <input  type="text" id="inputHomeCGPA"  maxlength="3" pattern="[0-9]+([\.,][0-9]+)?"
+                                 name="home_cgpa" class="form-control form-control-sm"
                                 <?php if(isset($home_cgpa)) echo "value=\"$home_cgpa\""; ?>>
                             <div id="cgpaFeedback" class="invalid-feedback"></div>
                         </div>

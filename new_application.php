@@ -668,7 +668,7 @@
                         <label for="inputHomeCredits" class="col-sm-3 col-form-label col-form-label-sm">Summe bisher
                             erworbener Kreditpunkte laut beigefügtem Transkript</label>
                         <div class="col-sm-9">
-                            <input type="number" id="inputHomeCredits" min="0" step="1" max="300" maxlength="3"
+                            <input type="number" id="inputHomeCredits" min="0" step="1" max="300" 
                                 name="home_credits" class="form-control form-control-sm"
                                 <?php if(isset($home_credits)) echo "value=\"$home_credits\""; ?>>
                             <div id="creditsFeedback" class="invalid-feedback"></div>
@@ -679,7 +679,7 @@
                         <label for="inputHomeCGPA" class="col-sm-3 col-form-label col-form-label-sm">Durchschnittsnote
                             laut beigefügtem Transkript</label>
                         <div class="col-sm-9">
-                            <input type="text" id="inputHomeCGPA" min="1" max="4" step="0.1" maxlength="3"
+                            <input  type="number" id="inputHomeCGPA" min="1" max="4" step="0.1" placeholder="Use period as decimal separator."
                                 name="home_cgpa" class="form-control form-control-sm"
                                 <?php if(isset($home_cgpa)) echo "value=\"$home_cgpa\""; ?>>
                             <div id="cgpaFeedback" class="invalid-feedback"></div>
