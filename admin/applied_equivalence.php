@@ -203,7 +203,7 @@
                     <thead>
                         <tr style="background-color: #003D76; color: white;">
                             <th scope="col" width="8%" align="center">Siehe Bewerbungen</th>
-                            <th scope="col" width="8%" align="center">Anzahl Kurspläzen</th>
+                            <th scope="col" width="8%" align="center">Anzahl Kursplätzen</th>
                             <th scope="col" width="8%" align="center">Anzahl Bewerbungen</th>
                             <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
                             <th scope="col" width="11%" align="center">Credits Heim-Uni</th>

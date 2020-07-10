@@ -326,6 +326,9 @@
             </div>
         </div>
 
+        <div class="alert alert-info">
+            Wenn du die Daten ändern willst, bitte diese Bewerbung löschen und dann eine neue Bewerbung abschicken.
+        </div>
 
 
         <!-- <div class="page-navigation">
@@ -503,9 +506,9 @@
                 </table>
                 <div class="text-right">
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $applicationid; ?>" method="post">
-                    <button type="submit" class="btn btn-primary btn-sm" name="exchange" >Add to Exchange</button>
-                        <button type="submit" class="btn btn-primary btn-sm" name="edit"
-                            <?php if($readonly) echo "disabled" ?>>Bearbeiten</button>
+                    <!-- <button type="submit" class="btn btn-primary btn-sm" name="exchange" >Add to Exchange</button> -->
+                        <!-- <button type="submit" class="btn btn-primary btn-sm" name="edit"
+                            <?php// if($readonly) echo "disabled" ?>>Bearbeiten</button> -->
                         <button type="button" class="btn btn-danger btn-sm" name="delete" id="delete">Löschen</button>
                     </form>
                 </div>

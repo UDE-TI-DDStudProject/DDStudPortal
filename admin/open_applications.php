@@ -24,9 +24,9 @@
         $foreignuni = $_GET['foreignuni'];
         $abschluss = $_GET['abschluss'];
 
-        if(empty($auslandssemester) || empty($foreignuni) || empty($abschluss)){
+        if(empty($auslandssemester)){
             $error = true;
-            $error_msg = "Bitte alle Felder auswählen!";
+            $error_msg = "Bitte Auslandssemester auswählen!";
         }
 
         if(!$error){
@@ -37,15 +37,15 @@
     }
 
     //upon save
-    if(isset($_POST['save_list'])){
+    if(isset($_POST['subtmitbtn']) && $_POST['subtmitbtn'] == "save_list"){
         $error = false;
         $auslandssemester = $_GET['auslandssemester'];
         $foreignuni = $_GET['foreignuni'];
         $abschluss = $_GET['abschluss'];
 
-        if(empty($auslandssemester) || empty($foreignuni) || empty($abschluss)){
+        if(empty($auslandssemester)){
             $error = true;
-            $error_msg = "Bitte alle Felder auswählen!";
+            $error_msg = "Bitte Auslandssemester auswählen!";
         }
 
         if(!empty($_POST['reviewed']) && !$error) {
@@ -94,7 +94,7 @@
         }
     }
 
-    if(isset($_POST['finalize'])){
+    if(isset($_POST['subtmitbtn']) && $_POST['subtmitbtn'] == "finalize"){
         
         //finalize reviewed applicatin to exchange list
         $error = false;
@@ -102,9 +102,9 @@
         $foreignuni = $_GET['foreignuni'];
         $abschluss = $_GET['abschluss'];
 
-        if(empty($auslandssemester) || empty($foreignuni) || empty($abschluss)){
+        if(empty($auslandssemester)){
             $error = true;
-            $error_msg = "Bitte alle Felder auswählen!";
+            $error_msg = "Bitte Auslandssemester auswählen!";
         }
 
         //save result first
@@ -118,6 +118,13 @@
                     if(isset($_POST['reviewed']) && !empty($_POST['reviewed'])){
                         if(isset($application_status) && !empty($application_status)){
 
+                            //set all applied_equivalence of this application to null
+                            $statement1 = $pdo->prepare("UPDATE applied_equivalence ae 
+                                                            SET ae.application_status_id = NULL 
+                                                            WHERE ae.application_id = :id");
+                            $result1 = $statement1->execute(array('id'=>$application_id));
+
+                            //check if application already added to reviewed_application
                             $statement = $pdo->prepare("SELECT * FROM reviewed_application WHERE application_id =:id");
                             $result = $statement->execute(array('id'=>$application_id));
                             $application = $statement->fetch();
@@ -138,14 +145,35 @@
                                 }
                             }    
                             $result1 = $statement1->execute(array('application_id'=>$application_id, 'application_status_id'=>$application_status, 'reviewed_by_user_id'=>$user['user_id']));
+
+                            //check if application is added to exchange
+                            $statement = $pdo->prepare("SELECT ap.application_id, ex.exchange_id, pr.first_uni_id  FROM application ap
+                                                        LEFT JOIN priority pr ON pr.application_id = ap.application_id 
+                                                        LEFT JOIN exchange ex ON ex.application_id = ap.application_id 
+                                                        WHERE ap.application_id =:id");
+                            $result = $statement->execute(array('id'=>$application_id));
+                            $exchange = $statement->fetch();
+
+                            if($application_status==2){
+                                //if application is approved but havnt added to exchange, add to exchange
+                                if(empty($exchange['exchange_id'])){
+                                    $statement = $pdo->prepare("INSERT INTO exchange(application_id, foreign_uni_id) VALUES(:application_id, :foreign_uni_id)");
+                                    $result = $statement->execute(array('application_id'=>$exchange['application_id'],'foreign_uni_id'=>$exchange['first_uni_id']));
+                                }
+                            }else{
+                                //if application is denied or not reviewed but was in exchange, remove from exchange
+                                if(!empty($exchange['exchange_id'])){
+                                    $statement = $pdo->prepare("DELETE FROM exchange WHERE exchange_id = :id");
+                                    $result = $statement->execute(array('id'=>$exchange['exchange_id']));
+                                }
+                            }
                         }
+
                     }
                 }
-                
-				$pdo->commit();
+                $pdo->commit();
 				$success_msg = 'Liste gespeichert';
-
-			}catch (Exception $e){
+            }catch (Exception $e){
 				$pdo->rollback();
                 throw $e;
                 $error = true;
@@ -153,93 +181,13 @@
 			}
         }
 
-        if(!$error){
-
-            /*Begin transaction*/
-			try {
-
-                $pdo->beginTransaction();
-
-                //set all applied_equivalence of all application to null
-                $statement1 = $pdo->prepare("UPDATE applied_equivalence ae 
-                                                LEFT JOIN application ap on ap.application_id = ae.application_id 
-                                                LEFT JOIN equivalent_subjects es on es.equivalence_id = ae.equivalence_id 
-                                                LEFT JOIN subject sj on sj.subject_id = es.foreign_subject_id 
-                                                SET ae.application_status_id = NULL 
-                                                WHERE ap.exchange_period_id = :id and sj.university_id = :uniid  and ap.applied_degree_id = $abschluss");
-                $result1 = $statement1->execute(array('id'=>$auslandssemester, 'uniid'=>$foreignuni));
-
-                //remove all exchange items for this semester and home_degree
-                $statement = $pdo->prepare("DELETE FROM exchange ex WHERE ex.application_id in( SELECT ap.application_id FROM application ap 
-                                            LEFT JOIN study_home sh on sh.application_id = ap.application_id 
-                                            WHERE ap.exchange_period_id=:id and sh.home_degree_id = :home_degree)");
-                $result = $statement->execute(array('id'=>$auslandssemester,'home_degree'=>$abschluss));
-
-                //get approved applications
-                $statement = $pdo->prepare("SELECT ra.application_id, pr.first_uni_id FROM reviewed_application ra
-                                            LEFT JOIN application ap on ap.application_id = ra.application_id 
-                                            LEFT JOIN study_home sh on sh.application_id = ap.application_id 
-                                            LEFT JOIN priority pr ON pr.application_id = ra.application_id  
-                                            WHERE ra.application_status_id = 2 and ap.exchange_period_id = :id and sh.home_degree_id = :home_degree");
-                $result = $statement->execute(array('id'=>$auslandssemester,'home_degree'=>$abschluss));
-
-                while($application = $statement->fetch()){
-                    //add to exchange
-                    $statement1 = $pdo->prepare("INSERT INTO exchange(application_id, foreign_uni_id) VALUES(:application_id, :foreign_uni_id)");
-                    $result1 = $statement1->execute(array('application_id'=>$application['application_id'],'foreign_uni_id'=>$application['first_uni_id']));
-                }
-        
-                
-
-                // //get exchange applications
-                // $statement = $pdo->prepare("SELECT ex.application_id FROM exchange ex
-                //                             LEFT JOIN application ap on ap.application_id = ex.application_id 
-                //                             LEFT JOIN study_home sh on sh.application_id = ap.application_id 
-                //                             WHERE ap.exchange_period_id=:id and sh.home_degree_id = :home_degree");
-                // $result = $statement->execute(array('id'=>$auslandssemester,'home_degree'=>$abschluss));
-                // $exchange_applications = array();
-                // while($application = $statement->fetch()){
-                //     array_push($exchange_applications, $application['application_id']);
-                // }
-
-                // foreach($approved_applications as $application){
-                //     if(!in_array($application, $exchange_applications)){
-                //         //get application
-                //         $statement = $pdo->prepare("SELECT first_uni_id FROM priority WHERE application_id = :application_id");
-                //         $result = $statement->execute(array('application_id'=>$application));
-                //         $foreign_uni = $statement->fetch();
-
-                //         //add to exchange
-                //         $statement = $pdo->prepare("INSERT INTO exchange(application_id, foreign_uni_id) VALUES(:application_id, :foreign_uni_id)");
-                //         $result = $statement->execute(array('application_id'=>$application,'foreign_uni_id'=>$foreign_uni['first_uni_id']));
-                //     }
-                // }
-
-                // foreach($exchange_applications as $exchange){
-                //     if(!in_array($exchange, $approved_applications)){
-                //         //remove exchange
-                //         $statement = $pdo->prepare("DELETE FROM exchange WHERE application_id = :application_id");
-                //         $result = $statement->execute(array('application_id'=>$application));
-                //     }
-                // }
-                $pdo->commit();
-        
-            }catch (Exception $e){
-                $pdo->rollback();
-                throw $e;
-                $error = true;
-                $error_msg = $e->get_message();
-            }
-        }
-
-
         // add to exchange_equivalenz
         if(!$error){
                 
             /*Begin transaction*/
 			try {
 
-				$pdo->beginTransaction();
+                $pdo->beginTransaction();
                 
                 //get exchange applications order by success_factor
                 $statement = $pdo->prepare("SELECT ex.exchange_id, ex.application_id, ap.success_factor FROM exchange ex
@@ -249,13 +197,11 @@
 
                 while($exchange = $statement->fetch()){
 
-                    //get applied equivalences of all exchange for this first foreign uni 
+                    //get applied equivalences of this exchange  
                     $statement1 = $pdo->prepare("SELECT * FROM applied_equivalence ae 
-                                                    LEFT JOIN application ap on ap.application_id = ae.application_id 
-                                                    LEFT JOIN equivalent_subjects es on es.equivalence_id = ae.equivalence_id 
-                                                    LEFT JOIN subject sj on sj.subject_id = es.foreign_subject_id 
-                                                    WHERE ap.application_id = :id and sj.university_id = :uniid and ap.applied_degree_id = $abschluss");
-                    $result1 = $statement1->execute(array('id'=>$exchange['application_id'], 'uniid'=>$foreignuni));
+                                                    LEFT JOIN exchange ex ON ex.application_id = ae.application_id 
+                                                    WHERE ex.exchange_id = :id");
+                    $result1 = $statement1->execute(array('id'=>$exchange['exchange_id']));
 
                     while($equivalence = $statement1->fetch()){
 
@@ -390,7 +336,7 @@
             </div>
             </div>
             <div class="form-group row col-auto">
-            <label for="foreignuni" class="col-auto col-form-label col-form-label-sm">*Partner-Universität:</label>
+            <label for="foreignuni" class="col-auto col-form-label col-form-label-sm">Partner-Universität:</label>
             <div class="col-auto">
               <select class="form-control form-control-sm" placeholder="Partner-Universität" name="foreignuni">
               <option></option>
@@ -406,7 +352,7 @@
             </div>
             </div>
             <div class="form-group row col-auto">
-            <label for="abschluss" class="col-auto col-form-label col-form-label-sm">*Abschluss:</label>
+            <label for="abschluss" class="col-auto col-form-label col-form-label-sm">Abschluss:</label>
             <div class="col-auto">
               <select class="form-control form-control-sm" placeholder="Abschluss" name="abschluss">
               <option></option>
@@ -429,12 +375,12 @@
           </div>
         </form>
 
-        <!-- equivalence-table-form -->
+        <!-- application-table-form -->
         <?php if(isset($show_table)&& $show_table==true): ?>
         <form id="applications-table-form" action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post">
             
         <div class="table-responsive">
-                <table class="table table-hover table-sm" id="equivalence_quota" style="text-align:center;font-size:16px;">
+                <table class="table table-hover table-sm" id="application-table" style="text-align:center;font-size:16px;">
                     <thead>
                         <tr style="background-color: #003D76; color: white;">
                             <th scope="col" width="5%" align="center">Annehmen</th>
@@ -457,8 +403,17 @@
 
                     <?php
 
+                    //get filter string
+                    $abschluss_filter = $foreignuni_filter = "";
+                    if(!empty($abschluss)){
+                        $abschluss_filter = " AND sh.home_degree_id = $abschluss";
+                    }
 
-                    //get all filtered equivalence
+                    if(!empty($foreignuni)){
+                        $foreignuni_filter = " AND pr.first_uni_id = $foreignuni";
+                    }
+
+                    //get all applications
                     $statement = $pdo->prepare("SELECT us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ROUND(ap.success_factor,3) as success_factor, 
                                                 uni1.abbreviation as uni1, uni2.abbreviation as uni2, uni3.abbreviation as uni3 , ra.comment, 
                                                 ROUND(sh.home_cgpa,1) as home_cgpa, ROUND(sh.home_credits) as home_credits, ep.period_id  
@@ -473,7 +428,7 @@
                                                 LEFT JOIN university uni2 on uni2.university_id = pr.second_uni_id 
                                                 LEFT JOIN university uni3 on uni3.university_id = pr.third_uni_id 
                                                 LEFT JOIN course cr on cr.course_id = sh.home_course_id 
-                                                WHERE ap.exchange_period_id = $auslandssemester and sh.home_degree_id = $abschluss and pr.first_uni_id = $foreignuni 
+                                                WHERE ap.exchange_period_id = $auslandssemester $abschluss_filter $foreignuni_filter
                                                 ORDER BY ap.success_factor DESC");
                 
                     $result = $statement->execute();
@@ -583,8 +538,8 @@
 
             <!-- save -->
             <div class="text-right">
-                <button type="submit" class="btn btn-primary" name="save_list" value="save_list" >Zwischenstand speichern</button>
-                <button type="submit" class="btn btn-success" name="finalize" value="finalize" >Ergebnisse veröffentlichen</button>
+                <button type="submit" class="btn btn-primary" name="subtmitbtn" value="save_list" >Zwischenstand speichern</button>
+                <button type="submit" class="btn btn-success" name="subtmitbtn" value="finalize" >Ergebnisse veröffentlichen</button>
             </div>
         </form>
         <?php endif; ?>
@@ -592,20 +547,7 @@
     </div>
 </main>
 
-<!-- ask for confirmation upon filter change -->
-<script>
-// $(document).ready(function(){
-//     $("#filter-form").submit(function(){
-//         if($("#equivalence_quota").length)
-//         {
-//             if(!confirm("Diese Seite wird erneut aktualisieren. Die nicht gespeicherte Daten werden verloren sein. Weiter?")){
-//                 e.preventDefault();
-//             }
-//         }
 
-//     });
-// });
-</script>
 
 <!-- change row color upon checked -->
 <script>
@@ -631,7 +573,7 @@ $(document).ready(function(){
 <!-- ask for confirmation upon finalizing -->
 <script>
 $(document).ready(function(){
-    $("#applications-table-form").submit(function(){
+    $("#applications-table-form").submit(function(e){
         if(!confirm("Weiter?")){
             e.preventDefault();
         }

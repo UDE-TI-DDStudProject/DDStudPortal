@@ -5,7 +5,7 @@
 
     //redirect user to homepage if the user has already login
     $user = check_user();
-
+    
     if(!isset($user)){
         header("location: login.php");
         exit;

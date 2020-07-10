@@ -41,21 +41,21 @@
 
             <!-- edit facherwahlliste quota -->
             <div class="dashboard-flex-item">
-                <h5 class="card-title">Kursplätze bearbeiten</h5>
-                <p class="card-text">Maximale Kursplätze in Fächerwahllisten ändern.</p>
+                <h5 class="card-title">Anzahl Kursplätze</h5>
+                <p class="card-text">Anzahl Kursplätze in Fächerwahllisten ändern.</p>
                 <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a>
             </div>
 
              <!-- See all bewerbungen -->
             <div class="dashboard-flex-item">
-                <h5 class="card-title">Offene Bewerbungen</h5>
+                <h5 class="card-title">Alle Bewerbungen</h5>
                 <p class="card-text">Übersicht Bewerbungen aller Studierenden eines Semesters.</p>
                 <a href="open_applications.php" class="btn btn-primary">Klick hier</a>
             </div>
 
             <!-- See Exchange Facherwahlliste  -->
             <div class="dashboard-flex-item">
-                <h5 class="card-title">Fächerwahlliste</h5>
+                <h5 class="card-title">Übersicht Fächerwahlen</h5>
                 <p class="card-text">Übersicht Fächerwahllisten aller Studierenden eines Semesters.</p>
                 <a href="applied_equivalence.php" class="btn btn-primary">Klick hier</a>
             </div>
@@ -71,7 +71,7 @@
             <div class="dashboard-flex-item">
                 <h5 class="card-title">Fächerwahlliste bearbeiten</h5>
                 <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <!-- <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a> -->
+                <a href="equivalence_list.php" class="btn btn-primary">Klick hier</a>
             </div>
         
         </div>
