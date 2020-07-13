@@ -1007,11 +1007,13 @@ $(document).ready(function() {
 });
 </script>
 
-<!-- before submit check file size -->
+<!-- before submit actions -->
 <script>
 $(document).ready(function() {
 
     $("#applicationForm").submit(function(e) {
+
+        var error = false;
 
         //check file size
         $("#applicationForm").find("input[type=file]").each(function(index, field){
@@ -1019,13 +1021,23 @@ $(document).ready(function() {
             var filename = field.name;
             if(file.size > 2 * 1024 * 1024 ) {
                alert(filename + ' must be less than 2MB.');
+               error = true;
                e.preventDefault();
             }    
         });
+
+        //ask for confirmation!
+        if(error==false){
+            if(!confirm("Nachdem Abschicken ist die Änderung von Matrikelnummer und Prioritäten nicht mehr möglich. Alle Daten geprüft und die Bewerbung abshicken?")){
+                e.preventDefault();
+            }
+        }
+
     });
 
 });
 </script>
+
 
 <?php 
     include("templates/footer.inc.php");

@@ -100,13 +100,17 @@
       $home_credits =  $homestudy['credits'];
       $home_cgpa =  $homestudy['cgpa'];
   
-      $statement = $pdo->prepare("SELECT * FROM priority WHERE application_id = :id");
+      $statement = $pdo->prepare("SELECT uni1.name as uni1, uni2.name as uni2, uni3.name as uni3 FROM priority pr
+                                  LEFT JOIN university uni1 ON uni1.university_id = first_uni_id  
+                                  LEFT JOIN university uni2 ON uni2.university_id = second_uni_id
+                                  LEFT JOIN university uni3 ON uni3.university_id = third_uni_id
+                                  WHERE application_id = :id");
       $result = $statement->execute(array('id' => $application['application_id']));
       $priority = $statement->fetch();
 
-      $first_uni = $priority['first_uni_id'];
-      $second_uni = $priority['second_uni_id'];
-      $third_uni = $priority['third_uni_id'];
+      $first_uni = $priority['uni1'];
+      $second_uni = $priority['uni2'];
+      $third_uni = $priority['uni3'];
 
       $statement = $pdo->prepare("SELECT * FROM exchange_period WHERE period_id = :id");
       $result = $statement->execute(array('id' => $application['exchange_period_id']));
@@ -670,9 +674,9 @@
                         <label for="inputMatrNo"
                             class="col-sm-3 col-form-label col-form-label-sm">Matrikelnummer</label>
                         <div class="col-sm-9">
-                            <input type="number" maxlength="10" name="home_matno" class="form-control form-control-sm"
-                                id="inputMatrNo" placeholder="matriculation number"
-                                value="<?php if(isset($home_matno)) echo $home_matno?>">
+                            <input type="text" name="home_matno" class="form-control-plaintext form-control-sm"
+                                id="inputMatrNo" 
+                                value="<?php if(isset($home_matno)) echo $home_matno?>" readonly>
                             <div id="matnoFeedback" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -827,18 +831,9 @@
                         <label for="inputFirstPrio" class="col-sm-3 col-form-label col-form-label-sm">1.
                             Priorität</label>
                         <div class="col-sm-9">
-                            <select type="number" id="inputFirstPrio" size="1" maxlength="20" name="firstprio"
-                                class="form-control form-control-sm">
-                                <option></option>
-                                <?php 
-				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,5)");
-				              				$result = $statement->execute();
-				              				while($row = $statement->fetch()) { ?>
-                                <option value="<?php echo ($row['university_id']);?>"
-                                    <?php if(isset($first_uni) and $first_uni == $row['university_id']) echo "selected"; ?>>
-                                    <?php echo ($row['name']);?></option>
-                                <?php } ?>
-                            </select>
+                            <input type="text" name="firstprio" class="form-control-plaintext form-control-sm"
+                                id="inputFirstPrio" 
+                                value="<?php if(isset($first_uni)) echo $first_uni?>" readonly>
                             <div id="FirstPrioFeedback" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -847,18 +842,9 @@
                         <label for="inputSecondPrio" class="col-sm-3 col-form-label col-form-label-sm">2.
                             Priorität</label>
                         <div class="col-sm-9">
-                            <select type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio"
-                                class="form-control form-control-sm">
-                                <option></option>
-                                <?php 
-				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,5)");
-				              				$result = $statement->execute();
-				              				while($row = $statement->fetch()) { ?>
-                                <option value="<?php echo ($row['university_id']);?>"
-                                    <?php if(isset($second_uni) and $second_uni == $row['university_id']) echo "selected"; ?>>
-                                    <?php echo ($row['name']);?></option>
-                                <?php } ?>
-                            </select>
+                            <input type="text" name="secondprio" class="form-control-plaintext form-control-sm"
+                                id="inputSecondPrio" 
+                                value="<?php if(isset($second_uni)) echo $second_uni?>" readonly>
                             <div id="SecondPrioFeedback" class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -867,18 +853,9 @@
                         <label for="inputThirdPrio" class="col-sm-3 col-form-label col-form-label-sm">3.
                             Priorität</label>
                         <div class="col-sm-9">
-                            <select type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio"
-                                class="form-control form-control-sm" <?php if(empty($second_uni)) echo"disabled";?>>
-                                <option></option>
-                                <?php 
-				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,5)");
-				              				$result = $statement->execute();
-				              				while($row = $statement->fetch()) { ?>
-                                <option value="<?php echo ($row['university_id']);?>"
-                                    <?php if(isset($third_uni) and $third_uni == $row['university_id']) echo "selected"; ?>>
-                                    <?php echo ($row['name']);?></option>
-                                <?php } ?>
-                            </select>
+                            <input type="text" name="thirdprio" class="form-control-plaintext form-control-sm"
+                                id="inputThirdPrio" 
+                                value="<?php if(isset($third_uni)) echo $third_uni?>" readonly>
                             <div id="ThirdPrioFeedback" class="invalid-feedback"></div>
                         </div>
                     </div>

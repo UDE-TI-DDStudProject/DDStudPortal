@@ -79,16 +79,34 @@
 
 <main class="container-fluid flex-fill">
     <div class="card register-form">
-        <?php if(isset($error_message)) echo
-        "<div class=\"alert alert-danger\" role=\"alert\">
-          $error_message
-        </div>"; else if(isset($success_message))  echo
-        "<div class=\"alert alert-success\" role=\"alert\">
-        $success_message
-        </div>";
+
+        <!-- show message -->
+        <?php 
+        if(isset($success_message) && !empty($success_message)):
         ?>
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $success_message; ?>
+        </div>
+        <?php 
+        endif;
+        ?>
+
+        <?php 
+        if(isset($error_message) && !empty($error_message)):
+        ?>
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $error_message; ?>
+        </div>
+        <?php 
+        endif;
+        ?>
+
         <img class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png">
+
         <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" id="registerForm">
+
             <div class="form-group">
                 <select class="form-control" id="inputSalutation" name="salutation" placeholder="salutation">
                     <?php
@@ -102,35 +120,38 @@
                 </select>
                 <div id="salutationFeedback" class="invalid-feedback"></div>
             </div>
+
             <div class="form-group">
                 <input type="text" name="firstname" class="form-control" id="inputFirstname" placeholder="Vorname"
                     value="<?php if(isset($vorname)) echo $vorname?>">
                 <div id="firstnameFeedback" class="invalid-feedback"></div>
             </div>
+
             <div class="form-group">
                 <input type="text" name="lastname" class="form-control" id="inputLastname" placeholder="Nachname"
                     value="<?php if(isset($nachname)) echo $nachname?>">
                 <div id="lastnameFeedback" class="invalid-feedback"></div>
             </div>
+
             <div class="form-group">
                 <input type="email" name="email" class="form-control" id="inputEmail" placeholder="E-Mail"
                     value="<?php if(isset($email)) echo $email?>">
                 <div id="emailFeedback" class="invalid-feedback"></div>
             </div>
+
             <div class="form-group">
                 <input type="password" name="passwort" class="form-control" id="inputPassword" placeholder="Passwort"
                     data-toggle="tooltip" data-placement="top"
                     title="Das Passwort muss mindestens acht Zeichen lang sein und mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten!">
-                <!-- <small id="passwordHelpBlock" class="form-text text-muted">
-                Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
-              </small> -->
                 <div id="passwordFeedback" class="invalid-feedback"></div>
             </div>
+
             <div class="form-group">
                 <input type="password" name="repeatpasswort" class="form-control" id="inputPasswordAgain"
                     placeholder="Passwort wiederholen">
                 <div id="repeatpasswordFeedback" class="invalid-feedback"></div>
             </div>
+
             <div class="form-group">
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input form-control-sm" id="agreeToTerms"
@@ -139,11 +160,14 @@
                             Geschäftsbedingungen</a> lesen und akzeptieren</label>
                 </div>
             </div>
+
             <button type="submit" class="btn btn-primary btn-block" id="btnregister"
                 name="register">Registrieren</button>
+                
         </form>
         <br>
         <small><a href="login.php">Login hier</a></small>
+        
     </div>
 </main>
 
