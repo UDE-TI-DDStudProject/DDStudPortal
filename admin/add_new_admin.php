@@ -58,11 +58,22 @@
 ?>
 
 <main class="container-fluid flex-fill">
-    <div class="card login-form">
+    <div class="card add-admin-form">
 
-        <!-- page title -->
-        <div class="page-title">
-            <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Neuen Admin hinzufügen
+        <!-- title row -->
+        <div class="title-row" style="display: flex; justify-content: space-between;">
+            <!-- page title -->
+            <div class="page-title">
+                <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Neuen Admin hinzufügen
+            </div>
+
+            <div class="title-button">
+                <form action="index.php" method="post">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm" name="logout"> Zurück zum Dashboard</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- show message -->
