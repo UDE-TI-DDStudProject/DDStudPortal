@@ -56,7 +56,7 @@
 			}
     }
 
-    //upon save
+    //upon save filter
     if(isset($_POST['save_list'])){
         $error = false;
         $foreignuni = $_GET['foreignuni'];
@@ -97,6 +97,113 @@
     }
 
 ?>
+
+<!-- add new equivalence -->
+<?php 
+        if(isset($_POST['add_equivalence'])){
+
+            //get home subject and foreign subject from drop down list
+            if(isset($_POST['home_subject_id'])){
+                $home_subject_id = $_POST['home_subject_id'];
+            }
+            if(isset($_POST['foreign_subject_id'])){
+                $foreign_subject_id = $_POST['foreign_subject_id'];
+            }
+
+            //check checkbox home_subject
+            if(isset($_POST['new_subject_home']) && !empty($_POST['new_subject_home'])){
+                //check if all fields are filled
+                if(!empty($_POST['courseNo_home']) && !empty($_POST['course_name_home']) && !empty($_POST['credit_home']) && !empty($_POST['degree_home'])){
+                    //check if subject exists in database
+                    $statementS = $pdo->prepare("SELECT * FROM subject WHERE subject_code = :subject_code");
+                    $resultS = $statementS->execute(array('subject_code' => $_POST['courseNo_home']));            
+                    $home_subject = $statementS->fetch();
+                    $home_subject_id = $home_subject['subject_id'];
+
+                    if(empty($home_subject)){
+                        // trim credits
+                        $home_credit = str_replace(',', '.' ,trim($_POST['credit_home']));
+
+                        //insert home subject
+                        $statement = $pdo->prepare("INSERT INTO subject(subject_code, subject_title, degree_id, subject_credits, university_id) VALUES (:subject_code, :subject_title, :degree_id, :subject_credits, :university_id)");
+                        $result = $statement->execute(array('subject_code' => $_POST['courseNo_home'], 'subject_title' => $_POST['course_name_home'], 'subject_credits' => $home_credit, 'degree_id' => $_POST['degree_home'], 'university_id'=>$home_university));         
+                        
+                        //get inserted subject in database
+                        $statementS = $pdo->prepare("SELECT * FROM subject WHERE subject_code = :subject_code");
+                        $resultS = $statementS->execute(array('subject_code' => $_POST['courseNo_home']));            
+                        $home_subject = $statementS->fetch();
+                        $home_subject_id = $home_subject['subject_id'];
+                    }
+                }else{
+                    //show error msg if not all fields are filled
+                    $error_msg = "Bitte alle Felder ausfüllen!";
+                }
+            }
+
+            //check checkbox foreign_subject
+            if(isset($_POST['new_subject_foreign']) && !empty($_POST['new_subject_foreign'])){
+                //check if all fields are filled
+                if(!empty($_POST['courseNo_foreign']) && !empty($_POST['course_name_foreign']) && !empty($_POST['credit_foreign']) && !empty($_POST['degree_foreign'])){
+                    //check if subject exists in database
+                    $statementS = $pdo->prepare("SELECT * FROM subject WHERE subject_code = :subject_code");
+                    $resultS = $statementS->execute(array('subject_code' => $_POST['courseNo_foreign']));            
+                    $foreign_subject = $statementS->fetch();
+                    $foreign_subject_id = $foreign_subject['subject_id'];
+        
+                    if(empty($foreign_subject)){
+                        // trim credits
+                        $foreign_credit = str_replace(',', '.' ,trim($_POST['credit_foreign']));
+
+                        //insert foreign subject
+                        $statement = $pdo->prepare("INSERT INTO subject(subject_code, subject_title, degree_id, subject_credits, university_id) VALUES (:subject_code, :subject_title, :degree_id, :subject_credits, :university_id)");
+                        $result = $statement->execute(array('subject_code' => $_POST['courseNo_foreign'], 'subject_title' => $_POST['course_name_foreign'], 'subject_credits' => $foreign_credit, 'degree_id' => $_POST['degree_foreign'], 'university_id'=>$foreignuni));         
+                        
+                        //get inserted subject in database
+                        $statementS = $pdo->prepare("SELECT * FROM subject WHERE subject_code = :subject_code");
+                        $resultS = $statementS->execute(array('subject_code' => $_POST['courseNo_foreign']));            
+                        $foreign_subject = $statementS->fetch();
+                        $foreign_subject_id = $foreign_subject['subject_id'];
+                    }
+                }else{
+                    //show error msg if not all fields are filled
+                    $error_msg = "Bitte alle Felder ausfüllen!";
+                }
+            }
+
+            //check if home_subject and foreign_subject are not empty, then insert euqivalence into database
+            if(!empty($home_subject_id) && !empty($foreign_subject_id)){
+                //check if equivalence exists in database
+                $statementS = $pdo->prepare("SELECT * FROM equivalent_subjects WHERE home_subject_id = :home_id and foreign_subject_id = :foreign_id");
+                $resultS = $statementS->execute(array('home_id' => $home_subject_id, 'foreign_id' => $foreign_subject_id));            
+                $equivalence = $statementS->fetch();
+
+                if(empty($equivalence)){
+                    //insert equivalence , status_id = 2 (approved)
+                    $statement = $pdo->prepare("INSERT INTO equivalent_subjects(home_subject_id, foreign_subject_id, status_id) VALUES (:home_subject_id, :foreign_subject_id, 2)");
+                    $result = $statement->execute(array('home_subject_id' => $home_subject_id, 'foreign_subject_id' => $foreign_subject_id));    
+                    
+                    //check if equivalence exists in database
+                    $statementS = $pdo->prepare("SELECT * FROM equivalent_subjects WHERE home_subject_id = :home_id and foreign_subject_id = :foreign_id");
+                    $resultS = $statementS->execute(array('home_id' => $home_subject_id, 'foreign_id' => $foreign_subject_id));            
+                    $equivalence = $statementS->fetch();
+
+                    //check if equivalence is successfully added to database
+                    if(!empty($equivalence)){
+                        //show success msg if equivalence already added to database
+                        $success_msg = "Äquivalenz ist erfolgreich hinzugefügt!";
+                    }else{
+                        //show error msg if equivalence already not added to database
+                        $error_msg = "Beim Speichern des Äquivalenz ist ein Fehler aufgetreten. Bitte neu versuchen!";
+                    }
+                
+                }else{
+                    //show error msg if equivalence already exists in database
+                    $error_msg = "Äquivalenz existiert schon in der Datenbank!";
+                }
+            }
+        }
+        ?>
+
 
 <?php     
     include("templates/headerlogin.inc.php");  
@@ -206,7 +313,7 @@
             </div>
         </div>
 
-        <form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post" id="equivalence-form">
+        <form action="<?php echo $_SERVER['REQUEST_URI']."?foreignuni=".$foreignuni."&abschluss=".$abschluss ;?>" method="post" id="equivalence-form">
             
         <div class="table-responsive">
                 <table class="table table-hover table-sm" id="equivalence_list" style="text-align:center;font-size:14px;">

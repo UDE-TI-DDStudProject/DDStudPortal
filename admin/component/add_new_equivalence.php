@@ -1,24 +1,14 @@
         
-        <?php 
-        if(isset($_POST['add_equivalence'])){
-            //check checkboxes
-            if(isset($_POST['new_subject_home']) && !empty($_POST['new_subject_home'])){
-                //insert new subject
-            }
-
-
-        }
-        ?>
         
         <!-- add new equivalence to the foreign_uni -->
-        <form id="add-equivalence-form" action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" style="font-size: 16px">
+        <form id="add-equivalence-form" action="<?php echo $_SERVER['REQUEST_URI']."?foreignuni=".$foreignuni."&abschluss=".$abschluss ;?>" method="post" style="font-size: 16px">
 
             <!-- select subjects row -->
             <div class="form-row">
                 <!-- select for home subject or add new subject -->
                 <div class="form-group col-md-6">
                     <label for="home_subject">Heim-Kurs</label>
-                    <select class="form-control form-control-sm" name="home_subject" >
+                    <select class="form-control form-control-sm" name="home_subject_id" >
                     <option></option>
                      <?php 
 			         	$statementA = $pdo->prepare("SELECT * FROM subject WHERE university_id=:id");
@@ -33,7 +23,7 @@
                 <!-- select for foreign subject or add new subject -->
                 <div class="form-group col-md-6">
                     <label for="foreign_subject">Partner-Kurs</label>
-                    <select class="form-control form-control-sm" name="foreign_subject" >
+                    <select class="form-control form-control-sm" name="foreign_subject_id" >
                     <option></option>
                      <?php 
 			         	$statementA = $pdo->prepare("SELECT * FROM subject WHERE university_id=:id");
@@ -104,13 +94,13 @@
                 <!-- home new subject credit -->
                 <div class="form-group col-md-6">
                     <label for="credit">Credits</label>
-                    <input type="text" class="form-control form-control-sm" name="credit_home" placeholder="z.B. 4,0" disabled>
+                    <input type="text" class="form-control form-control-sm" name="credit_home" placeholder="z.B. 4,0" maxlength="4" pattern="^[1-9]\d*((\.|,)\d+)?$"  disabled>
                 </div>
 
                 <!-- foreign new subject credit -->
                 <div class="form-group col-md-6">
                     <label for="credit">Credits</label>
-                    <input type="text" class="form-control form-control-sm" name="credit_foreign" placeholder="z.B. 4,0" disabled>
+                    <input type="text" class="form-control form-control-sm" name="credit_foreign" placeholder="z.B. 4,0" maxlength="4" pattern="^[1-9]\d*((\.|,)\d+)?$"  disabled>
                 </div>
             </div>
 
@@ -161,7 +151,7 @@
                 if(value == "home"){
                     if($(this).prop("checked") == true){
                         //disable home subject select
-                        $('select[name="home_subject"]').attr('disabled', 'disabled');
+                        $('select[name="home_subject_id"]').attr('disabled', 'disabled');
                         //enable new subject input
                         $('input[name="courseNo_home"]').prop("disabled", false);
                         $('input[name="course_name_home"]').prop("disabled", false);
@@ -169,7 +159,7 @@
                         $('select[name="degree_home"]').removeAttr('disabled');
                     }else{
                         //enable home subject select
-                        $('select[name="home_subject"]').removeAttr('disabled');
+                        $('select[name="home_subject_id"]').removeAttr('disabled');
                         //disable new subject input
                         $('input[name="courseNo_home"]').prop("disabled", 'disabled');
                         $('input[name="course_name_home"]').prop("disabled", 'disabled');
@@ -180,7 +170,7 @@
                 }else if(value == "foreign"){
                     if($(this).prop("checked") == true){
                         //disable home subject select
-                        $('select[name="foreign_subject"]').attr('disabled', 'disabled');
+                        $('select[name="foreign_subject_id"]').attr('disabled', 'disabled');
                         //enable new subject input
                         $('input[name="courseNo_foreign"]').prop("disabled", false);
                         $('input[name="course_name_foreign"]').prop("disabled", false);
@@ -188,7 +178,7 @@
                         $('select[name="degree_foreign"]').removeAttr('disabled');
                     }else{
                         //enable home subject select
-                        $('select[name="foreign_subject"]').removeAttr('disabled');
+                        $('select[name="foreign_subject_id"]').removeAttr('disabled');
                         //disable new subject input
                         $('input[name="courseNo_foreign"]').prop("disabled", 'disabled');
                         $('input[name="course_name_foreign"]').prop("disabled", 'disabled');
