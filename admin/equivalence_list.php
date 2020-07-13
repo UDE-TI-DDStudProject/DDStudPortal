@@ -59,12 +59,13 @@
     //upon save filter
     if(isset($_POST['save_list'])){
         $error = false;
+        $home_university = $_GET['homeuni'];
         $foreignuni = $_GET['foreignuni'];
         $abschluss = $_GET['abschluss'];
 
-        if( empty($foreignuni) ){
+        if( empty($foreignuni) || empty($home_university) ){
             $error = true;
-            $error_msg = "Bitte Partner-Universität auswählen!";
+            $error_msg = "Bitte Universitäten auswählen!";
         }
 
         if(!empty($_POST['student_equivalence_status']) && !$error) {
@@ -254,6 +255,21 @@
         <!-- filter option for Heim-Uni, Foreign University -->
         <form id="filter-form" action="<?php echo $_SERVER['PHP_SELF'];?>" method="get">
         <div class="form-row">
+            <div class="form-group row col-auto">
+            <label for="homeuni" class="col-auto col-form-label col-form-label-sm">*Heim-Universität:</label>
+            <div class="col-auto">
+              <select class="form-control form-control-sm"  name="homeuni">
+                <?php 
+							$statement = $pdo->prepare("SELECT * FROM university");
+							$result = $statement->execute();
+							while($row = $statement->fetch()) { ?>
+                <option value="<?php echo ($row['university_id']);?>"
+                <?php if(isset($home_university) && $home_university == $row['university_id']) echo "selected" ?>>
+                <?php echo ($row['name']);?></option>
+                <?php } ?>
+              </select>
+            </div>
+            </div>
             <div class="form-group row col-auto">
             <label for="foreignuni" class="col-auto col-form-label col-form-label-sm">*Partner-Universität:</label>
             <div class="col-auto">

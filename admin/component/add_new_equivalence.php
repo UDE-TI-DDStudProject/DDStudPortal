@@ -1,4 +1,37 @@
-        
+<!-- create JS subject arrays -->
+<script>
+    var home_subjects = [];
+    var foreign_subjects = [];
+</script>
+
+<!-- get home subject list -->
+<?php 
+	$statementA = $pdo->prepare("SELECT degree_id, subject_id ,subject_code,subject_title, subject_credits FROM subject WHERE university_id=:id");
+    $resultA = $statementA->execute(array(':id'=>$home_university));
+    $home_subjects = array();
+	while($row = $statementA->fetch()) { 
+        array_push($home_subjects, $row);?>
+        <script>
+            var subject = JSON.parse('<?php echo json_encode($row) ?>');
+            home_subjects.push(subject);
+        </script>
+    <?php } 
+?> 
+
+<!-- get foreign subject list -->
+<?php 
+	$statementA = $pdo->prepare("SELECT degree_id, subject_id ,subject_code,subject_title, subject_credits FROM subject WHERE university_id=:id");
+    $resultA = $statementA->execute(array(':id'=>$foreignuni));
+    $foreign_subjects = array();
+	while($row = $statementA->fetch()) { 
+        array_push($foreign_subjects, $row);?>
+        <script>
+            var subject = JSON.parse('<?php echo json_encode($row) ?>');
+            foreign_subjects.push(subject);
+        </script>
+    <?php } 
+?> 
+
         
         <!-- add new equivalence to the foreign_uni -->
         <form id="add-equivalence-form" action="<?php echo $_SERVER['REQUEST_URI']."?foreignuni=".$foreignuni."&abschluss=".$abschluss ;?>" method="post" style="font-size: 16px">
@@ -11,7 +44,7 @@
                     <select class="form-control form-control-sm" name="home_subject_id" >
                     <option></option>
                      <?php 
-			         	$statementA = $pdo->prepare("SELECT * FROM subject WHERE university_id=:id");
+			         	$statementA = $pdo->prepare("SELECT subject_id ,subject_code,subject_title, subject_credits FROM subject WHERE university_id=:id");
 	    	         	$resultA = $statementA->execute(array(':id'=>$home_university));
 	    	         	while($row = $statementA->fetch()) { ?>
                          <option value="<?php echo $row['subject_id'];?>">
@@ -64,13 +97,13 @@
                 <!-- home new subject number -->
                 <div class="form-group col-md-6">
                     <label for="courseNo">Kurs.Nr.</label>
-                    <input type="text" class="form-control form-control-sm" name="courseNo_home" placeholder="z.B. ZKB12345" disabled>
+                    <input type="text" class="form-control form-control-sm" name="courseNo_home"  disabled>
                 </div>
 
                 <!-- foreign new subject number -->
                 <div class="form-group col-md-6">
                     <label for="courseNo">Kurs.Nr.</label>
-                    <input type="text" class="form-control form-control-sm" name="courseNo_foreign" placeholder="z.B. ZKB12345" disabled>
+                    <input type="text" class="form-control form-control-sm" name="courseNo_foreign"  disabled>
                 </div>
             </div>
 
@@ -79,13 +112,13 @@
                 <!-- home new subject title -->
                 <div class="form-group col-md-6">
                     <label for="coursename">Kursname</label>
-                    <input type="text" class="form-control form-control-sm" name="course_name_home" placeholder="z.B. Mathematik 1" disabled>
+                    <input type="text" class="form-control form-control-sm" name="course_name_home"  disabled>
                 </div>
 
                 <!-- foreign new subject title -->
                 <div class="form-group col-md-6">
                     <label for="coursename">Kursname</label>
-                    <input type="text" class="form-control form-control-sm" name="course_name_foreign" placeholder="z.B. Mathematik 1" disabled>
+                    <input type="text" class="form-control form-control-sm" name="course_name_foreign" disabled>
                 </div>
             </div>
 
@@ -94,13 +127,13 @@
                 <!-- home new subject credit -->
                 <div class="form-group col-md-6">
                     <label for="credit">Credits</label>
-                    <input type="text" class="form-control form-control-sm" name="credit_home" placeholder="z.B. 4,0" maxlength="4" pattern="^[1-9]\d*((\.|,)\d+)?$"  disabled>
+                    <input type="text" class="form-control form-control-sm" name="credit_home" maxlength="4" pattern="^[1-9]\d*((\.|,)\d+)?$"  disabled>
                 </div>
 
                 <!-- foreign new subject credit -->
                 <div class="form-group col-md-6">
                     <label for="credit">Credits</label>
-                    <input type="text" class="form-control form-control-sm" name="credit_foreign" placeholder="z.B. 4,0" maxlength="4" pattern="^[1-9]\d*((\.|,)\d+)?$"  disabled>
+                    <input type="text" class="form-control form-control-sm" name="credit_foreign"  maxlength="4" pattern="^[1-9]\d*((\.|,)\d+)?$"  disabled>
                 </div>
             </div>
 
@@ -188,4 +221,39 @@
                 }
             });
         });
+        </script>
+
+        <!-- university drop down select change -->
+        <script>
+            $(document).ready(function(){
+                //select home uni changed
+                $('select[name="home_subject_id"]').change(function(){
+                    var home_id = $(this).val();
+
+                     for(var i=0; i<home_subjects.length;i++){
+                        if(home_subjects[i].subject_id == home_id){
+             
+                            $('input[name="courseNo_home"]').val(home_subjects[i].subject_code);
+                            $('input[name="course_name_home"]').val(home_subjects[i].subject_title);
+                            $('input[name="credit_home"]').val(home_subjects[i].subject_credits);
+                            $('select[name="degree_home"]').val(home_subjects[i].degree_id);
+                        }
+                     }
+                });
+
+                //select home uni changed
+                $('select[name="foreign_subject_id"]').change(function(){
+                    var foreign_id = $(this).val();
+
+                     for(var i=0; i<foreign_subjects.length;i++){
+                        if(foreign_subjects[i].subject_id == foreign_id){
+                            $('input[name="courseNo_foreign"]').val(foreign_subjects[i].subject_code);
+                            $('input[name="course_name_foreign"]').val(foreign_subjects[i].subject_title);
+                            $('input[name="credit_foreign"]').val(foreign_subjects[i].subject_credits);
+                            $('select[name="degree_foreign"]').val(foreign_subjects[i].degree_id);
+                        }
+                     }
+                });
+            });
+
         </script>
