@@ -315,3 +315,5 @@ namespace PasswordCompat\binary {
 
     }
 }
+
+?>

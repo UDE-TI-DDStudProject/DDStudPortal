@@ -188,3 +188,5 @@ function password_strength($password){
 		return true;
 	}
 }
+
+?>
