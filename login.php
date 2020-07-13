@@ -7,7 +7,13 @@
     $user = check_user();
 
     if(isset($user)){
-        header("location: status_application.php");
+        if($user['user_group_id']==1){
+            //student
+            header("location: status_application.php");
+        }else{
+            //admin
+            header("location: admin/index.php");
+        }
         exit;
     }
 
@@ -35,9 +41,16 @@
                 setcookie("identifier",$identifier,time()+(3600*24*365)); //Valid for 1 year
                 setcookie("securitytoken",$securitytoken,time()+(3600*24*365)); //Valid for 1 year
             }
-        
-            header("location: status_application.php");
+            if($user['user_group_id']==1){
+                //student
+                header("location: status_application.php");
+            }else{
+                //admin
+                header("location: admin/index.php");
+            }
             exit;
+            // header("location: status_application.php");
+            // exit;
         } else {
             $error_message =  "E-Mail oder Passwort war ungültig!";
         }
