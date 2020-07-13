@@ -64,7 +64,7 @@
             <div class="dashboard-flex-item">
                 <h5 class="card-title">Neuen Admin eintragen</h5>
                 <p class="card-text">Neue E-Mail Adresse in Admin-Liste hinzufügen.</p>
-                <!-- <a href="equivalence_quota.php" class="btn btn-primary">Klick hier</a> -->
+                <a href="add_new_admin.php" class="btn btn-primary">Klick hier</a>
             </div>
 
             <!-- edit facherwahlliste -->
