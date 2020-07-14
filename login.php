@@ -22,7 +22,7 @@
         $email = trim($_POST['email']);
         $passwort = $_POST['passwort'];
     
-        $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email");
+        $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 1");
         $result = $statement->execute(array('email' => $email));
         $user = $statement->fetch();
     
@@ -93,6 +93,7 @@
         <br>
         <small><a href="forgetpassword.php">Passwort vergessen</a></small>
         <small><a href="register.php">Registieren</a></small>
+        <small><a href="admin/login.php">Admin login hier</a></small>
     </div>
 </main>
 

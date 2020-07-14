@@ -4,18 +4,22 @@
     require_once("inc/functions.inc.php");
     
     //redirect user to homepage if the user has already login
-    // $user = check_user();
+    $user = check_user();
 
-    // if(isset($user)){
-    //     header("location: status.php");
-    //     exit;
-    // }
+    if(isset($user)){
+        if($user['user_group_id']==1){
+            header("location: status.php");
+        }else if($user['user_group_id']==2){
+            header("location: admin/index.php");
+        }
+        exit;
+    }
 
     $userid = $_GET['userid'];
     $code = $_GET['code'];
 
     if(!isset($userid) || !isset($code)){
-        header("location: home.php");
+        header("location: login.php");
         exit;
     }
 
