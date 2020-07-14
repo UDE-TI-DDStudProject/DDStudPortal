@@ -56,7 +56,7 @@
 			}
     }
 
-    //upon save filter
+    //upon save list
     if(isset($_POST['save_list'])){
         $error = false;
         $home_university = $_GET['homeuni'];
@@ -68,20 +68,18 @@
             $error_msg = "Bitte Universitäten auswählen!";
         }
 
-        if(!empty($_POST['student_equivalence_status']) && !$error) {
+        if(!empty($_POST['status']) && !$error) {
 			/*Begin transaction*/
 			try {
 
 				$pdo->beginTransaction();
 
-				foreach ($_POST['student_equivalence'] as $equivalence_id => $application_id){
+				foreach ($_POST['status'] as $equivalence_id => $status_id){
 
-                    if(isset($_POST['student_equivalence_status'][$equivalence_id.$application_id])){
+                    if(isset($status_id)){
 
-                        $equivalence_status = $_POST['student_equivalence_status'][$equivalence_id.$application_id];
-
-                        $statement = $pdo->prepare("UPDATE applied_equivalence SET application_status_id = $equivalence_status WHERE application_id =:application_id AND equivalence_id = :equivalence_id");
-                        $result = $statement->execute(array('application_id'=>$application_id, 'equivalence_id'=>$equivalence_id));
+                        $statement = $pdo->prepare("UPDATE equivalent_subjects SET status_id = $status_id WHERE equivalence_id =:id");
+                        $result = $statement->execute(array('id'=>$equivalence_id));
                     }
                 }
                 
@@ -97,6 +95,25 @@
         }
     }
 
+?>
+
+<!-- upon save valid course -->
+<?php 
+    if(isset($_POST['save_course'])){
+        //get equivalence_id
+        $equivalence_id = $_POST['save_course'];
+
+        //remove all valid course of this equivalence in database
+        $statementD = $pdo->prepare("DELETE FROM equivalence_course WHERE equivalence_id = :id");
+        $resultD = $statementD->execute(array('id' => $equivalence_id)); 
+
+        foreach($_POST['equivalence_course'][$equivalence_id] as $course => $course_id){
+
+            //add valid course into database 
+            $statementS = $pdo->prepare("INSERT INTO equivalence_course(equivalence_id, course_id) VALUES(:eid, :cid)");
+            $resultS = $statementS->execute(array('eid' => $equivalence_id, "cid"=>$course_id));     
+        }
+    }
 ?>
 
 <!-- add new equivalence -->
@@ -373,16 +390,18 @@
                     
                         $result1 = $statement1->execute(array('id'=>$equivalence['equivalence_id']));
                         $validcourses = array();
+                        $validcoursesnames = array();
                         $validcoursesids = array();
                         while($row1 = $statement1->fetch()){
-                            array_push($validcourses, $row1['name']);
+                            array_push($validcourses, $row1);
                             array_push($validcoursesids, $row1['course_id']);
+                            array_push($validcoursesnames, $row1['name']);
                         }
-                        if(count($validcourses) == 0){
+                        if(count($validcoursesnames) == 0){
                             $forAll = true;
                         }else{
                             $forAll = false;
-                            $validcoursesname = implode(",", $validcourses); //convert array to string
+                            $validcoursesnames_string = implode(",", $validcoursesnames); //convert array to string
                         }
 
 
@@ -398,7 +417,7 @@
                                 <td align="center"><?php echo $equivalence['foreign_subject_credits'] ?></td>
                                 <td align="center"><?php echo $equivalence['foreign_subject_title'] ?></td>
                                 <td align="center">
-                                <?php if($forAll) echo "alle"; else if(isset($validcoursesname)) echo $validcoursesname; ?>
+                                <?php if($forAll) echo "alle"; else if(isset($validcoursesnames_string)) echo $validcoursesnames_string; ?>
                                 <!-- <span><i class="fa fa-pencil" aria-hidden="true"></i></span> -->
                                 <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#edit-valid-courses-<?php echo $equivalence['equivalence_id']?>">
                                    edit
@@ -406,7 +425,7 @@
                                 <?php require("component/edit_valid_course.php") ?>
                                 </td>
                                 <td align="center">
-                                    <select class="form-control form-control-sm"  name="status">
+                                    <select class="form-control form-control-sm"  name="status[<?php echo $equivalence['equivalence_id']?>]">
                                     <?php 
 			                        		$statement2 = $pdo->prepare("SELECT * FROM status");
 	    	                        		$result2 = $statement2->execute();

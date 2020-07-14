@@ -44,7 +44,7 @@
                     <select class="form-control form-control-sm" name="home_subject_id" >
                     <option></option>
                      <?php 
-			         	$statementA = $pdo->prepare("SELECT subject_id ,subject_code,subject_title, subject_credits FROM subject WHERE university_id=:id");
+			         	$statementA = $pdo->prepare("SELECT subject_id ,subject_code,subject_title, subject_credits FROM subject WHERE university_id=:id ORDER BY subject_title ASC");
 	    	         	$resultA = $statementA->execute(array(':id'=>$home_university));
 	    	         	while($row = $statementA->fetch()) { ?>
                          <option value="<?php echo $row['subject_id'];?>">
@@ -59,7 +59,7 @@
                     <select class="form-control form-control-sm" name="foreign_subject_id" >
                     <option></option>
                      <?php 
-			         	$statementA = $pdo->prepare("SELECT * FROM subject WHERE university_id=:id");
+			         	$statementA = $pdo->prepare("SELECT * FROM subject WHERE university_id=:id ORDER BY subject_title ASC");
 	    	         	$resultA = $statementA->execute(array(':id'=>$foreignuni));
 	    	         	while($row = $statementA->fetch()) { ?>
                          <option value="<?php echo $row['subject_id'];?>">
