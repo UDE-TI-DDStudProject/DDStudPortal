@@ -20,7 +20,7 @@
     }
 
     //Abfrage des Nutzers
-    $statement = $pdo->prepare("SELECT * FROM reset_password WHERE user_id = :userid");
+    $statement = $pdo->prepare("SELECT * FROM reset_password WHERE user_id = :userid ORDER BY created_at DESC limit 1");
     $result = $statement->execute(array('userid' => $userid));
     $user = $statement->fetch();
         
@@ -92,7 +92,7 @@
 
         <small>Neues Passwort vergeben</small>
 
-        <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" class="needs-validation" novalidate>
+        <form action="<?php echo $_SERVER['PHP_SELF']."?userid=$userid&code=$code";?>" method="post" class="needs-validation" novalidate>
             <div class="form-group">
                 <input type="password" name="passwort" class="form-control" id="inputPassword"
                     placeholder="Neues Passwort" data-toggle="tooltip" data-placement="top"

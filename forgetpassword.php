@@ -2,6 +2,15 @@
     session_start();
     require_once("inc/config.inc.php");
     require_once("inc/functions.inc.php");
+    require_once("PHPMailer/PHPMailer.php");
+    require_once("PHPMailer/SMTP.php");
+    require_once("PHPMailer/Exception.php");
+    require_once("PHPMailer/POP3.php");
+    require_once("PHPMailer/OAuth.php");
+
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
+    use PHPMailer\PHPMailer\Exception;
     
     //redirect user to homepage if the user has already login
     $user = check_user();
@@ -44,10 +53,36 @@
                 
                 //echo $text;
                  
-                mail($empfaenger, $betreff, $text, $from);
-     
-                echo "Ein Link um dein Passwort zurückzusetzen wurde an deine E-Mail-Adresse gesendet.";	
-                $showForm = false;
+                $mail = new PHPMailer;
+
+                $mail->isSMTP();                            // Set mailer to use SMTP
+                $mail->Host = 'smtp.gmail.com';             // Specify main and backup SMTP servers
+                $mail->SMTPAuth = true;                     // Enable SMTP authentication
+                $mail->Username = 'ddstudportal';          // SMTP username
+                $mail->Password = 'admin123!';              // SMTP password
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;                  // Enable TLS encryption, `ssl` also accepted
+                $mail->Port = 587;        // TCP port to connect to
+                $mail->CharSet ="UTF-8";                      
+                // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                         
+                
+                $mail->setFrom('ddstudportal@gmail.com', 'admin');
+                $mail->addReplyTo('ddstudportal@gmail.com', 'admin');
+                $mail->addAddress($empfaenger);   // Add a recipient
+                // $mail->addCC('cc@example.com');
+                // $mail->addBCC('bcc@example.com');
+                
+                $mail->isHTML(false);  // Set email format to HTML
+                 
+                $mail->Subject = $betreff;
+                $mail->Body    = $text;
+                
+                if(!$mail->send()) {
+                    $error_msg = $mail->ErrorInfo;
+                } else {
+                    $success_msg = "Ein Link um dein Passwort zurückzusetzen wurde an deine E-Mail-Adresse gesendet.";
+                    $showForm = false;
+                }
+    
             }
         }
     }
