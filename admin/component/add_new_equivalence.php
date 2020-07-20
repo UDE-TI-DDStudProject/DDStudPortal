@@ -34,8 +34,41 @@
 
         
         <!-- add new equivalence to the foreign_uni -->
-        <form id="add-equivalence-form" action="<?php echo $_SERVER['REQUEST_URI']."?foreignuni=".$foreignuni."&abschluss=".$abschluss ;?>" method="post" style="font-size: 16px">
+        <form id="add-equivalence-form" action="<?php echo $_SERVER['REQUEST_URI'] ;?>" method="post" style="font-size: 16px">
 
+           <!-- select equivalence abschluss row -->
+           <div class="form-row">
+                <!-- select valid_degree -->
+                <div class="form-group col-md-6">
+                    <label for="valid_degree">Abschluss</label>
+                    <select class="form-control form-control-sm" name="valid_degree" >
+                    <option></option>
+                     <?php 
+			         	$statementA = $pdo->prepare("SELECT * FROM degree WHERE name is not null");
+	    	         	$resultA = $statementA->execute();
+	    	         	while($row = $statementA->fetch()) { ?>
+                         <option value="<?php echo $row['degree_id'];?>" <?php if(isset($valid_degree_id) && $valid_degree_id== $row['degree_id']) echo "selected"; else if(isset($abschluss) && $abschluss== $row['degree_id']) echo "selected"; ?>>
+                         <?php echo $row['name'];?></option>
+                     <?php } ?>
+                    </select>
+                </div>
+
+                <!-- select equivalence_status -->
+                <div class="form-group col-md-6">
+                    <label for="status">Status</label>
+                    <select class="form-control form-control-sm" name="status" >
+                    <option></option>
+                     <?php 
+			         	$statementA = $pdo->prepare("SELECT * FROM status");
+	    	         	$resultA = $statementA->execute();
+	    	         	while($row = $statementA->fetch()) { ?>
+                         <option value="<?php echo $row['status_id'];?>" <?php if(isset($status) && $status== $row['status_id']) echo "selected" ?>>  
+                         <?php echo $row['name'];?></option>
+                     <?php } ?>
+                    </select>
+                </div>
+            </div>
+            
             <!-- select subjects row -->
             <div class="form-row">
                 <!-- select for home subject or add new subject -->
@@ -47,7 +80,7 @@
 			         	$statementA = $pdo->prepare("SELECT subject_id ,subject_code,subject_title, subject_credits FROM subject WHERE university_id=:id ORDER BY subject_title ASC");
 	    	         	$resultA = $statementA->execute(array(':id'=>$home_university));
 	    	         	while($row = $statementA->fetch()) { ?>
-                         <option value="<?php echo $row['subject_id'];?>">
+                         <option value="<?php echo $row['subject_id'];?>" <?php if(isset($home_subject_id) && $home_subject_id== $row['subject_id']) echo "selected" ?>>
                          <?php echo $row['subject_title']." | ".$row['subject_code'];?></option>
                      <?php } ?>
                     </select>
@@ -62,7 +95,7 @@
 			         	$statementA = $pdo->prepare("SELECT * FROM subject WHERE university_id=:id ORDER BY subject_title ASC");
 	    	         	$resultA = $statementA->execute(array(':id'=>$foreignuni));
 	    	         	while($row = $statementA->fetch()) { ?>
-                         <option value="<?php echo $row['subject_id'];?>">
+                         <option value="<?php echo $row['subject_id'];?>" <?php if(isset($foreign_subject_id) && $foreign_subject_id== $row['subject_id']) echo "selected" ?>>
                          <?php echo $row['subject_title']." | ".$row['subject_code'];?></option>
                      <?php } ?>
                     </select>

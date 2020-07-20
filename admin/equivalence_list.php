@@ -196,23 +196,37 @@
                 $equivalence = $statementS->fetch();
 
                 if(empty($equivalence)){
-                    //insert equivalence , status_id = 2 (approved)
-                    $statement = $pdo->prepare("INSERT INTO equivalent_subjects(home_subject_id, foreign_subject_id, status_id) VALUES (:home_subject_id, :foreign_subject_id, 2)");
-                    $result = $statement->execute(array('home_subject_id' => $home_subject_id, 'foreign_subject_id' => $foreign_subject_id));    
-                    
-                    //check if equivalence exists in database
-                    $statementS = $pdo->prepare("SELECT * FROM equivalent_subjects WHERE home_subject_id = :home_id and foreign_subject_id = :foreign_id");
-                    $resultS = $statementS->execute(array('home_id' => $home_subject_id, 'foreign_id' => $foreign_subject_id));            
-                    $equivalence = $statementS->fetch();
-
-                    //check if equivalence is successfully added to database
-                    if(!empty($equivalence)){
-                        //show success msg if equivalence already added to database
-                        $success_msg = "Äquivalenz ist erfolgreich hinzugefügt!";
-                    }else{
-                        //show error msg if equivalence already not added to database
-                        $error_msg = "Beim Speichern des Äquivalenz ist ein Fehler aufgetreten. Bitte neu versuchen!";
+                    //check status and abschluss
+                    if(isset($_POST["valid_degree"])){
+                        $valid_degree_id = $_POST["valid_degree"];
                     }
+                    if(isset($_POST["status"]) ){
+                        $status = $_POST["status"];
+                    }
+                    if(isset($_POST["valid_degree"]) && isset($_POST["status"]) && !empty($_POST["valid_degree"] && !empty($_POST["status"]))){
+
+                        //insert equivalence 
+                        $statement = $pdo->prepare("INSERT INTO equivalent_subjects(home_subject_id, foreign_subject_id, status_id, valid_degree_id) VALUES (:home_subject_id, :foreign_subject_id, :status_id, :degree_id)");
+                        $result = $statement->execute(array('home_subject_id' => $home_subject_id, 'foreign_subject_id' => $foreign_subject_id, 'status_id'=> $_POST["status"], 'degree_id'=>$_POST["valid_degree"]));    
+                        
+                        //check if equivalence exists in database
+                        $statementS = $pdo->prepare("SELECT * FROM equivalent_subjects WHERE home_subject_id = :home_id and foreign_subject_id = :foreign_id");
+                        $resultS = $statementS->execute(array('home_id' => $home_subject_id, 'foreign_id' => $foreign_subject_id));            
+                        $equivalence = $statementS->fetch();
+
+                        //check if equivalence is successfully added to database
+                        if(!empty($equivalence)){
+                            //show success msg if equivalence already added to database
+                            $success_msg = "Äquivalenz ist erfolgreich hinzugefügt!";
+                        }else{
+                            //show error msg if equivalence already not added to database
+                            $error_msg = "Beim Speichern des Äquivalenz ist ein Fehler aufgetreten. Bitte neu versuchen!";
+                        }
+                    }else{
+                        //show error msg if abschluss and valid degree is not selected
+                        $error_msg = "Bitte Abschluss und Status auswählen!";
+                    }
+                
                 
                 }else{
                     //show error msg if equivalence already exists in database
@@ -346,7 +360,7 @@
             </div>
         </div>
 
-        <form action="<?php echo $_SERVER['REQUEST_URI']."?foreignuni=".$foreignuni."&abschluss=".$abschluss ;?>" method="post" id="equivalence-form">
+        <form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post" id="equivalence-form">
             
         <div class="table-responsive">
                 <table class="table table-hover table-sm" id="equivalence_list" style="text-align:center;font-size:14px;">
