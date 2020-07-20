@@ -13,4 +13,11 @@ $pdo = new pdo("mysql:host=$db_host;dbname=$db_name;port=3308", $db_user, $db_pa
 // $db_user = 'smchnage';
 // $db_password = 'smYo6cwlsV5l';
 // $db_server = 'db12.uni-duisburg-essen.de';
-// $pdo = new pdo("mysql:host=$db_host;dbname=$db_name;port=$db_port", $db_user, $db_password, $db_server);
+
+// try {
+//     $pdo = new pdo("mysql:host=$db_server;dbname=$db_name;port=$db_port", $db_user, $db_password);
+// } catch (PDOException $e) {
+//     echo 'Connection failed: ' . $e->getMessage();
+// }
+
+?>
