@@ -227,7 +227,8 @@
                             (SELECT COUNT(*) FROM exchange_equivalence ae 
                                                     LEFT JOIN exchange ex on ex.exchange_id = ae.exchange_id 
                                                     LEFT JOIN application ap on ap.application_id = ex.application_id 
-                                                    WHERE ap.exchange_period_id = $auslandssemester AND ae.equivalence_id = es.equivalence_id) as applied_count,
+                                                    LEFT JOIN study_home sh on sh.application_id = ap.application_id 
+                                                    WHERE ap.exchange_period_id = $auslandssemester AND ae.equivalence_id = es.equivalence_id AND sh.home_degree_id = $abschluss) as applied_count,
                             (SELECT quota FROM equivalence_quota eq WHERE eq.equivalence_id = es.equivalence_id and eq.exchange_period_id = $auslandssemester) as max_count 
                             FROM equivalent_subjects es
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
@@ -280,6 +281,7 @@
                             <?php 
                                 //if at least one student applied for the equivalence, then create a row, in that row create a table to show all students that applied for this equivalence
                                 if($equivalence['applied_count']>0):?>
+                                    <script>console.log("yay")</script>
                                     
                                     <tr>
                                         <td colspan="11"  class="collapse multi-collapse" id="row<?php echo $equivalence['equivalence_id']?>">
@@ -301,19 +303,18 @@
 
                                                         <?php
                                                         //get all approved students that applied this equivalence
-                                                        $statement3 = $pdo->prepare("SELECT eq.equivalence_id, ae.application_status_id, us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ap.success_factor, uni1.name as uni1  
+                                                        $statement3 = $pdo->prepare("SELECT ae.equivalence_id, ae.application_status_id, us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ap.success_factor, uni1.name as uni1  
                                                         FROM applied_equivalence ae 
-                                                        LEFT JOIN reviewed_application ra on ra.application_id = ae.application_id 
-                                                        LEFT JOIN exchange ex on ex.application_id = ra.application_id 
+                                                        LEFT JOIN exchange ex on ex.application_id = ae.application_id 
                                                         LEFT JOIN exchange_equivalence eq on eq.exchange_id = ex.exchange_id and eq.equivalence_id = ae.equivalence_id 
-                                                        LEFT JOIN application ap on ap.application_id = ra.application_id 
+                                                        LEFT JOIN application ap on ap.application_id = ae.application_id 
                                                         LEFT JOIN student st on st.student_id = ap.student_id 
                                                         LEFT JOIN user us on us.user_id = st.user_id 
                                                         LEFT JOIN study_home sh on sh.application_id = ap.application_id 
                                                         LEFT JOIN course cr on cr.course_id = sh.home_course_id 
                                                         LEFT JOIN priority pr on pr.application_id = ap.application_id 
                                                         LEFT JOIN university uni1 on uni1.university_id = pr.first_uni_id 
-                                                        WHERE ra.application_status_id = 2 AND ap.exchange_period_id = $auslandssemester and sh.home_degree_id = $abschluss and ae.equivalence_id = :id 
+                                                        WHERE  ap.exchange_period_id = $auslandssemester and sh.home_degree_id = $abschluss and ae.equivalence_id = :id 
                                                         ORDER BY ap.success_factor DESC");
 
                                                         $result3 = $statement3->execute(array('id'=>$equivalence['equivalence_id']));
@@ -323,6 +324,8 @@
                                                         $count = 0;
 
                                                         while($student = $statement3->fetch()){
+                                                            $studentname= $student["firstname"];
+                                                            echo "<script>console.log(\"$studentname\")</script>"; 
                                                             $count += 1;
                                                         
                                                             if(empty($max_count)){
