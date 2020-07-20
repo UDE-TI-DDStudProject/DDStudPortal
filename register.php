@@ -48,7 +48,7 @@
 
       //Überprüfe, dass die E-Mail-Adresse noch nicht registriert wurde
       if(!$error) {
-        $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email");
+        $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 1");
         $result = $statement->execute(array('email' => $email));
         $user = $statement->fetch();
 
@@ -88,7 +88,7 @@
 			$betreff = "Email Activation für deinen Account auf ".getSiteURL(); //Ersetzt hier den Domain-Namen
 			$from = "From: Vorname Nachname <absender@domain.de>"; //Ersetzt hier euren Name und E-Mail-Adresse
 			$url_activation = getSiteURL().'email_activation.php?userid='.$user['user_id'].'&code='.$activationcode; //Setzt hier eure richtige Domain ein
-            $text = 'Hallo '.$user['firstname'].','.$url_activation.' Viele Grüße,dein Bewerbungs-Team';
+            $text = 'Hallo '.$user['firstname'].',<br><br><a href="'.$url_activation.'">'.$url_activation.'</a> <br><br>Viele Grüße,dein Bewerbungs-Team';
 
             $mail = new PHPMailer;
 
@@ -108,7 +108,7 @@
             // $mail->addCC('cc@example.com');
             // $mail->addBCC('bcc@example.com');
             
-            $mail->isHTML(false);  // Set email format to HTML
+            $mail->isHTML(true);  // Set email format to HTML
              
             $mail->Subject = $betreff;
             $mail->Body    = $text;

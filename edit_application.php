@@ -181,33 +181,44 @@
         $third_uni = 'NULL';
     }
 
-    if(!$error){
-      //Check if all required fields are filled
-      if(!isset($nationality) or !isset($birthday)
-      or !isset($home_street) or !isset($home_zip) or !isset($home_city) or !isset($home_state) or !isset($home_country) or !isset($home_phone)
-      or !isset($home_degree) or !isset($home_university) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
-      or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) ){
-        $error_msg = "Please fill in all required fields!";
-        $error = true;
-      }
-    }
-
     //check whether if selected period is past deadline
     if(!$error) { 
-      $statement = $pdo->prepare("SELECT * FROM exchange_period WHERE period_id = :id");
-      $result = $statement->execute(array('id' => $starting_semester));
-      $period = $statement->fetch();
+        $statement = $pdo->prepare("SELECT * FROM exchange_period WHERE period_id = :id");
+        $result = $statement->execute(array('id' => $starting_semester));
+        $period = $statement->fetch();
+    
+        //set form readonly after deadline
+        if(isset($period)){
+          $deadline = $period['application_end'];
+    
+          if(((strtotime(date('Y-m-d h:i:sa')) - strtotime($deadline))/60/60/24) >= 0){
+            $error = true;
+            $error_msg = "Selected period is no longer applicable/editable!";
+          }
+        }
+    }
 
-      //set form readonly after deadline
-      if(isset($period)){
-        $deadline = $period['application_end'];
-
-        if(((strtotime(date('Y-m-d h:i:sa')) - strtotime($deadline))/60/60/24) >= 0){
+    if(!$error){
+        //Check if all required fields are filled
+        if(!isset($nationality) or !isset($birthday)
+        or !isset($home_street) or !isset($home_zip) or !isset($home_city) or !isset($home_state) or !isset($home_country) or !isset($home_phone)
+        or !isset($home_degree) or !isset($home_university) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
+        or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) ){
+          $error_msg = "Please fill in all required fields!";
           $error = true;
-          $error_msg = "Selected period is no longer applicable/editable!";
         }
       }
+
+    //validation of data
+    if(!$error){
+        if($home_semester < 1){
+            $error_msg = "Semester darf nicht weniger als 1 sein!";
+            $error = true;
+        }
     }
+
+    //set success_factor
+    $success_factor = $home_credits * 0.125 / (($home_semester - 1) * $home_cgpa);
 
     if(!$error){
       try {
@@ -262,6 +273,10 @@
           third_uni_id= $third_uni 
           WHERE application_id =:applicationid");
         $statement7->execute(array('applicationid'=>$applicationid));
+
+        //instead of trigger, update success factor here
+        $statement10 = $pdo->prepare("UPDATE $applicationDB SET success_factor = $success_factor WHERE application_id = $applicationid");
+        $statement10->execute();
   
         $pdo->commit();
         

@@ -318,24 +318,24 @@ if(isset($_POST['save'])) {
                 
                     <div class="form-check form-check-inline">
                         <input name="degree1" class="form-check-input" type="checkbox" id="degree1" value="degree"
-                            checked>
+                            <?php if(isset($application) && $application["applied_degree_id"]==1) echo "checked";?>>
                         <label class="form-check-label" for="inlineCheckbox1">Bachelor</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input name="master1" class="form-check-input" type="checkbox" id="master1" value="master"
-                            checked>
+                        <?php if(isset($application) && $application["applied_degree_id"]==2) echo "checked";?>>
                         <label class="form-check-label" for="inlineCheckbox2">Master</label>
                     </div>
                 
 
                     <!-- radio button -->
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="forCourse" id="mycourse1" value="mycourse" checked>
-                      <label class="form-check-label" for="mycourse">Mein Studiengang</label>
+                      <input class="form-check-input" type="radio" name="forCourse1" id="mycourse1" value="mycourse" checked>
+                      <label class="form-check-label" for="mycourse1">Mein Studiengang</label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="forCourse" id="allcourse1" value="allcourse">
-                      <label class="form-check-label" for="allcourse">Alle Studiengänge</label>
+                      <input class="form-check-input" type="radio" name="forCourse1" id="allcourse1" value="allcourse">
+                      <label class="form-check-label" for="allcourse1">Alle Studiengänge</label>
                     </div>
                 </div>
 
@@ -504,24 +504,24 @@ if(isset($_POST['save'])) {
                 
                     <div class="form-check form-check-inline">
                         <input name="degree2" class="form-check-input" type="checkbox" id="degree2" value="degree"
-                            checked>
+                        <?php if(isset($application) && $application["applied_degree_id"]==1) echo "checked";?>>
                         <label class="form-check-label" for="inlineCheckbox1">Bachelor</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input name="master2" class="form-check-input" type="checkbox" id="master2" value="master"
-                            checked>
+                        <?php if(isset($application) && $application["applied_degree_id"]==2) echo "checked";?>>
                         <label class="form-check-label" for="inlineCheckbox2">Master</label>
                     </div>
                 
 
                     <!-- radio button -->
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="forCourse" id="mycourse2" value="mycourse" checked>
-                      <label class="form-check-label" for="mycourse">Mein Studiengang</label>
+                      <input class="form-check-input" type="radio" name="forCourse2" id="mycourse2" value="mycourse" checked>
+                      <label class="form-check-label" for="mycourse2">Mein Studiengang</label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="forCourse" id="allcourse2" value="allcourse">
-                      <label class="form-check-label" for="allcourse">Alle Studiengänge</label>
+                      <input class="form-check-input" type="radio" name="forCourse2" id="allcourse2" value="allcourse">
+                      <label class="form-check-label" for="allcourse2">Alle Studiengänge</label>
                     </div>
                 </div>
 
@@ -694,24 +694,24 @@ if(isset($_POST['save'])) {
                 
                     <div class="form-check form-check-inline">
                         <input name="degree3" class="form-check-input" type="checkbox" id="degree3" value="degree"
-                            checked>
+                        <?php if(isset($application) && $application["applied_degree_id"]==1) echo "checked";?>>
                         <label class="form-check-label" for="inlineCheckbox1">Bachelor</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input name="master3" class="form-check-input" type="checkbox" id="master3" value="master"
-                            checked>
+                        <?php if(isset($application) && $application["applied_degree_id"]==2) echo "checked";?>>
                         <label class="form-check-label" for="inlineCheckbox2">Master</label>
                     </div>
                 
 
                     <!-- radio button -->
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="forCourse" id="mycourse3" value="mycourse" checked>
-                      <label class="form-check-label" for="mycourse">Mein Studiengang</label>
+                      <input class="form-check-input" type="radio" name="forCourse3" id="mycourse3" value="mycourse" checked>
+                      <label class="form-check-label" for="mycourse3">Mein Studiengang</label>
                     </div>
                     <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="forCourse" id="allcourse3" value="allcourse">
-                      <label class="form-check-label" for="allcourse">Alle Studiengänge</label>
+                      <input class="form-check-input" type="radio" name="forCourse3" id="allcourse3" value="allcourse">
+                      <label class="form-check-label" for="allcourse3">Alle Studiengänge</label>
                     </div>
                 </div>
 
@@ -875,14 +875,26 @@ if(isset($_POST['save'])) {
 
 <script>
 $(document).ready(function() {
-    //hide invalid equivalence on page load
+    //get row of three tables on page load
     var rows1 = $('#courses1 tr');
     var rows2 = $('#courses2 tr');
     var rows3 = $('#courses3 tr');
 
+    //hide invalid equivalence on page load
     rows1.filter('[name ="invalid"]').hide();
     rows2.filter('[name ="invalid"]').hide();
     rows3.filter('[name ="invalid"]').hide();
+
+    ////hide irrelevant abschluss on page load, all three have the same abschluss on page load
+    if ($("#degree1").prop("checked") == true) {
+        rows1.filter('#2').hide();
+        rows2.filter('#2').hide();
+        rows3.filter('#2').hide();
+    }else{
+        rows1.filter('#1').hide();
+        rows2.filter('#1').hide();
+        rows3.filter('#1').hide();
+    }
 
 
     $("#degree1").click(function() {
@@ -890,6 +902,11 @@ $(document).ready(function() {
 
         if ($("#degree1").prop("checked") == true) {
             rows.filter('#1').show();
+
+            //check studiengang
+            if($("#mycourse1").prop("checked") == true){
+                rows.filter('[name ="invalid"]').hide();
+            }
         } else {
             rows.filter('#1').hide();
         }
@@ -900,6 +917,11 @@ $(document).ready(function() {
 
         if ($("#master1").prop("checked") == true) {
             rows.filter('#2').show();
+
+            //check studiengang
+            if($("#mycourse1").prop("checked") == true){
+                rows.filter('[name ="invalid"]').hide();
+            }
         } else {
             rows.filter('#2').hide();
         }
@@ -910,6 +932,11 @@ $(document).ready(function() {
 
         if ($("#degree2").prop("checked") == true) {
             rows.filter('#1').show();
+
+            //check studiengang
+            if($("#mycourse2").prop("checked") == true){
+                rows.filter('[name ="invalid"]').hide();
+            }
         } else {
             rows.filter('#1').hide();
         }
@@ -920,6 +947,11 @@ $(document).ready(function() {
 
         if ($("#master2").prop("checked") == true) {
             rows.filter('#2').show();
+
+            //check studiengang
+            if($("#mycourse2").prop("checked") == true){
+                rows.filter('[name ="invalid"]').hide();
+            }
         } else {
             rows.filter('#2').hide();
         }
@@ -930,6 +962,11 @@ $(document).ready(function() {
 
         if ($("#degree3").prop("checked") == true) {
             rows.filter('#1').show();
+
+            //check studiengang
+            if($("#mycourse3").prop("checked") == true){
+                rows.filter('[name ="invalid"]').hide();
+            }
         } else {
             rows.filter('#1').hide();
         }
@@ -940,6 +977,11 @@ $(document).ready(function() {
 
         if ($("#master3").prop("checked") == true) {
             rows.filter('#2').show();
+
+            //check studiengang
+            if($("#mycourse3").prop("checked") == true){
+                rows.filter('[name ="invalid"]').hide();
+            }
         } else {
             rows.filter('#2').hide();
         }
@@ -957,7 +999,19 @@ $(document).ready(function() {
         var rows = $('#courses1 tr');
 
         if ($("#allcourse1").prop("checked") == true) {
-            rows.filter('[name ="invalid"]').show();
+            //check abschluss
+            if($("#degree1").prop("checked") == true && $("#master1").prop("checked") == true){
+                //show all courses
+                rows.show();
+            }else if($("#degree1").prop("checked") == true){
+                //show all degree courses only
+                rows.filter('#1').show();
+            }else if($("#master1").prop("checked") == true){
+                //show all master courses only
+                rows.filter('#2').show();
+            }else{
+                rows.hide();
+            }
         }
     });
 
@@ -973,7 +1027,19 @@ $(document).ready(function() {
         var rows = $('#courses2 tr');
 
         if ($("#allcourse2").prop("checked") == true) {
-            rows.filter('[name ="invalid"]').show();
+            //check abschluss
+            if($("#degree2").prop("checked") == true && $("#master2").prop("checked") == true){
+                //show all courses
+                rows.show();
+            }else if($("#degree2").prop("checked") == true){
+                //show all degree courses only
+                rows.filter('#1').show();
+            }else if($("#master2").prop("checked") == true){
+                //show all master courses only
+                rows.filter('#2').show();
+            }else{
+                rows.hide();
+            }
         }
     });
 
@@ -989,7 +1055,19 @@ $(document).ready(function() {
         var rows = $('#courses3 tr');
 
         if ($("#allcourse3").prop("checked") == true) {
-            rows.filter('[name ="invalid"]').show();
+            //check abschluss
+            if($("#degree3").prop("checked") == true && $("#master3").prop("checked") == true){
+                //show all courses
+                rows.show();
+            }else if($("#degree3").prop("checked") == true){
+                //show all degree courses only
+                rows.filter('#1').show();
+            }else if($("#master3").prop("checked") == true){
+                //show all master courses only
+                rows.filter('#2').show();
+            }else{
+                rows.hide();
+            }
         }
     });
 });

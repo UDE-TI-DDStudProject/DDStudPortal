@@ -93,7 +93,10 @@
         <br>
         <small><a href="forgetpassword.php">Passwort vergessen</a></small>
         <small><a href="register.php">Registieren</a></small>
-        <small><a href="admin/login.php">Admin login hier</a></small>
+        <div class="text-right">
+            <small><a href="admin/login.php">Admin einloggen</a></small>
+        </div>
+        
     </div>
 </main>
 

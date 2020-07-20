@@ -8,7 +8,7 @@
 
     if(isset($user)){
         if($user['user_group_id']==1){
-            header("location: status.php");
+            header("location: status_application.php");
         }else if($user['user_group_id']==2){
             header("location: admin/index.php");
         }
@@ -55,6 +55,12 @@
         //set user activated = 1 
         $statement = $pdo->prepare("UPDATE user SET activated = 1 WHERE user_id = :userid");
         $result = $statement->execute(array('userid' => $userid));
+
+        // if user is a student, create a student instance in the database
+        if($user["user_group_id"] == 1){
+            $statement = $pdo->prepare("INSERT INTO student(user_id, student_status_id) VALUES(:userid, 1)");
+            $result = $statement->execute(array('userid' => $userid));
+        }
         
         // then remove email activation code if successfully activated
         if($result){

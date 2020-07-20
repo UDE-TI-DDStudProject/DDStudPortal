@@ -135,6 +135,17 @@
       }
     }
 
+    //validation of data
+    if(!$error){
+        if($home_semester < 1){
+            $error_msg = "Semester darf nicht weniger als 1 sein!";
+            $error = true;
+        }
+    }
+
+    //set success_factor
+    $success_factor = $home_credits * 0.125 / (($home_semester - 1) * $home_cgpa);
+
     //check files
     if(!$error){
         if($_FILES["Fächerwahlliste"]["size"] == 0 || $_FILES["Motivationsschreiben"]["size"] == 0 || $_FILES["Lebenslauf"]["size"] == 0 || $_FILES["Transkript"]["size"] == 0){
@@ -222,7 +233,6 @@
         $application =  $statement9->fetch();
         $applicationid = $application['application_id'];
 
-        echo "<script>console.log('$applicationid');</script>";
       
         $statement6 = $pdo->prepare("INSERT INTO $homestudyDB (
           home_university_id,
@@ -261,6 +271,10 @@
           $third_uni
           )");
         $statement7->execute();
+
+        //instead of trigger, update success factor here
+        $statement10 = $pdo->prepare("UPDATE $applicationDB SET success_factor = $success_factor WHERE application_id = $applicationid");
+        $statement10->execute();
   
         $pdo->commit();
         
