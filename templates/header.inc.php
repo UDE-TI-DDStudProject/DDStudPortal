@@ -38,7 +38,7 @@
                         alt="">
                 </a>
                 <!-- Exchange Logo hyperlink -->
-                <a class="navbar-brand" href="../index.php">
+                <a class="navbar-brand" href="index.php">
                     <img src="screenshots/worldwide.png" width="30" height="30" class="d-inline-block align-center"
                         alt="">
                     Südostasien
