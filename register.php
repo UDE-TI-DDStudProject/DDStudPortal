@@ -88,7 +88,10 @@
 			$betreff = "Email Activation für deinen Account auf ".getSiteURL(); //Ersetzt hier den Domain-Namen
 			$from = "From: Vorname Nachname <absender@domain.de>"; //Ersetzt hier euren Name und E-Mail-Adresse
 			$url_activation = getSiteURL().'email_activation.php?userid='.$user['user_id'].'&code='.$activationcode; //Setzt hier eure richtige Domain ein
-            $text = 'Hallo '.$user['firstname'].',<br><br><a href="'.$url_activation.'">'.$url_activation.'</a> <br><br>Viele Grüße,dein Bewerbungs-Team';
+            $text = 'Sehr geehrte Damen und Herren,<br><br> 
+            herzlich Willkommen im Bewerberportal für ein Auslandssemester in Südostasien. Wir freuen uns, dass Sie da sind. Jetzt ist es nur noch ein kleiner Schritt. Bestätigen Sie die Registrierung durch einen Klick auf den folgenden Link:<br><br>
+            <a href="'.$url_activation.'">'.$url_activation.'</a> 
+            <br><br>Freundliche Grüße<br><br>Ihr Team von<br>SCIES – Support Center for (International) Engineering Studies';
 
             $mail = new PHPMailer;
 

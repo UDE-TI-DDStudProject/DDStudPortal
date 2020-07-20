@@ -327,7 +327,7 @@
         </div>
 
         <div class="alert alert-info">
-            Wenn du die Matrikelnummer oder die Prioritäten ändern willst, bitte diese Bewerbung löschen und dann eine neue Bewerbung abschicken.
+            Eine Änderung der Matrikelnummer oder der Uni-Prioritäten ist nicht mehr möglich. Bitte lösche hierfür die aktuelle Bewerbung und schicke eine neue Bewerbung ab.        
         </div>
 
 
