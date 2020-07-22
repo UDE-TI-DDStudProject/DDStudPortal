@@ -19,7 +19,7 @@ if(isset($_GET['send']) ) {
 		$error = "<b>Bitte eine E-Mail-Adresse eintragen</b>";
 	} else {
 		$statement = $pdo->prepare("SELECT * FROM user WHERE email = :email");
-		$result = $statement->execute(array('email' => $_POST['email']));
+		$result = $statement->execute(array('email' => strtolower(trim($_POST['email']))));
 		$user = $statement->fetch();		
  
 		if($user === false) {

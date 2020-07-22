@@ -35,8 +35,8 @@
     }else if(isset($_POST['btnEmail'])) {
     		$activeTab = "email";
     		$passwort = $_POST['password'];
-    		$email = trim($_POST['emailNew']);
-    		$email2 = trim($_POST['emailNew1']);
+    		$email = strtolower(trim($_POST['emailNew']));
+    		$email2 = strtolower(trim($_POST['emailNew1']));
     
     		if($email != $email2) {
     			$error_msg = "Die eingegebenen E-Mail-Adressen stimmten nicht überein.";

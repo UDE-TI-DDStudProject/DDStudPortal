@@ -25,7 +25,7 @@
       $salutationid = trim($_POST['salutation']);
       $vorname = trim($_POST['firstname']);
       $nachname = trim($_POST['lastname']);
-      $email = trim($_POST['email']);
+      $email = strtolower(trim($_POST['email']));
       $passwort = $_POST['passwort'];
       $passwort2 = $_POST['repeatpasswort'];
 

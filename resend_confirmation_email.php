@@ -28,7 +28,7 @@
 <?php 
     if(isset($_POST['send'])) {
 
-        $email = $_POST['email'];
+        $email = strtolower(trim($_POST['email']));
 
         //get user
         $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 1");

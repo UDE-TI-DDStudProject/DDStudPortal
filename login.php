@@ -19,7 +19,7 @@
 
     //after form submit
     if(isset($_POST['email']) && isset($_POST['passwort'])) {
-        $email = trim($_POST['email']);
+        $email = strtolower(trim($_POST['email']));
         $passwort = $_POST['passwort'];
     
         $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 1");
