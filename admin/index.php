@@ -73,6 +73,13 @@
                 <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
                 <a href="equivalence_list.php" class="btn btn-primary">Klick hier</a>
             </div>
+
+            <!-- edit exchange semester -->
+            <div class="dashboard-flex-item">
+                <h5 class="card-title">Auslandssemester bearbeiten</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <a href="edit_auslandssemester.php" class="btn btn-primary">Klick hier</a>
+            </div>
         
         </div>
     </div>
