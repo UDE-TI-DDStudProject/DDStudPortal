@@ -224,11 +224,11 @@
                             $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
                             s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
                             ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at ,
-                            (SELECT COUNT(*) FROM exchange_equivalence ae 
-                                                    LEFT JOIN exchange ex on ex.exchange_id = ae.exchange_id 
-                                                    LEFT JOIN application ap on ap.application_id = ex.application_id 
+                            (SELECT COUNT(distinct(ex.exchange_id)) FROM applied_equivalence ae  
+                                                    LEFT JOIN application ap on ap.application_id = ae.application_id 
+                                                    LEFT JOIN exchange ex on ex.application_id = ap.application_id
                                                     LEFT JOIN study_home sh on sh.application_id = ap.application_id 
-                                                    WHERE ap.exchange_period_id = $auslandssemester AND ae.equivalence_id = es.equivalence_id AND sh.home_degree_id = $abschluss) as applied_count,
+                                                    WHERE ap.exchange_period_id = $auslandssemester AND ae.equivalence_id = es.equivalence_id AND sh.home_degree_id = $abschluss AND ex.exchange_id IS NOT NULL) as applied_count,
                             (SELECT quota FROM equivalence_quota eq WHERE eq.equivalence_id = es.equivalence_id and eq.exchange_period_id = $auslandssemester) as max_count 
                             FROM equivalent_subjects es
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
@@ -314,7 +314,7 @@
                                                         LEFT JOIN course cr on cr.course_id = sh.home_course_id 
                                                         LEFT JOIN priority pr on pr.application_id = ap.application_id 
                                                         LEFT JOIN university uni1 on uni1.university_id = pr.first_uni_id 
-                                                        WHERE  ap.exchange_period_id = $auslandssemester and sh.home_degree_id = $abschluss and ae.equivalence_id = :id 
+                                                        WHERE  ap.exchange_period_id = $auslandssemester and sh.home_degree_id = $abschluss and ae.equivalence_id = :id and ex.exchange_id IS NOT NULL 
                                                         ORDER BY ap.success_factor DESC");
 
                                                         $result3 = $statement3->execute(array('id'=>$equivalence['equivalence_id']));
