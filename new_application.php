@@ -126,19 +126,25 @@
 
     if(!$error){
       //Check if all required fields are filled
-      if(!isset($nationality) or !isset($birthday)
-      or !isset($home_street) or !isset($home_zip) or !isset($home_city) or !isset($home_state) or !isset($home_country) or !isset($home_phone)
-      or !isset($home_degree) or !isset($home_university) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
-      or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) ){
-        $error_msg = "Please fill in all required fields!";
+      if(empty($nationality) or empty($birthday)
+      or empty($home_street) or empty($home_zip) or empty($home_city) or empty($home_state) or empty($home_country) or empty($home_phone)
+      or empty($home_degree) or empty($home_university) or empty($home_course) or empty($home_matno) or empty($home_enrollment) or empty($home_semester) or empty($home_credits) or empty($home_cgpa)
+      or empty($intention) or empty($starting_semester) or empty($foreign_degree) or empty($first_uni) ){
+        $error_msg = "Bitte alle Felder ausfüllen!";
         $error = true;
       }
     }
 
     //validation of data
     if(!$error){
+
         if($home_semester < 1){
-            $error_msg = "Semester darf nicht weniger als 1 sein!";
+            $error_msg += "Semester darf nicht weniger als 1 sein!<br>";
+            $error = true;
+        }
+
+        if(strlen($home_matno) > 10){
+            $error_msg += "Matrikelnummer darf nicht mehr als 10 Zeichen!<br>";
             $error = true;
         }
     }
@@ -795,14 +801,16 @@
                             Priorität</label>
                         <div class="col-sm-9">
                             <select type="number" id="inputSecondPrio" size="1" maxlength="20" name="secondprio"
-                                class="form-control form-control-sm" disabled>
+                                class="form-control form-control-sm" 
+                                <?php if(!isset($first_uni) || empty($first_uni)) echo "disabled"; ?>>
                                 <option></option>
                                 <?php 
 				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,5)");
 				              				$result = $statement->execute();
 				              				while($row = $statement->fetch()) { ?>
                                 <option value="<?php echo ($row['university_id']);?>"
-                                    <?php if(isset($second_uni) and $second_uni == $row['university_id']) echo "selected"; ?>>
+                                    <?php if(isset($second_uni) and $second_uni == $row['university_id']) echo "selected"; 
+                                            else if(isset($first_uni) and $first_uni == $row['university_id']) echo "disabled"; ?>>
                                     <?php echo ($row['name']);?></option>
                                 <?php } ?>
                             </select>
@@ -815,14 +823,17 @@
                             Priorität</label>
                         <div class="col-sm-9">
                             <select type="number" id="inputThirdPrio" size="1" maxlength="20" name="thirdprio"
-                                class="form-control form-control-sm" disabled>
+                                class="form-control form-control-sm" 
+                                <?php if(!isset($second_uni) || empty($second_uni) || $second_uni == "NULL") echo "disabled"; ?>>
                                 <option></option>
                                 <?php 
 				              				$statement = $pdo->prepare("SELECT * FROM university where university_id in (2,3,5)");
 				              				$result = $statement->execute();
 				              				while($row = $statement->fetch()) { ?>
                                 <option value="<?php echo ($row['university_id']);?>"
-                                    <?php if(isset($third_uni) and $third_uni == $row['university_id']) echo "selected"; ?>>
+                                    <?php if(isset($third_uni) and $third_uni == $row['university_id']) echo "selected"; 
+                                        else if(isset($second_uni) and $second_uni == $row['university_id']) echo "disabled";
+                                        else if(isset($first_uni) and $first_uni == $row['university_id']) echo "disabled"; ?>>
                                     <?php echo ($row['name']);?></option>
                                 <?php } ?>
                             </select>
