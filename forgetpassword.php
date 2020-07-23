@@ -26,11 +26,11 @@
         if(!isset($_POST['email']) || empty($_POST['email'])) {
             $error_msg = "Bitte eine E-Mail-Adresse eintragen!";
         } else {
-            $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email");
+            $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 1");
             $result = $statement->execute(array('email' => strtolower(trim($_POST['email']))));
             $user = $statement->fetch();		
      
-            if($user === false) {
+            if(empty($user)) {
                 $error_msg = "Kein Benutzer gefunden.";
             } else {
                 
@@ -39,17 +39,12 @@
                 $result = $statement->execute(array('passwortcode' => sha1($passwortcode), 'userid' => $user['user_id']));
                 
                 $empfaenger = $user['email'];
-                $betreff = "Neues Passwort für deinen Account auf www.php-einfach.de"; //Ersetzt hier den Domain-Namen
+                $betreff = "Neues Passwort für deinen Account auf ".getSiteURL(); //Ersetzt hier den Domain-Namen
                 $from = "From: Vorname Nachname <absender@domain.de>"; //Ersetzt hier euren Name und E-Mail-Adresse
                 $url_passwortcode = getSiteURL().'resetpassword.php?userid='.$user['user_id'].'&code='.$passwortcode; //Setzt hier eure richtige Domain ein
-                $text = 'Hallo '.$user['firstname'].',
-    für deinen Account auf www.php-einfach.de wurde nach einem neuen Passwort gefragt. Um ein neues Passwort zu vergeben, rufe innerhalb der nächsten 24 Stunden die folgende Website auf:
-    '.$url_passwortcode.'
-     
-    Sollte dir dein Passwort wieder eingefallen sein oder hast du dies nicht angefordert, so ignoriere bitte diese E-Mail.
-     
-    Viele Grüße,
-    dein Bewerbungs-Team';
+                $text = 'Hallo '.$user['firstname'].',<br><br>für deinen Account auf '.getSiteURL().' wurde nach einem neuen Passwort gefragt. Um ein neues Passwort zu vergeben, rufe innerhalb der nächsten 24 Stunden die folgende Website auf:<br><br>
+                <a href="'.$url_passwortcode.'">'.$url_passwortcode.'</a><br><br>Sollte dir dein Passwort wieder eingefallen sein oder hast du dies nicht angefordert, so ignoriere bitte diese E-Mail.
+                <br><br>Viele Grüße,<br>dein Bewerbungs-Team';
                 
                 //echo $text;
                  
@@ -71,7 +66,7 @@
                 // $mail->addCC('cc@example.com');
                 // $mail->addBCC('bcc@example.com');
                 
-                $mail->isHTML(false);  // Set email format to HTML
+                $mail->isHTML(true);  // Set email format to HTML
                  
                 $mail->Subject = $betreff;
                 $mail->Body    = $text;
@@ -123,7 +118,7 @@
 
         <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" class="needs-validation" novalidate>
             <div class="form-group">
-                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="E-Mail"
+                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="E-Mail eingeben"
                     value="<?php if(isset($email)) echo $email?>" required>
                 <div id="emailFeedback" class="invalid-feedback"></div>
             </div>

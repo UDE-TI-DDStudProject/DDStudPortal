@@ -2,6 +2,15 @@
     session_start();
     require_once("../inc/config.inc.php");
     require_once("../inc/functions.inc.php");
+    require_once("../PHPMailer/PHPMailer.php");
+    require_once("../PHPMailer/SMTP.php");
+    require_once("../PHPMailer/Exception.php");
+    require_once("../PHPMailer/POP3.php");
+    require_once("../PHPMailer/OAuth.php");
+
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
+    use PHPMailer\PHPMailer\Exception;
 
     //redirect admin to login page if the user is not login
     $user = check_admin();
@@ -75,9 +84,57 @@
         $statement = $pdo->prepare("INSERT INTO user(user_group_id, salutation_id, firstname, lastname, email, password) VALUES (2, :salutationid, :vorname, :nachname, :email, :passwort)");
         $result = $statement->execute(array('salutationid' => $salutationid, 'email' => $email, 'passwort' => $passwort_hash, 'vorname' => $vorname, 'nachname' => $nachname));
 
-        if($result) {
-          $success_message = 'Du wurdest erfolgreich registriert. <a href="login.php">Zum Login</a>';
-        } else {
+        //get user (user_group_id = 2)
+        $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 2");
+        $result = $statement->execute(array('email' => $email));
+        $user = $statement->fetch();
+
+        if(!empty($user)) {
+            // create email activation code
+            $activationcode = random_string();
+			$statement = $pdo->prepare("INSERT INTO email_activation(user_id, activation_code) VALUES( :userid, :activationcode) ");
+            $result = $statement->execute(array('activationcode' => sha1($activationcode), 'userid' => $user['user_id']));
+            
+            //send email activation
+            $empfaenger = $user['email'];
+			$betreff = "Email Activation für deinen Account auf ".getSiteURL(); //Ersetzt hier den Domain-Namen
+			$from = "From: Vorname Nachname <absender@domain.de>"; //Ersetzt hier euren Name und E-Mail-Adresse
+			$url_activation = getSiteURL().'email_activation.php?userid='.$user['user_id'].'&code='.$activationcode; //Setzt hier eure richtige Domain ein
+            $text = 'Sehr geehrte Damen und Herren,<br><br> 
+            herzlich Willkommen im Bewerberportal für ein Auslandssemester in Südostasien. Wir freuen uns, dass Sie da sind. Jetzt ist es nur noch ein kleiner Schritt. Bestätigen Sie die Registrierung durch einen Klick auf den folgenden Link:<br><br>
+            <a href="'.$url_activation.'">'.$url_activation.'</a> 
+            <br><br>Freundliche Grüße<br><br>Ihr Team von<br>SCIES – Support Center for (International) Engineering Studies';
+
+            $mail = new PHPMailer;
+
+            $mail->isSMTP();                            // Set mailer to use SMTP
+            $mail->Host = 'smtp.gmail.com';             // Specify main and backup SMTP servers
+            $mail->SMTPAuth = true;                     // Enable SMTP authentication
+            $mail->Username = 'ddstudportal';          // SMTP username
+            $mail->Password = 'admin123!';              // SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;                  // Enable TLS encryption, `ssl` also accepted
+            $mail->Port = 587;        // TCP port to connect to
+            $mail->CharSet ="UTF-8";                      
+            // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                         
+            
+            $mail->setFrom('ddstudportal@gmail.com', 'admin');
+            $mail->addReplyTo('ddstudportal@gmail.com', 'admin');
+            $mail->addAddress($empfaenger);   // Add a recipient
+            // $mail->addCC('cc@example.com');
+            // $mail->addBCC('bcc@example.com');
+            
+            $mail->isHTML(true);  // Set email format to HTML
+             
+            $mail->Subject = $betreff;
+            $mail->Body    = $text;
+            
+            if(!$mail->send()) {
+                $error_msg = $mail->ErrorInfo;
+            } else {
+                $success_message = 'Wir haben dir einen Bestätigungslink geschickt. Bitte öffne die Mail und klicke auf den Link, um dein neues Konto zu aktivieren.';
+                $showForm = false;
+            }
+        }else{
           $error_message = 'Beim Abspeichern ist leider ein Fehler aufgetreten';
         }
       }
@@ -97,13 +154,27 @@
             <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Admin Registrieren
         </div>
 
-        <?php if(isset($error_message)) echo
-        "<div class=\"alert alert-danger\" role=\"alert\">
-          $error_message
-        </div>"; else if(isset($success_message))  echo
-        "<div class=\"alert alert-success\" role=\"alert\">
-        $success_message
-        </div>";
+        <!-- show message -->
+        <?php 
+        if(isset($success_message) && !empty($success_message)):
+        ?>
+        <div class="alert alert-success">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $success_message; ?>
+        </div>
+        <?php 
+        endif;
+        ?>
+
+        <?php 
+        if(isset($error_message) && !empty($error_message)):
+        ?>
+        <div class="alert alert-danger">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $error_message; ?>
+        </div>
+        <?php 
+        endif;
         ?>
 
         <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" id="registerForm">

@@ -64,10 +64,23 @@
 
 <main class="container-fluid flex-fill">
     <div class="card login-form">
-        <?php if(isset($error_message)) echo 
-        "<div class=\"alert alert-danger\" role=\"alert\">
-          $error_message
-        </div>" ?>
+
+        <!-- page title -->
+        <div class="page-title">
+            <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Student einloggen
+        </div>
+
+        <?php 
+            if(isset($error_message) && !empty($error_message)):
+            ?>
+        <div class="alert alert-danger">
+            <?php echo $error_message; ?>
+        </div>
+        <?php 
+            endif;
+        ?>
+        
+
         <img class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png">
         <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" class="needs-validation" id="loginForm"
             novalidate>
@@ -94,7 +107,7 @@
         <small><a href="forgetpassword.php">Passwort vergessen</a></small>
         <small><a href="register.php">Registieren</a></small>
         <div class="text-right">
-            <small><a href="admin/login.php">Admin einloggen</a></small>
+            <small><a href="admin/login.php">Als Admin einloggen</a></small>
         </div>
         
     </div>

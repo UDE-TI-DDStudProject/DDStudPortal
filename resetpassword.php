@@ -94,8 +94,6 @@
             endif;
         ?>
 
-        <small>Neues Passwort vergeben</small>
-
         <form action="<?php echo $_SERVER['PHP_SELF']."?userid=$userid&code=$code";?>" method="post" class="needs-validation" novalidate>
             <div class="form-group">
                 <input type="password" name="passwort" class="form-control" id="inputPassword"
