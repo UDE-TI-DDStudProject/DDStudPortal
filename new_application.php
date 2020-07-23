@@ -184,14 +184,15 @@
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         $pdo->setAttribute( PDO::ATTR_EMULATE_PREPARES, FALSE );
         $pdo->beginTransaction();
-  
-        $statement1 = $pdo->prepare("INSERT INTO $studentDB (birthdate, nationality_country_id, user_id) VALUES ('$birthday', $nationality, $user_id)");
-        $statement1->execute();
-  
-        $statement2 = $pdo->prepare("SELECT student_id FROM $studentDB WHERE user_id = $user_id");
-        $result = $statement2->execute();
-        $student = $statement2->fetch();
+
+        $statement1 = $pdo->prepare("SELECT student_id FROM $studentDB WHERE user_id = $user_id");
+        $result = $statement1->execute();
+        $student = $statement1->fetch();
         $studentid = $student['student_id'];
+
+        $statement2 = $pdo->prepare("UPDATE $studentDB SET birthdate = :birthdate, nationality_country_id= :country WHERE student_id = :id");
+        $statement2->execute(array(":birthdate"=>$birthday, ":country"=>$nationality, ":id"=>$studentid));
+
   
         $statement3 = $pdo->prepare("INSERT INTO $homeaddressDB (
           student_id,

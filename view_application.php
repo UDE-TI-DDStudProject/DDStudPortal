@@ -179,36 +179,36 @@
     }
 
     //check uploaded document
-	if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste")) {
+	if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Fächerwahlliste")) {
       $facherwahlliste = true;
-      $F_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
+      $F_files = glob( "$file_server/".$first_uni."/".$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
       if(!empty($F_files) && file_exists($F_files[0])){
         $F_name = basename($F_files[0]);
       }
     }else{
         $facherwahlliste = false;
     }
-    if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben")) {
+    if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Motivationsschreiben")) {
       $Motivationsschreiben = true;
-      $M_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
+      $M_files = glob( "$file_server/".$first_uni."/".$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
       if(!empty($M_files) && file_exists($M_files[0])){
         $M_name = basename($M_files[0]);
       }
     }else{
         $Motivationsschreiben = false;
     }
-    if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf")) {
+    if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Lebenslauf")) {
       $Lebenslauf = true;
-      $L_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
+      $L_files = glob( "$file_server/".$first_uni."/".$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
       if(!empty($L_files) && file_exists($L_files[0])){
         $L_name = basename($L_files[0]);
       }
     }else{
         $Lebenslauf = false;
     }
-    if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript")) {
+    if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Transkript")) {
       $Transkript = true;
-      $T_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript"."/". '*', GLOB_MARK);
+      $T_files = glob( "$file_server/".$first_uni."/".$home_matno."/Transkript"."/". '*', GLOB_MARK);
       if(!empty($T_files) && file_exists($T_files[0])){
         $T_name = basename($T_files[0]);
       }
@@ -233,19 +233,15 @@
 
                 $statement = $pdo->prepare("DELETE FROM $homestudyDB WHERE application_id = :id");
                 $result = $statement->execute(array('id' => $application['application_id']));
-                $result = $statement->fetch();
             
                 $statement = $pdo->prepare("DELETE FROM $priorityDB WHERE application_id = :id");
                 $result = $statement->execute(array('id' => $application['application_id']));
-                $result = $statement->fetch();
-            
-                $statement = $pdo->prepare("DELETE FROM $applicationDB WHERE application_id = :id");
-                $result = $statement->execute(array('id' => $application['application_id']));
-                $result = $statement->fetch();
 
                 $statement = $pdo->prepare("DELETE FROM $homeaddressDB WHERE address_id = :id");
                 $result = $statement->execute(array('id' => $application['home_address_id']));
-                $result = $statement->fetch();
+            
+                $statement = $pdo->prepare("DELETE FROM $applicationDB WHERE application_id = :id");
+                $result = $statement->execute(array('id' => $application['application_id']));
 
                 $pdo->commit();
                 header("location: status_application.php?application_removed=1");
@@ -255,30 +251,6 @@
                 $pdo->rollback();
                 $error_msg = $e->getMessage();
             }
-    }else if(isset($_POST['exchange'])){
-        $statement = $pdo->prepare("SELECT * FROM exchange WHERE application_id = :id");
-        $result = $statement->execute(array('id' => $application['application_id']));
-        $exchange = $statement->fetch();
-        $exchangeid = $exchange['exchange_id'];
-
-        if(empty($exchangeid)){
-            // $statement = $pdo->prepare("INSERT INTO reviewed_application(application_id, application_status_id, reviewed_by_user_id) VALUES(:application_id, 1, :reviewed_by_user_id)");
-            // $result = $statement->execute(array('id' => $application['application_id'], 'reviewed_by_user_id'=> $user_id));
-
-            $statement = $pdo->prepare("INSERT INTO exchange(application_id, foreign_uni_id) VALUES(:id, :foreign_uni_id)");
-            $result = $statement->execute(array('id' => $application['application_id'], 'foreign_uni_id'=> $foreign_uni_id));
-
-            $statement = $pdo->prepare("SELECT * FROM exchange WHERE application_id = :id");
-            $result = $statement->execute(array('id' => $application['application_id']));
-            $exchange = $statement->fetch();
-            $exchangeid = $exchange['exchange_id'];
-        }
-
-        if(!empty($exchangeid)){
-            header("location: exchange_checklist.php?id=".$exchangeid);
-            exit;
-        }
-
     }
 ?>
 
@@ -330,16 +302,6 @@
             Eine Änderung der Matrikelnummer oder der Uni-Prioritäten ist nicht mehr möglich. Bitte lösche hierfür die aktuelle Bewerbung und schicke eine neue Bewerbung ab.        
         </div>
 
-
-        <!-- <div class="page-navigation">
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="test_status.php">Homepage</a></li>
-                <li class="breadcrumb-item active" aria-current="page">View Application</li>
-                <li class="breadcrumb-item"><a href="test_facherwahl.php?id=<?php echo $applicationid;?>">Subject Selection</a></li>
-              </ol>
-            </nav>
-        </div> -->
         <!-- show message -->
         <?php 
         if(isset($success_msg) && !empty($success_msg)):
