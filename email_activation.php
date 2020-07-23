@@ -88,7 +88,6 @@
             if(isset($success_msg) && !empty($success_msg)):
             ?>
         <div class="alert alert-success">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <?php echo $success_msg; ?>
         </div>
         <?php 

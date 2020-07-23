@@ -23,6 +23,8 @@
         }
         exit;
     }
+
+    $showForm = true;
 ?>
 
 <?php 
@@ -37,14 +39,14 @@
 
         // if user deosnt exist
         if(empty($user)){
-            $error_msg = "User ist nicht gefunden.";
+            $error_msg = "E-Mail-Adresse ist nicht vorhanden.";
         // if user is already activated
         }else if($user['activated']==1){
             $error_msg = "Dein Account ist schon aktiviert. Bitte <a href=\"login.php\">Login hier</a>";
         }else{
             //delete existing email activation
             $statement = $pdo->prepare("DELETE FROM email_activation WHERE user_id = :userid");
-            $result = $statement->execute(array('userid' => $userid));
+            $result = $statement->execute(array('userid' => $user['user_id']));
 
             // create email activation code
             $activationcode = random_string();
@@ -53,16 +55,13 @@
 
             //send email activation
             $empfaenger = $user['email'];
-            $betreff = "Email Activation für deinen Account auf ".getSiteURL(); //Ersetzt hier den Domain-Namen
-            $from = "From: Vorname Nachname <absender@domain.de>"; //Ersetzt hier euren Name und E-Mail-Adresse
-            $url_activation = getSiteURL().'email_activation.php?userid='.$user['user_id'].'&code='.$activationcode; //Setzt hier eure richtige Domain ein
-            $text = 'Hallo '.$user['firstname'].',
-            
-            '.$url_activation.'
-             
-             
-            Viele Grüße,
-            dein Bewerbungs-Team';
+			$betreff = "Email Activation für deinen Account auf ".getSiteURL(); //Ersetzt hier den Domain-Namen
+			$from = "From: Vorname Nachname <absender@domain.de>"; //Ersetzt hier euren Name und E-Mail-Adresse
+			$url_activation = getSiteURL().'email_activation.php?userid='.$user['user_id'].'&code='.$activationcode; //Setzt hier eure richtige Domain ein
+            $text = 'Sehr geehrte Damen und Herren,<br><br> 
+            herzlich Willkommen im Bewerberportal für ein Auslandssemester in Südostasien. Wir freuen uns, dass Sie da sind. Jetzt ist es nur noch ein kleiner Schritt. Bestätigen Sie die Registrierung durch einen Klick auf den folgenden Link:<br><br>
+            <a href="'.$url_activation.'">'.$url_activation.'</a> 
+            <br><br>Freundliche Grüße<br><br>Ihr Team von<br>SCIES – Support Center for (International) Engineering Studies';
             
             $mail = new PHPMailer;
         
@@ -82,7 +81,7 @@
             // $mail->addCC('cc@example.com');
             // $mail->addBCC('bcc@example.com');
             
-            $mail->isHTML(false);  // Set email format to HTML
+            $mail->isHTML(true);  // Set email format to HTML
              
             $mail->Subject = $betreff;
             $mail->Body    = $text;
@@ -90,12 +89,10 @@
             if(!$mail->send()) {
                 $error_msg = $mail->ErrorInfo;
             } else {
-                $success_message = 'E-Mail ist gesendet.';
+                $success_msg = 'Wir haben dir einen Bestätigungslink geschickt. Bitte öffne die Mail und klicke auf den Link, um dein neues Konto zu aktivieren.';
                 $showForm = false;
             }
         }
-
-
         
     }
 ?>
@@ -114,7 +111,6 @@
             if(isset($success_msg) && !empty($success_msg)):
             ?>
         <div class="alert alert-success">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <?php echo $success_msg; ?>
         </div>
         <?php 
@@ -131,16 +127,18 @@
             endif;
         ?>
 
-        <small>E-Mail eingeben</small>
+        <?php if($showForm) : ?>
 
         <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" class="needs-validation" novalidate>
             <div class="form-group">
-                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="E-Mail"
+                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="E-Mail eingeben"
                     value="<?php if(isset($email)) echo $email?>">
                 <div id="emailFeedback" class="invalid-feedback"></div>
             </div>
             <button type="submit" class="btn btn-primary btn-block" id="send" name="send">Senden</button>
         </form>
+
+        <?php endif; ?>
     </div>
 </main>
 
