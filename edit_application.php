@@ -200,10 +200,10 @@
 
     if(!$error){
         //Check if all required fields are filled
-        if(!isset($nationality) or !isset($birthday)
-        or !isset($home_street) or !isset($home_zip) or !isset($home_city) or !isset($home_state) or !isset($home_country) or !isset($home_phone)
-        or !isset($home_degree) or !isset($home_university) or !isset($home_course) or !isset($home_matno) or !isset($home_enrollment) or !isset($home_semester) or !isset($home_credits) or !isset($home_cgpa)
-        or !isset($intention) or !isset($starting_semester) or !isset($foreign_degree) or !isset($first_uni) ){
+        if(empty($nationality) or empty($birthday)
+        or empty($home_street) or empty($home_zip) or empty($home_city) or empty($home_state) or empty($home_country) or empty($home_phone)
+        or empty($home_degree) or empty($home_university) or empty($home_course) or empty($home_matno) or empty($home_enrollment) or empty($home_semester) or empty($home_credits) or empty($home_cgpa)
+        or empty($intention) or empty($starting_semester) or empty($foreign_degree) or empty($first_uni) ){
           $error_msg = "Please fill in all required fields!";
           $error = true;
         }
@@ -252,27 +252,13 @@
       
         $statement6 = $pdo->prepare("UPDATE $homestudyDB SET
           home_university_id=:uni,
-          home_matno=:matno,
           home_degree_id=:degree, 
           home_course_id=:course,
           home_cgpa=:cgpa,
           home_enrollment_date=:enroll,
           home_semester=:sem,
           home_credits=:credits WHERE application_id = :applicationid");
-        $statement6->execute(array('uni'=>$home_university, 'matno'=>$home_matno, 'degree'=>$home_degree, 'course'=>$home_course, 'cgpa'=>$home_cgpa, 'enroll'=>$home_enrollment, 'credits'=>$home_credits, 'sem'=>$home_semester, 'applicationid'=>$applicationid));
-
-        if(!isset($second_uni) || empty($second_uni)){
-          $second_uni = "NULL";
-        }
-        if(!isset($third_uni) || empty($third_uni)){
-          $third_uni = "NULL";
-        }
-        $statement7 = $pdo->prepare("UPDATE $priorityDB SET
-          first_uni_id= $first_uni,
-          second_uni_id=$second_uni,
-          third_uni_id= $third_uni 
-          WHERE application_id =:applicationid");
-        $statement7->execute(array('applicationid'=>$applicationid));
+        $statement6->execute(array('uni'=>$home_university, 'degree'=>$home_degree, 'course'=>$home_course, 'cgpa'=>$home_cgpa, 'enroll'=>$home_enrollment, 'credits'=>$home_credits, 'sem'=>$home_semester, 'applicationid'=>$applicationid));
 
         //instead of trigger, update success factor here
         $statement10 = $pdo->prepare("UPDATE $applicationDB SET success_factor = $success_factor WHERE application_id = $applicationid");
@@ -436,15 +422,7 @@
             </div>
         </div>
 
-        <!-- <div class="page-navigation">
-                <nav aria-label="breadcrumb">
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="test_status.php">Homepage</a></li>
-                    <li class="breadcrumb-item"><a href="view_application.php?id=<?php //echo $applicationid;?>">View Application</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Edit Application</li>
-                  </ol>
-                </nav>
-            </div> -->
+
         <!-- show message -->
         <?php 
             if(isset($success_msg) && !empty($success_msg)):
@@ -1003,14 +981,7 @@ $(document).ready(function() {
 });
 </script>
 
-<!-- form validation -->
-<script>
-$(document).ready(function() {
-    // $('#applicationForm').find('input, select').each(function(){
-    //  console.info(this);
-    // }); 
-});
-</script>
+
 
 <!-- next and back button click -->
 <script>
