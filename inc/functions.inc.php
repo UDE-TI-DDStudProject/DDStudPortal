@@ -136,6 +136,15 @@ function error($error_msg) {
 	exit();
 }
 
+// check valid email domain
+function valid_email_domain($email) {
+	if(stristr($email, '@stud.uni-due.de')){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 
 function Namen_bereinigen($dateiname)
 {

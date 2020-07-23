@@ -34,14 +34,22 @@
         $error_message =  'Bitte alle Felder ausfüllen';
         $error = true;
       }
+
+      //check email domain
+      if(!valid_email_domain($email))
+      {
+        $error_message =  'Deine E-Mail-Adresse muss @stud.uni-due.de enthalten!';
+        $error = true;
+      }
+
       //check password strength (defined in functions.inc.php)
-      if(!password_strength($passwort)) {
+      if(!$error && !password_strength($passwort)) {
         // $error_message =  'Password must contain at least one upper case, one lower case, a number, a special character and at least 8 characters!';
         $error_message =  'Das Passwort muss mindestens acht Zeichen lang sein und mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Ziffer und ein Sonderzeichen enthalten!';
         $error = true;
       }
       //check repeated password
-      if($passwort != $passwort2) {
+      if(!$error && $passwort != $passwort2) {
         $error_message = 'Die Passwörter müssen übereinstimmen';
         $error = true;
       }
@@ -119,7 +127,7 @@
             if(!$mail->send()) {
                 $error_msg = $mail->ErrorInfo;
             } else {
-                $success_message = 'Please click on the email confirmation link for successful registration.';
+                $success_message = 'Wir haben dir einen Bestätigungslink geschickt. Bitte öffne die Mail und klicke auf den Link, um dein neues Konto zu aktivieren.';
                 $showForm = false;
             }
         }else{
