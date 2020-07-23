@@ -343,7 +343,9 @@ if(isset($_POST['save'])) {
                         <table class="table table-hover table-sm" id="courses1">
                             <thead>
                                 <tr style="background-color: #003D76; color: white;">
-                                    <th scope="col" width="8%" align="center">Auswahl</th>
+                                    <th scope="col" width="8%" align="center">
+                                        <input type="checkbox" name="select_all1" value="all_equivalence">
+                                    </th>
                                     <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
                                     <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
                                     <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
@@ -368,28 +370,6 @@ if(isset($_POST['save'])) {
 		                    	array_push($selectedCourses, $selectedCourse['equivalence_id']);
 		                    }
                         
-                    
-                            // select equivalences that dont have specific courses, then union with equivalence that valid for this course
-                            // $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            // s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
-                            // ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
-                            // FROM equivalent_subjects es
-                            // LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
-                            // LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
-                            // LEFT JOIN status st ON st.status_id = es.status_id
-                            // WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id AND 
-                            // NOT EXISTS (SELECT * FROM equivalence_course ec WHERE ec.equivalence_id = es.equivalence_id) 
-                            // UNION ALL
-                            // SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            // s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
-                            // ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
-                            // FROM equivalence_course ec 
-                            // LEFT JOIN equivalent_subjects es ON es.equivalence_id = ec.equivalence_id
-                            // LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
-                            // LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
-                            // LEFT JOIN status st ON st.status_id = es.status_id
-                            // WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id AND ec.course_id = $home_course
-                            // ORDER BY status_id, equivalence_id");
 
 		                    //get all equivalence
                             $statement = $pdo->prepare("SELECT CASE WHEN es.equivalence_id in (SELECT equivalence_id FROM applied_equivalence WHERE application_id = $applicationid) THEN 1 else 0 END AS selected,  
@@ -400,7 +380,7 @@ if(isset($_POST['save'])) {
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id
+                            WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id and es.valid_degree_id <> 0 
                             ORDER BY selected DESC, st.name ASC, s1.subject_title ASC");
                         
                             $result = $statement->execute();
@@ -531,7 +511,9 @@ if(isset($_POST['save'])) {
                         <table class="table table-hover table-sm" id="courses2">
                             <thead>
                                 <tr style="background-color: #003D76; color: white;">
-                                    <th scope="col" width="8%" align="center">Auswahl</th>
+                                    <th scope="col" width="8%" align="center">
+                                        <input type="checkbox" name="select_all2" value="all_equivalence">
+                                    </th>
                                     <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
                                     <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
                                     <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
@@ -554,28 +536,7 @@ if(isset($_POST['save'])) {
 		                    {
 		                    	array_push($selectedCourses, $selectedCourse['equivalence_id']);
 		                    }
-                        
-                            // select equivalences that dont have specific courses, then union with equivalence that valid for this course
-                            // $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            // s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
-                            // ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
-                            // FROM equivalent_subjects es
-                            // LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
-                            // LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
-                            // LEFT JOIN status st ON st.status_id = es.status_id
-                            // WHERE s1.university_id = $home_university AND s2.university_id = $second_uni_id AND 
-                            // NOT EXISTS (SELECT * FROM equivalence_course ec WHERE ec.equivalence_id = es.equivalence_id) 
-                            // UNION ALL
-                            // SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            // s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
-                            // ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
-                            // FROM equivalence_course ec 
-                            // LEFT JOIN equivalent_subjects es ON es.equivalence_id = ec.equivalence_id
-                            // LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
-                            // LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
-                            // LEFT JOIN status st ON st.status_id = es.status_id
-                            // WHERE s1.university_id = $home_university AND s2.university_id = $second_uni_id AND ec.course_id = $home_course
-                            // ORDER BY status_id, equivalence_id");
+
                             
 		                    //get all equivalence
                             $statement = $pdo->prepare("SELECT CASE WHEN es.equivalence_id in (SELECT equivalence_id FROM applied_equivalence WHERE application_id = $applicationid) THEN 1 else 0 END AS selected,  
@@ -586,7 +547,7 @@ if(isset($_POST['save'])) {
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $second_uni_id 
+                            WHERE s1.university_id = $home_university AND s2.university_id = $second_uni_id and es.valid_degree_id <> 0  
                             ORDER BY selected DESC, st.name ASC, s1.subject_title ASC");
 
 		                    $result = $statement->execute();
@@ -721,7 +682,9 @@ if(isset($_POST['save'])) {
                         <table class="table table-hover table-sm" id="courses3">
                             <thead>
                                 <tr style="background-color: #003D76; color: white;">
-                                    <th scope="col" width="8%" align="center">Auswahl</th>
+                                    <th scope="col" width="8%" align="center">
+                                        <input type="checkbox" name="select_all3" value="all_equivalence">
+                                    </th>
                                     <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
                                     <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
                                     <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
@@ -746,28 +709,7 @@ if(isset($_POST['save'])) {
 		                    	array_push($selectedCourses, $selectedCourse['equivalence_id']);
 		                    }
                         
-                    
-                            // select equivalences that dont have specific courses, then union with equivalence that valid for this course
-                            // $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            // s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
-                            // ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
-                            // FROM equivalent_subjects es
-                            // LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
-                            // LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
-                            // LEFT JOIN status st ON st.status_id = es.status_id
-                            // WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id AND 
-                            // NOT EXISTS (SELECT * FROM equivalence_course ec WHERE ec.equivalence_id = es.equivalence_id) 
-                            // UNION ALL
-                            // SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
-                            // s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
-                            // ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
-                            // FROM equivalence_course ec 
-                            // LEFT JOIN equivalent_subjects es ON es.equivalence_id = ec.equivalence_id
-                            // LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
-                            // LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
-                            // LEFT JOIN status st ON st.status_id = es.status_id
-                            // WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id AND ec.course_id = $home_course
-                            // ORDER BY status_id, equivalence_id");
+  
 
                             //get all equivalence
                             $statement = $pdo->prepare("SELECT CASE WHEN es.equivalence_id in (SELECT equivalence_id FROM applied_equivalence WHERE application_id = $applicationid) THEN 1 else 0 END AS selected, 
@@ -778,7 +720,7 @@ if(isset($_POST['save'])) {
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
-                            WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id 
+                            WHERE s1.university_id = $home_university AND s2.university_id = $third_uni_id and es.valid_degree_id <> 0  
                             ORDER BY selected DESC, st.name ASC, s1.subject_title ASC");
 
 		                    $result = $statement->execute();
@@ -873,6 +815,57 @@ if(isset($_POST['save'])) {
     </div>
 </main>
 
+<!-- select all equivalence -->
+<script>
+$(document).ready(function() {
+
+    $("input[name='select_all1']").click(function() {
+        var checkboxes = $('#courses1 tr input[type="checkbox"]');
+
+        if ($(this).prop("checked") == true) {
+            checkboxes.each(function(){
+                $(this).prop( "checked", true );
+            });
+        }else{
+            checkboxes.each(function(){
+                $(this).prop( "checked", false );
+            });
+        }
+    });
+    
+    $("input[name='select_all2']").click(function() {
+        var checkboxes = $('#courses2 tr input[type="checkbox"]');
+
+        if ($(this).prop("checked") == true) {
+            checkboxes.each(function(){
+                $(this).prop( "checked", true );
+            });
+        }else{
+            checkboxes.each(function(){
+                $(this).prop( "checked", false );
+            });
+        }
+    });
+    
+    $("input[name='select_all3']").click(function() {
+        var checkboxes = $('#courses3 tr input[type="checkbox"]');
+
+        if ($(this).prop("checked") == true) {
+            checkboxes.each(function(){
+                $(this).prop( "checked", true );
+            });
+        }else{
+            checkboxes.each(function(){
+                $(this).prop( "checked", false );
+            });
+        }
+    });
+
+});
+</script>
+
+
+
 <script>
 $(document).ready(function() {
     //get row of three tables on page load
@@ -896,11 +889,11 @@ $(document).ready(function() {
         rows3.filter('#1').hide();
     }
 
-
     $("#degree1").click(function() {
         var rows = $('#courses1 tr');
 
         if ($("#degree1").prop("checked") == true) {
+            rows.filter('#0').show();
             rows.filter('#1').show();
 
             //check studiengang
