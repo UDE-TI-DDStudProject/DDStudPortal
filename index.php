@@ -72,8 +72,8 @@
                 Wir freuen uns auf Deine Bewerbung!
             </p>
 
-            <?php if(!is_checked_in()): ?>
-            <p><a class="btn btn-primary btn-lg" href="register.php" role="button">Jetzt
+            <?php if(empty($user)): ?>
+            <p><a class="btn btn-primary btn-lg" href="register.php" role="button" style="color:#ffffff;">Jetzt
                     registrieren</a></p>
             <?php endif; ?>
         </div>
