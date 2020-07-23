@@ -6,10 +6,11 @@
     //redirect user to homepage if the user has already login
     $user = check_admin();
 
-    if(isset($user)){
+    if(!empty($user)){
         header("location: index.php");
         exit;
     }
+
 
     //after form submit
     if(isset($_POST['email']) && isset($_POST['passwort'])) {
@@ -85,6 +86,7 @@
         </form>
         <br>
         <small><a href="register.php">Registrieren</a></small>
+        <small><a href="forgetpassword.php">Passwort vergessen</a></small>
     </div>
 </main>
 

@@ -1,13 +1,13 @@
 <?php 
     session_start();
-    require_once("inc/config.inc.php");
-    require_once("inc/functions.inc.php");
+    require_once("../inc/config.inc.php");
+    require_once("../inc/functions.inc.php");
     
     //redirect user to homepage if the user has already login
-    $user = check_user();
+    $user = check_admin();
 
-    if(!empty($user) ){
-        header("location: status_application.php");
+    if(!empty($user)){
+        header("location: index.php");
         exit;
     }
 

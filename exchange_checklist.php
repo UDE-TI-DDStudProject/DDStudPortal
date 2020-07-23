@@ -7,7 +7,7 @@
     $user = check_user();
     $user_id = $user['user_id'];
 
-    if(!isset($user)){
+    if(empty($user)){
         header("location: login.php");
         exit;
     }

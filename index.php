@@ -6,7 +6,7 @@
     //redirect user to homepage if the user has already login
     $user = check_user();
 
-    if(isset($user)){
+    if(isset($user) && !empty($user)){
         include("templates/headerlogin.inc.php");
     }else{
         include("templates/header.inc.php");

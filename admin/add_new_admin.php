@@ -6,7 +6,7 @@
     //redirect user to login if the user has not login
     $user = check_admin();
 
-    if(!isset($user)){
+    if(empty($user)){
         header("location: login.php");
         exit;
     }

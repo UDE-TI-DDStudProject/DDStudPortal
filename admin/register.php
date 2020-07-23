@@ -15,10 +15,11 @@
     //redirect admin to login page if the user is not login
     $user = check_admin();
 
-    if(isset($user)){
+    if(!empty($user)){
         header("location: index.php");
         exit;
     }
+
 
     if(isset($_POST['register'])) {
       $error = false;

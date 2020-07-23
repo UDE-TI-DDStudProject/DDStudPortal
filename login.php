@@ -6,14 +6,8 @@
     //redirect user to homepage if the user has already login
     $user = check_user();
 
-    if(isset($user)){
-        if($user['user_group_id']==1){
-            //student
-            header("location: status_application.php");
-        }else{
-            //admin
-            header("location: admin/index.php");
-        }
+    if(!empty($user)){
+        header("location: status_application.php");
         exit;
     }
 

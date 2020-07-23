@@ -38,7 +38,7 @@ function check_user() {
 	if(!isset($_SESSION['userid'])) {
 		return null;
 	}else{
-		$statement = $pdo->prepare("SELECT * FROM user WHERE user_id = :id");
+		$statement = $pdo->prepare("SELECT * FROM user WHERE user_id = :id and user_group_id = 1");
 		$result = $statement->execute(array('id' => $_SESSION['userid']));
 		$user = $statement->fetch();
 		

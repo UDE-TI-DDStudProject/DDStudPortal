@@ -14,14 +14,14 @@
         <!-- Bootstrap 4 core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <!-- style.css -->
-        <link rel="stylesheet" href="./../css/style.css">
+        <link rel="stylesheet" href="../css/style.css">
         <!-- <link rel="stylesheet" href="css/testlayout.css"> -->
 
         <!-- jQuery -->
-        <script src="../js/jquery.min.js"></script>
+        <script src="js/jquery.min.js"></script>
 
         <!-- form validate -->
-        <script src="../js/form-validate"></script>
+        <script src="js/form-validate"></script>
 
     </head>
 
@@ -33,15 +33,15 @@
             <!-- navbar -->
             <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #003D76;">
                 <!-- UDE Logo hyperlink -->
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="https://www.uni-due.de/en/" rel="noopener noreferrer">
                     <img src="../screenshots/UDE-Logo1.png" width="150" height="70" class="d-inline-block align-top"
                         alt="">
                 </a>
                 <!-- Exchange Logo hyperlink -->
-                <a class="navbar-brand" href="../index.php">
+                <a class="navbar-brand" href="index.php">
                     <img src="../screenshots/worldwide.png" width="30" height="30" class="d-inline-block align-center"
                         alt="">
-                    Südostasien
+                        Studis Raus! - Südostasien
                 </a>
                 <!-- Menu hamburger icon at mobile size -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
@@ -56,7 +56,7 @@
           <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
         </li> -->
                         <!-- Dropdown menu Information-->
-                        <li class="nav-item dropdown">
+                        <!-- <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-user-alt"></i> Informationen
@@ -73,9 +73,9 @@
                                 <a class="dropdown-item" href="#">During Exchange</a>
                                 <a class="dropdown-item" href="#">After Exchange</a>
                             </div>
-                        </li>
+                        </li> -->
                         <!-- Application Information-->
-                        <li class="nav-item dropdown">
+                        <!-- <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-user-alt"></i> Application Process
@@ -88,7 +88,7 @@
                                 <h6 class="dropdown-header">Exchange</h6>
                                 <a class="dropdown-item" href="#">Visa application</a>
                             </div>
-                        </li>
+                        </li> -->
                         <!-- <li class="nav-item">
           <a class="nav-link" href="#"><i class="fas fa-pen-square"></i> Apply now</a>
         </li> -->

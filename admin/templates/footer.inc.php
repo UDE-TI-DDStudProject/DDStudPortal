@@ -38,7 +38,7 @@
                 </div>
                 <!-- end /.col-lg-3 -->
 
-                <div class="col-md-3 col-sm-4">
+                <div class="col-md-3 col-sm-3">
                     <div class="footer-widget">
                         <div class="footer-menu no-padding">
                             <h3 class="footer-widget-title">Others</h3>
@@ -63,7 +63,7 @@
                 </div>
                 <!-- Ends: .col-lg-3 -->
 
-                <div class="col-md-3 col-sm-4">
+                <div class="col-md-3 col-sm-3">
                     <div class="footer-widget">
                         <div class="footer-menu">
                             <h3 class="footer-widget-title">Kontakt</h3>

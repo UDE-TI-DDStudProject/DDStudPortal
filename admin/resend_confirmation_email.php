@@ -1,7 +1,7 @@
 <?php 
     session_start();
-    require_once("inc/config.inc.php");
-    require_once("inc/functions.inc.php");
+    require_once("../inc/config.inc.php");
+    require_once("../inc/functions.inc.php");
     require_once("../PHPMailer/PHPMailer.php");
     require_once("../PHPMailer/SMTP.php");
     require_once("../PHPMailer/Exception.php");
@@ -13,14 +13,10 @@
     use PHPMailer\PHPMailer\Exception;
     
     //redirect user to homepage if the user has already login
-    $user = check_user();
+    $user = check_admin();
 
-    if(isset($user)){
-        if($user['user_group_id']==1){
-            header("location: status.php");
-        }else if($user['user_group_id']==2){
-            header("location: admin/index.php");
-        }
+    if(!empty($user)){
+        header("location: index.php");
         exit;
     }
 
@@ -33,7 +29,7 @@
         $email = strtolower(trim($_POST['email']));
 
         //get user
-        $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 1");
+        $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 2");
         $result = $statement->execute(array('email' => $email));
         $user = $statement->fetch();
 

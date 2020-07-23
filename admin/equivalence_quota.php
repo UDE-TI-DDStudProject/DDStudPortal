@@ -9,7 +9,7 @@
     // admin home university = UDE
     $home_university = 4; 
 
-    if(!isset($user)){
+    if(empty($user)){
         header("location: login.php");
         exit;
     }

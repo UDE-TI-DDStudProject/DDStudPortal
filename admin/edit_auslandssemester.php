@@ -6,50 +6,10 @@
     //redirect user to login if the user has not login
     $user = check_admin();
 
-    if(!isset($user)){
+    if(empty($user)){
         header("location: login.php");
         exit;
     }
-
-    //after form submit
-    if(isset($_POST['add_admin'])){
-        if(isset($_POST['email']) && isset($_POST['passwort'])) {
-            $email = trim($_POST['email']);
-            $passwort = $_POST['passwort'];
-        
-            //Überprüfung des Passworts
-            if (password_verify($passwort, $user['password'])) {
-                //check if admin exists in database
-                $statement = $pdo->prepare("SELECT * FROM admin_list WHERE admin_email = :email");
-                $result = $statement->execute(array('email' => $email));            
-                $admin = $statement->fetch();
-    
-                if(empty($admin)){
-                    //insert admin to admin_list database
-                    $statement = $pdo->prepare("INSERT INTO admin_list(admin_email) VALUES (:email)");
-                    $result = $statement->execute(array('email' => $email));    
-    
-                    //check if admin added to database
-                    $statement = $pdo->prepare("SELECT * FROM admin_list WHERE admin_email = :email");
-                    $result = $statement->execute(array('email' => $email));            
-                    $admin = $statement->fetch();
-    
-                    if(!empty($admin)){
-                        $success_msg =  $email." ist erfolgreich hinzugefügt!";
-                    }else{
-                        $error_msg =  "Beim Speichern ist ein Fehler aufgetreten!";
-                    }
-                }
-    
-    
-            } else {
-                $error_msg =  "Passwort war ungültig!";
-            }
-        }else{
-            $error_msg =  "Bitte alle Felder ausfüllen!";
-        }
-    }
-
 
 ?>
 
@@ -58,13 +18,13 @@
 ?>
 
 <main class="container-fluid flex-fill">
-    <div class="card add-admin-form">
+    <div class="card application-form">
 
         <!-- title row -->
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
-                <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Neuen Admin hinzufügen
+                <span><img src="../screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Auslandssemester bearbeiten
             </div>
 
             <div class="title-button">
@@ -99,21 +59,40 @@
         endif;
         ?>
 
-        <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post" class="needs-validation" id="adminForm"
-            novalidate>
-            <div class="form-group">
-                <label for="email">E-Mail des neuen Admins</label>
-                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="E-Mail"
-                    value="<?php if(isset($email)) echo $email?>" required>
-                <div id="emailFeedback" class="invalid-feedback"></div>
+
+        <form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post">
+            
+        <div class="table-responsive">
+                <table class="table table-hover table-sm" id="exchange_semester_list" style="text-align:center;font-size:16px">
+                    <thead>
+                        <tr style="background-color: #003D76; color: white;">
+                            <th scope="col" width="10%" align="center">Semester</th>
+                            <th scope="col" width="15%" align="center">Semester Beginn</th>
+                            <th scope="col" width="15%" align="center">Semester Ende</th>
+                            <th scope="col" width="15%" align="center">Bewerbungphase Beginn</th>
+                            <th scope="col" width="15%" align="center">Bewerbungphase Ende</th>
+                            <th scope="col" width="10%" align="center">Success Factor</th>
+                            <th scope="col" width="10%" align="center">Zuletzt Aktualisiert</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr class="<?php if($row['status_id'] == "1") echo "table-warning"; else if($row['status_id'] == "2") echo "table-success"; else if($row['status_id'] == "3") echo "table-danger"; ?>">
+                            <td align="center" valign="middle"><input class="form-control form-control-sm" type="number" name="equivalence[<?php echo $row['equivalence_id']; ?>]" min="0" value="<?php if(isset($quota) && !empty($quota)) echo $quota['quota'];?>" ></td>
+                            <td align="center" valign="middle"><?php echo $row['home_subject_code'] ?></td>
+                            <td align="center"><?php echo $row['home_subject_title'] ?></td>
+                            <td align="center"><?php echo $row['foreign_subject_title'] ?></td>
+                            <td align="center"><?php if($forAll) echo "alle"; else if(isset($validcoursesname))echo $validcoursesname ?></td>
+                            <td align="center"><?php echo $row['status'] ?></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group">
-                <label for="passwort">Dein Passwort</label>
-                <input type="password" name="passwort" class="form-control" id="inputPassword" placeholder="Passwort"
-                    required>
-                <div id="passwordFeedback" class="invalid-feedback"></div>
+
+            <!-- save -->
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary" name="save_quota" value="quotachanged" >Speichern</button>
             </div>
-            <button type="submit" class="btn btn-primary btn-block" id="btnAdd" name="add_admin">hinzufügen</button>
         </form>
     </div>
 </main>

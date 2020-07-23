@@ -1,24 +1,24 @@
 <?php 
     session_start();
-    require_once("inc/config.inc.php");
-    require_once("inc/functions.inc.php");
-    require_once("PHPMailer/PHPMailer.php");
-    require_once("PHPMailer/SMTP.php");
-    require_once("PHPMailer/Exception.php");
-    require_once("PHPMailer/POP3.php");
-    require_once("PHPMailer/OAuth.php");
+    require_once("../inc/config.inc.php");
+    require_once("../inc/functions.inc.php");
+    require_once("../PHPMailer/PHPMailer.php");
+    require_once("../PHPMailer/SMTP.php");
+    require_once("../PHPMailer/Exception.php");
+    require_once("../PHPMailer/POP3.php");
+    require_once("../PHPMailer/OAuth.php");
 
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\SMTP;
     use PHPMailer\PHPMailer\Exception;
     
     //redirect user to homepage if the user has already login
-    $user = check_user();
-
+    $user = check_admin();
     if(!empty($user)){
-        header("location: status_application.php");
+        header("location: index.php");
         exit;
     }
+
 ?>
 
 <?php 
@@ -26,7 +26,7 @@
         if(!isset($_POST['email']) || empty($_POST['email'])) {
             $error_msg = "Bitte eine E-Mail-Adresse eintragen!";
         } else {
-            $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 1");
+            $statement = $pdo->prepare("SELECT * FROM user WHERE email = :email and user_group_id = 2");
             $result = $statement->execute(array('email' => strtolower(trim($_POST['email']))));
             $user = $statement->fetch();		
      
