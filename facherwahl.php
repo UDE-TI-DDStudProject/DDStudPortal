@@ -343,9 +343,7 @@ if(isset($_POST['save'])) {
                         <table class="table table-hover table-sm" id="courses1">
                             <thead>
                                 <tr style="background-color: #003D76; color: white;">
-                                    <th scope="col" width="8%" align="center">
-                                        <input type="checkbox" name="select_all1" value="all_equivalence">
-                                    </th>
+                                    <th scope="col" width="8%" align="center">Auswahl</th>
                                     <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
                                     <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
                                     <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
@@ -511,9 +509,7 @@ if(isset($_POST['save'])) {
                         <table class="table table-hover table-sm" id="courses2">
                             <thead>
                                 <tr style="background-color: #003D76; color: white;">
-                                    <th scope="col" width="8%" align="center">
-                                        <input type="checkbox" name="select_all2" value="all_equivalence">
-                                    </th>
+                                    <th scope="col" width="8%" align="center">Auswahl</th>
                                     <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
                                     <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
                                     <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
@@ -682,9 +678,7 @@ if(isset($_POST['save'])) {
                         <table class="table table-hover table-sm" id="courses3">
                             <thead>
                                 <tr style="background-color: #003D76; color: white;">
-                                    <th scope="col" width="8%" align="center">
-                                        <input type="checkbox" name="select_all3" value="all_equivalence">
-                                    </th>
+                                    <th scope="col" width="8%" align="center">Auswahl</th>
                                     <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
                                     <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
                                     <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
@@ -816,7 +810,7 @@ if(isset($_POST['save'])) {
 </main>
 
 <!-- select all equivalence -->
-<script>
+<!-- <script>
 $(document).ready(function() {
 
     $("input[name='select_all1']").click(function() {
@@ -862,7 +856,7 @@ $(document).ready(function() {
     });
 
 });
-</script>
+</script> -->
 
 
 
