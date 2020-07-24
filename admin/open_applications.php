@@ -386,12 +386,14 @@
                             <th scope="col" width="5%" align="center">Annehmen</th>
                             <th scope="col" width="5%" align="center">Ablehnen</th>
                             <th scope="col" width="30%" align="center">Kommentar</th>
+                            <th scope="col" width="5%" align="center">Bewerbung vollständig</th>
                             <th scope="col" width="10%" align="center">Mat.-Nr.</th>
                             <th scope="col" width="15%" align="center">Studiengang</th>
                             <th scope="col" width="5%" align="center">Fachsemester</th>
                             <th scope="col" width="5%" align="center">Erfolgsfaktor</th>
                             <th scope="col" width="5%" align="center">Credits</th>
                             <th scope="col" width="5%" align="center">Noten</th>
+                            <th scope="col" width="5%" align="center">Austausch-Abschluss</th>
                             <th scope="col" width="10%" align="center">1. Priorität</th>
                             <th scope="col" width="10%" align="center">2. Priorität</th>
                             <th scope="col" width="10%" align="center">3. Priorität</th>
@@ -405,18 +407,19 @@
 
                     //get filter string
                     $abschluss_filter = $foreignuni_filter = "";
+
                     if(!empty($abschluss)){
-                        $abschluss_filter = " AND sh.home_degree_id = $abschluss";
+                        $abschluss_filter = " AND ap.applied_degree_id = $abschluss";
                     }
 
                     if(!empty($foreignuni)){
                         $foreignuni_filter = " AND pr.first_uni_id = $foreignuni";
                     }
 
-                    //get all applications
+                    //get all completed applications where user still has a valid accounts
                     $statement = $pdo->prepare("SELECT us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ROUND(ap.success_factor,3) as success_factor, 
                                                 uni1.abbreviation as uni1, uni2.abbreviation as uni2, uni3.abbreviation as uni3 , ra.comment, 
-                                                ROUND(sh.home_cgpa,1) as home_cgpa, ROUND(sh.home_credits) as home_credits, ep.period_id  
+                                                ROUND(sh.home_cgpa,1) as home_cgpa, ROUND(sh.home_credits) as home_credits, ep.period_id, dg.name as applied_degree , uni1.name as firstuni , ap.completed 
                                                 FROM application ap 
                                                 LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
                                                 LEFT JOIN reviewed_application ra on ra.application_id = ap.application_id 
@@ -428,24 +431,14 @@
                                                 LEFT JOIN university uni2 on uni2.university_id = pr.second_uni_id 
                                                 LEFT JOIN university uni3 on uni3.university_id = pr.third_uni_id 
                                                 LEFT JOIN course cr on cr.course_id = sh.home_course_id 
-                                                WHERE ap.exchange_period_id = $auslandssemester $abschluss_filter $foreignuni_filter
-                                                ORDER BY ap.success_factor DESC");
+                                                LEFT JOIN degree dg on dg.degree_id = ap.applied_degree_id 
+                                                WHERE us.user_id IS NOT NULL AND 
+                                                ap.exchange_period_id = $auslandssemester $abschluss_filter $foreignuni_filter
+                                                ORDER BY ap.completed DESC, ap.success_factor DESC");
                 
                     $result = $statement->execute();
-                    
-                    // how many application per period should be approved
-                    // $max_count = 10;
-                    // $count = 0;
 
                     while($row = $statement->fetch()) {
-
-                        // $count += 1;
-
-                        // if($count <= $max_count){
-                        //     $suggested = true;
-                        // }else{
-                        //     $suggested = false;
-                        // }
 
                         $statement1 = $pdo->prepare("SELECT min_success_factor FROM exchange_period WHERE period_id = :id");
                         $result1 = $statement1->execute(array(":id"=>$row['period_id']));
@@ -461,46 +454,38 @@
                         $result1 = $statement1->execute(array(":id"=>$row['application_id']));
                         $reviewed = $statement1->fetch();
 
-                        //get 3 chars of first name
-                        $firstname_short = $row["firstname"];
-                        $lastname = $row["lastname"];
                         $home_matno = $row["home_matno"];
-                        $first_uni = $row["uni1"];
-
-                        //get three characters of first name
-                        if(strlen($firstname_short) >= 3) {
-                            $firstname_short = substr($firstname_short, 0, 3);
-                        }
+                        $first_uni = $row["firstuni"];
                     
                         //check uploaded document
-	                    if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste")) {
-                          $F_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
+	                    if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Fächerwahlliste")) {
+                          $F_files = glob( "$file_server/".$first_uni."/".$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
                           if(!empty($F_files) && file_exists($F_files[0])){
-                            $F_name = basename($F_files[0]);
+                            $F_name[$row["application_id"]] = basename($F_files[0]);
                           }
                         }
-                        if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben")) {
-                          $M_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
+                        if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Motivationsschreiben")) {
+                          $M_files = glob( "$file_server/".$first_uni."/".$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
                           if(!empty($M_files) && file_exists($M_files[0])){
-                            $M_name = basename($M_files[0]);
+                            $M_name[$row["application_id"]] = basename($M_files[0]);
                           }
                         }
-                        if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf")) {
-                          $L_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
+                        if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Lebenslauf")) {
+                          $L_files = glob( "$file_server/".$first_uni."/".$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
                           if(!empty($L_files) && file_exists($L_files[0])){
-                            $L_name = basename($L_files[0]);
+                            $L_name[$row["application_id"]] = basename($L_files[0]);
                           }
                         }
-                        if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript")) {
-                          $T_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript"."/". '*', GLOB_MARK);
+                        if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Transkript")) {
+                          $T_files = glob( "$file_server/".$first_uni."/".$home_matno."/Transkript"."/". '*', GLOB_MARK);
                           if(!empty($T_files) && file_exists($T_files[0])){
-                            $T_name = basename($T_files[0]);
+                            $T_name[$row["application_id"]] = basename($T_files[0]);
                           }
 	                    }
                         ?>
                     
 
-                        <tr class="<?php if(!empty($reviewed) && $reviewed['application_status_id'] == 2) echo "table-success"; else if(!empty($reviewed) && $reviewed['application_status_id'] == 3) echo "table-danger"; else if($suggested) echo "table-info"; else echo "table-secondary"?>">
+                        <tr class="<?php if(!empty($reviewed) && $reviewed['application_status_id'] == 2) echo "table-success"; else if(!empty($reviewed) && $reviewed['application_status_id'] == 3) echo "table-danger";else if($row['completed']==0) echo "table-secondary"; else if($suggested) echo "table-info"; else echo "table-warning"?>">
 
                             <td align="center">
                                 <div class="form-check form-check-inline">
@@ -513,19 +498,21 @@
                                 </div>
                             </td>
                             <td align="center"><textarea class="form-control form-control-sm" cols="30" rows="2" name="comment[<?php echo $row['application_id']?>]" id="comment" ><?php if(isset($row['comment'])) echo $row['comment'];?></textarea></td>
+                            <td align="center"><?php if($row['completed']==1) echo "Ja"; else echo "Nein"; ?></td>
                             <td align="center"><?php echo $row['home_matno'] ?></td>
                             <td align="center"><?php echo $row['home_course'] ?></td>
                             <td align="center"><?php echo $row['home_semester'] ?></td>
                             <td align="center"><?php echo $row['success_factor'] ?></td>
                             <td align="center"><?php echo $row['home_credits'] ?></td>
                             <td align="center"><?php echo $row['home_cgpa'] ?></td>
+                            <td align="center"><?php echo $row['applied_degree'] ?></td>
                             <td align="center"><?php echo $row['uni1'] ?></td>
                             <td align="center"><?php echo $row['uni2'] ?></td>
                             <td align="center"><?php echo $row['uni3'] ?></td>
                             <td align="center">
-                                <?php if(isset($T_name)): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $T_files[0]; ?>">Transkript</a><br><?php endif;?>
-                                <?php if(isset($L_name)): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $L_files[0]; ?>">Lebenslauf</a><br><?php endif;?>
-                                <?php if(isset($M_name)): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $M_files[0]; ?>">Motivationsschreiben</a><?php endif;?>
+                                <?php if(isset($T_name[$row["application_id"]] )): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $T_files[0]; ?>">Transkript</a><br><?php endif;?>
+                                <?php if(isset($L_name[$row["application_id"]] )): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $L_files[0]; ?>">Lebenslauf</a><br><?php endif;?>
+                                <?php if(isset($M_name[$row["application_id"]] )): ?><a  target="_blank" rel="noopener noreferrer"  href="<?php echo $M_files[0]; ?>">Motivationsschreiben</a><?php endif;?>
                             </td>
 
                         </tr>
@@ -580,6 +567,7 @@ $(document).ready(function(){
     });
 });
 </script>
+
 
 <?php 
     include("templates/footer.inc.php");

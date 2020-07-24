@@ -33,27 +33,32 @@
 
     if(isset($application)&&!empty($application)){
         //check application status
-        $statement = $pdo->prepare("SELECT count(distinct(sj.university_id)) as submmited_count FROM applied_equivalence ae 
-        LEFT JOIN equivalent_subjects es on es.equivalence_id = ae.equivalence_id
-        LEFT JOIN subject sj on sj.subject_id = es.foreign_subject_id 
-        WHERE ae.application_id = :id");
-        $result = $statement->execute(array('id' => $applicationid));
-        $submitted = $statement->fetch();
-        $submittedCount = $submitted['submmited_count'];
-
-        $statement = $pdo->prepare("SELECT CASE WHEN second_uni_id IS NULL AND third_uni_id IS NULL THEN 1 
-                WHEN third_uni_id IS NULL THEN 2 
-                ELSE 3 END AS prior_count 
-                FROM priority WHERE application_id = :id");
-        $result = $statement->execute(array('id' => $applicationid));
-        $priority = $statement->fetch();
-        $priorityCount = $priority['prior_count'];
-
-        if($submittedCount==$priorityCount){
+        if($application['completed']==1){
             $application_completed = true;
         }else{
             $application_completed = false;
         }
+        // $statement = $pdo->prepare("SELECT count(distinct(sj.university_id)) as submmited_count FROM applied_equivalence ae 
+        // LEFT JOIN equivalent_subjects es on es.equivalence_id = ae.equivalence_id
+        // LEFT JOIN subject sj on sj.subject_id = es.foreign_subject_id 
+        // WHERE ae.application_id = :id");
+        // $result = $statement->execute(array('id' => $applicationid));
+        // $submitted = $statement->fetch();
+        // $submittedCount = $submitted['submmited_count'];
+
+        // $statement = $pdo->prepare("SELECT CASE WHEN second_uni_id IS NULL AND third_uni_id IS NULL THEN 1 
+        //         WHEN third_uni_id IS NULL THEN 2 
+        //         ELSE 3 END AS prior_count 
+        //         FROM priority WHERE application_id = :id");
+        // $result = $statement->execute(array('id' => $applicationid));
+        // $priority = $statement->fetch();
+        // $priorityCount = $priority['prior_count'];
+
+        // if($submittedCount==$priorityCount){
+        //     $application_completed = true;
+        // }else{
+        //     $application_completed = false;
+        // }
     }else{
         $error_msg = "Keine Bewerbung gefunden!";
     }

@@ -173,8 +173,16 @@ if(isset($_POST['save'])) {
             }
 
             if($application_completed==true){
+                //update completed = 1 in application
+                $statement = $pdo->prepare("UPDATE $applicationDB SET completed = 1 WHERE application_id = :id");
+                $result = $statement->execute(array('id' => $applicationid));
+
                 header("location: application_complete.php?id=".$applicationid);
                 exit;
+            }else{
+                //update completed = 0 in application
+                $statement = $pdo->prepare("UPDATE $applicationDB SET completed = 0 WHERE application_id = :id");
+                $result = $statement->execute(array('id' => $applicationid));
             }
         }
 
