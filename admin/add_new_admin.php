@@ -14,7 +14,7 @@
     //after form submit
     if(isset($_POST['add_admin'])){
         if(isset($_POST['email']) && isset($_POST['passwort'])) {
-            $email = trim($_POST['email']);
+            $email = strtolower(trim($_POST['email']));
             $passwort = $_POST['passwort'];
         
             //Überprüfung des Passworts
@@ -39,6 +39,8 @@
                     }else{
                         $error_msg =  "Beim Speichern ist ein Fehler aufgetreten!";
                     }
+                }else{
+                    $error_msg =  $email." ist bereits hinzugefügt!";
                 }
     
     
