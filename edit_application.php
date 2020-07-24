@@ -212,7 +212,27 @@
     //validation of data
     if(!$error){
         if($home_semester < 1){
-            $error_msg = "Semester darf nicht weniger als 1 sein!";
+            $error_msg .= "Semester darf nicht weniger als 1 sein!<br>";
+            $error = true;
+        }
+
+        if(strlen($home_matno) > 10){
+            $error_msg .= "Matrikelnummer darf nicht mehr als 10 Zeichen!<br>";
+            $error = true;
+        }
+
+        if($home_credits < 0 || $home_credits > 240 ){
+            $error_msg .= "Credits darf nur zwischen 0 und 240 sein!<br>";
+            $error = true;
+        }
+
+        if($home_cgpa < 0 || $home_cgpa > 5 ){
+            $error_msg .= "Noten darf nur zwischen 0 und 5 sein!<br>";
+            $error = true;
+        }
+
+        if($home_cgpa < 0 || $home_cgpa > 5 ){
+            $error_msg .= "Noten darf nur zwischen 0 und 5 sein!<br>";
             $error = true;
         }
     }
