@@ -483,12 +483,6 @@
 <!-- get matno -->
 <?php 
 	echo "<div class=\"$home_matno\" id=\"matno\"></div>";
-	// echo "<div class=\"$lastname\" id=\"surname\"></div>";
-	// echo "<div class=\"$firstname\" id=\"firstname\"></div>";
-	// echo "<div class=\"$home_university_title\" id=\"homeUni\"></div>";
-	// echo "<div class=\"$first_uni_title\" id=\"firstUni\"></div>";
-	// echo "<div class=\"$second_uni_title\" id=\"secondUni\"></div>";
-	// echo "<div class=\"$third_uni_title\" id=\"thirdUni\"></div>";
 ?>
 
 <!-- print list -->
@@ -496,7 +490,6 @@
 $(document).ready(function() {
     $("#print").click(function() {
 
-        var submitteddate = $(".submitted-date").attr('id');
         var Matriculationnummer = $("#matno").attr('class');
 
         var doc = new jsPDF('p', 'mm', 'a4');
@@ -522,8 +515,6 @@ $(document).ready(function() {
                     36, 14);
                 doc.text('Application', pageWidth / 2, 30, 'center');
                 doc.setFontSize(10);
-                doc.text('Submitted on: ' + submitteddate, data.settings.margin.left, 20,
-                    'left');
                 doc.text('Matriculationnummer: ' + Matriculationnummer.toString(), data
                     .settings.margin.left, 25, 'left');
                 // doc.text('Nachname: ' + surname, data.settings.margin.left  , 25 , 'left');
@@ -569,6 +560,32 @@ $(document).ready(function(){
             var pageURL = $(location).attr("href");
             $(location).prop('href', pageURL + "&delete=1");
         }
+    });
+});
+</script>
+
+<!-- download file upon click on <a> -->
+<script>
+$(document).ready(function(){
+    $('#application a').on('click', function (e) {
+        // $.ajax({
+        //     url: $(this).attr('href'),
+        //     method: 'GET',
+        //     xhrFields: {
+        //         responseType: 'blob'
+        //     },
+        //     success: function (data) {
+        //         var a = document.createElement('a');
+        //         var url = window.URL.createObjectURL(data);
+        //         a.href = url;
+        //         a.download = 'test.pdf';
+        //         document.body.append(a);
+        //         a.click();
+        //         a.remove();
+        //         window.URL.revokeObjectURL(url);
+        //     }
+        // });
+        // e.preventDefault();  
     });
 });
 </script>
