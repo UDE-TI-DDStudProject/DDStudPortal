@@ -265,7 +265,11 @@
                     
                             <tr id="<?php if($equivalence['applied_count'] > 0) echo "1"; else echo "0"; ?>" 
                                 class="<?php if(!empty($equivalence['max_count']) && ($equivalence['max_count'] < $equivalence['applied_count'])) echo "table-warning"?>" >
-                                <td align="center"><a class="expand-btn" data-toggle="collapse" href="#row<?php echo $equivalence['equivalence_id']?>" role="button" aria-expanded="false" aria-controls="row<?php echo $equivalence['equivalence_id']?>"><i class="fa fa-plus-circle" aria-hidden="true"></i></a></td>
+                                <td align="center">
+                                    <a class="expand-btn" data-toggle="collapse" href="#row<?php echo $equivalence['equivalence_id']?>" role="button" aria-expanded="<?php if($equivalence['applied_count']==0) echo "false"; else echo "true"?>" aria-controls="row<?php echo $equivalence['equivalence_id']?>">
+                                        <i class="fa fa-<?php if($equivalence['applied_count']==0) echo "plus"; else echo "minus"?>-circle" aria-hidden="true"></i>
+                                    </a>
+                                </td>
                                 <td align="center"><?php echo $equivalence['max_count'] ?></td>
                                 <td align="center"><?php echo $equivalence['applied_count'] ?></td>
                                 <td align="center"><?php echo $equivalence['home_subject_code'] ?></td>
@@ -284,7 +288,7 @@
                                     <script>console.log("yay")</script>
                                     
                                     <tr>
-                                        <td colspan="11"  class="collapse multi-collapse" id="row<?php echo $equivalence['equivalence_id']?>">
+                                        <td colspan="11"  class="collapse multi-collapse<?php if($equivalence['applied_count']>0) echo " show"?>" id="row<?php echo $equivalence['equivalence_id']?>">
                                             <div class="table-responsive">
                                                 <table class="table table-hover table-sm" id="student_equivalence" style="text-align:center;font-size:14px;">
                                                     <thead>
@@ -339,41 +343,35 @@
                                                             }
 
                                                             //get 3 chars of first name
-                                                            $firstname_short = $student["firstname"];
-                                                            $lastname = $student["lastname"];
+        
                                                             $home_matno = $student["home_matno"];
                                                             $first_uni = $student["uni1"];
-
-                                                            //get three characters of first name
-                                                            if(strlen($firstname_short) >= 3) {
-                                                                $firstname_short = substr($firstname_short, 0, 3);
-                                                            }
                                                         
                                                             //check uploaded document
-	                                                        if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste")) {
-                                                              $F_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
-                                                              if(!empty($F_files) && file_exists($F_files[0])){
-                                                                $F_name = basename($F_files[0]);
-                                                              }
+	                                                        if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Fächerwahlliste")) {
+                                                                $F_files = glob( "$file_server/".$first_uni."/".$home_matno."/Fächerwahlliste"."/". '*', GLOB_MARK);
+                                                                if(!empty($F_files) && file_exists($F_files[0])){
+                                                                  $F_name[$row["application_id"]] = basename($F_files[0]);
+                                                                }
                                                             }
-                                                            if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben")) {
-                                                              $M_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
+                                                            if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Motivationsschreiben")) {
+                                                              $M_files = glob( "$file_server/".$first_uni."/".$home_matno."/Motivationsschreiben"."/". '*', GLOB_MARK);
                                                               if(!empty($M_files) && file_exists($M_files[0])){
-                                                                $M_name = basename($M_files[0]);
+                                                                $M_name[$row["application_id"]] = basename($M_files[0]);
                                                               }
                                                             }
-                                                            if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf")) {
-                                                              $L_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
+                                                            if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Lebenslauf")) {
+                                                              $L_files = glob( "$file_server/".$first_uni."/".$home_matno."/Lebenslauf"."/". '*', GLOB_MARK);
                                                               if(!empty($L_files) && file_exists($L_files[0])){
-                                                                $L_name = basename($L_files[0]);
+                                                                $L_name[$row["application_id"]] = basename($L_files[0]);
                                                               }
                                                             }
-                                                            if(is_dir("$file_server/".$first_uni ."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript")) {
-                                                              $T_files = glob( "$file_server/".$first_uni."/".$lastname."_"  .$firstname_short."_"  .$home_matno."/Transkript"."/". '*', GLOB_MARK);
+                                                            if(is_dir("$file_server/".$first_uni ."/".$home_matno."/Transkript")) {
+                                                              $T_files = glob( "$file_server/".$first_uni."/".$home_matno."/Transkript"."/". '*', GLOB_MARK);
                                                               if(!empty($T_files) && file_exists($T_files[0])){
-                                                                $T_name = basename($T_files[0]);
+                                                                $T_name[$row["application_id"]] = basename($T_files[0]);
                                                               }
-	                                                        }
+                                                            }
                                                             
                                                             ?>
 

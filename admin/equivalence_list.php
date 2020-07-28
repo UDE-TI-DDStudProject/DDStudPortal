@@ -321,7 +321,7 @@
             <label for="abschluss" class="col-auto col-form-label col-form-label-sm">Abschluss:</label>
             <div class="col-auto">
               <select class="form-control form-control-sm" placeholder="Abschluss" name="abschluss">
-              <option></option>
+              <option>alle</option>
               <?php 
 					$statement = $pdo->prepare("SELECT * FROM degree where name is not null");
 	    			$result = $statement->execute();
@@ -348,7 +348,7 @@
 
         <div class="list-filter">
             <!-- checkbox button -->
-            <div class="form-check form-check-inline">
+            <!-- <div class="form-check form-check-inline">
                 <input name="degree" class="form-check-input" type="checkbox" id="degree" value="degree"
                     checked>
                 <label class="form-check-label" for="inlineCheckbox1">Bachelor</label>
@@ -357,7 +357,7 @@
                 <input name="master" class="form-check-input" type="checkbox" id="master" value="master"
                     checked>
                 <label class="form-check-label" for="inlineCheckbox2">Master</label>
-            </div>
+            </div> -->
         </div>
 
         <form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post" id="equivalence-form">
@@ -372,8 +372,9 @@
                             <th scope="col" width="20%" align="center">Kurs Heim-Uni</th>
                             <th scope="col" width="5%" align="center">Credits Partner-Uni</th>
                             <th scope="col" width="20%" align="center">Kurs Partner-Uni</th>
+                            <th scope="col" width="5%" align="center">Abschluss</th>
                             <th scope="col" width="25%" align="center">Gültig Für</th>
-                            <th scope="col" width="25%" align="center">Status</th>
+                            <th scope="col" width=30%" align="center">Status</th>
                             <th scope="col" width="5%" align="center">Zuletzt Aktualisiert</th>
                         </tr>
                     </thead>
@@ -383,13 +384,14 @@
                     <?php
 
                             //get all equivalence of this partner-uni
-                            $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
+                            $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status, dg.name as degree, 
                             s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
                             ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
                             FROM equivalent_subjects es
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
+                            LEFT JOIN degree dg on dg.degree_id = es.valid_degree_id 
                             WHERE s1.university_id = $home_university AND s2.university_id = $foreignuni 
                             ORDER BY  st.name ASC, s1.subject_title ASC");
                         
@@ -430,6 +432,7 @@
                                 <td align="center"><?php echo $equivalence['home_subject_title'] ?></td>
                                 <td align="center"><?php echo $equivalence['foreign_subject_credits'] ?></td>
                                 <td align="center"><?php echo $equivalence['foreign_subject_title'] ?></td>
+                                <td align="center"><?php echo $equivalence['degree'] ?></td>
                                 <td align="center">
                                 <?php if($forAll) echo "alle"; else if(isset($validcoursesnames_string)) echo $validcoursesnames_string; ?>
                                 <!-- <span><i class="fa fa-pencil" aria-hidden="true"></i></span> -->

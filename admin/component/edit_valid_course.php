@@ -4,7 +4,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Studiengänge bearbeiten <?php echo $equivalence['equivalence_id'] ?></h5>
+        <h5 class="modal-title" id="exampleModalLabel">Studiengänge bearbeiten</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -12,11 +12,12 @@
       <div class="modal-body">
         <!-- allow add courses -->
         <!-- <form> -->
+        <p style="text-align:left;"><b>Heim-Kurs: </b><?php echo $equivalence['home_subject_title']?></p>
+        <p style="text-align:left;"><b>Kurs Partner-Uni: </b><?php echo $equivalence['foreign_subject_title']?></p>
             <div class="form-group row col-auto">
                 <label for="course" class="col-auto col-form-label col-form-label-sm">Studiengang hinzufügen:</label>
                 <div class="col-auto">
                   <select class="form-control form-control-sm"  name="course">
-                  <option></option>
                     <?php 
 			    		        $statementC = $pdo->prepare("SELECT * FROM course");
 			    		        $resultC = $statementC->execute();
