@@ -233,6 +233,10 @@
                     $error_msg = "Äquivalenz existiert schon in der Datenbank!";
                 }
             }
+            else{
+                //show error msg if not all fields are filled
+                $error_msg = "Bitte Heim-Kurs und Kus Partner-Uni auswählen!";
+            }
         }
         ?>
 
