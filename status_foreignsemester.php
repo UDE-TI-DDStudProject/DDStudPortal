@@ -37,7 +37,7 @@
         <div class="title-row" style="display: flex; justify-content: space-between;">
             <!-- page title -->
             <div class="page-title">
-                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Meine Auslandssemesters
+                <span><img src="screenshots/UDE Sky.jpg" alt="" width="50" height="50"></span> Meine Auslandssemester
             </div>
 
         </div>
@@ -62,9 +62,9 @@
 
         <?php 
             if(!isset($exchangedatas)){
-                $info_msg = "Noch keine Auslandssemesters vorhanden.";
+                $info_msg = "Noch keine Auslandssemester vorhanden.";
             }else if(count($exchangedatas)==0){
-                $info_msg =  "Noch keine Auslandssemesters vorhanden.";
+                $info_msg =  "Noch keine Auslandssemester vorhanden.";
             }
                 ?>
 

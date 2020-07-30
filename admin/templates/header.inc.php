@@ -124,6 +124,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="register.php">Registrieren</a>
                                 <a class="dropdown-item" href="forgetpassword.php">Passwort vergessen?</a>
+                                <a class="dropdown-item" href="../login.php">Als Student einloggen</a>
                             </div>
                         </li>
                     </ul>

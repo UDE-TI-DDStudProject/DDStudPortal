@@ -87,6 +87,9 @@
         <br>
         <small><a href="register.php">Registrieren</a></small>
         <small><a href="forgetpassword.php">Passwort vergessen</a></small>
+        <div class="text-right">
+            <small><a href="../login.php">Als Student einloggen</a></small>
+        </div>
     </div>
 </main>
 

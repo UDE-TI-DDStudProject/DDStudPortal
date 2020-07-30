@@ -125,7 +125,7 @@
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                                 <!-- <a class="dropdown-item" href="test_status.php"><i class="fas fa-home"></i> Profile Homepage</a> -->
 								<a class="dropdown-item" href="status_foreignsemester.php"><i class="fas fa-globe"></i>
-									Mein Auslandssemester</a>
+									Meine Auslandssemester</a>
                                 <!-- learning agreement, visa ... under mein Auslandssemester -->
 								<a class="dropdown-item" href="status_application.php"><i class="fas fa-pen"></i>
 									Meine Bewerbungen</a>
