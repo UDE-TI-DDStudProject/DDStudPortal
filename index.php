@@ -83,5 +83,5 @@
 
 
 <?php
-    include("templates/footer.inc.php");
+    include("templates/footer1.inc.php");
 ?>

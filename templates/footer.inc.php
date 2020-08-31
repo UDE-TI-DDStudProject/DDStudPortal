@@ -2,19 +2,17 @@
     <div class="footer-big">
         <!-- start .container -->
         <div class="container">
-            <div class="row">
-                <div class="col-md-2 col-sm-4">
+            <!-- <div class="row"> -->
+                <!-- <div class="col-md-2 col-sm-4"> -->
                     <div class="footer-widget">
                         <div class="widget-about">
                             <img src="screenshots/UDE-Logo1.png" alt="" class="img-fluid">
                         </div>
                     </div>
                     <!-- Ends: .footer-widget -->
-                </div>
+                <!-- </div> -->
 
-                <div class="col-md-4 col-sm-4">
-                    <div class="footer-widget">
-                        <div class="footer-menu">
+                <div class="footer-menu" >
                             <h3 class="footer-widget-title">Partneruniversitäten </h3>
                             <ul>
                                 <li>
@@ -32,14 +30,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <!-- end /.footer-menu -->
-                    </div>
-                    <!-- Ends: .footer-widget -->
-                </div>
-                <!-- end /.col-lg-3 -->
 
-                <div class="col-md-3 col-sm-4">
-                    <div class="footer-widget">
                         <div class="footer-menu no-padding">
                             <h3 class="footer-widget-title">Others</h3>
                             <ul>
@@ -57,14 +48,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <!-- end /.footer-menu -->
-                    </div>
-                    <!-- Ends: .footer-widget -->
-                </div>
-                <!-- Ends: .col-lg-3 -->
 
-                <div class="col-md-3 col-sm-4">
-                    <div class="footer-widget">
                         <div class="footer-menu">
                             <h3 class="footer-widget-title">Kontakt</h3>
                             <ul class="contact-details">
@@ -77,14 +61,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <!-- end /.footer-menu -->
-                    </div>
-                    <!-- Ends: .footer-widget -->
-                </div>
-                <!-- end /.col-lg-3 -->
 
-            </div>
-            <!-- end /.row -->
         </div>
         <!-- end /.container -->
     </div>

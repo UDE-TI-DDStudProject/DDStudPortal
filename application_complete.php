@@ -24,10 +24,15 @@
 
     $applicationid = $_GET['id'];
 
+    //get user's student id
+    $statement = $pdo->prepare("SELECT * FROM student WHERE user_id = :id ");
+    $result = $statement->execute(array('id' => $user['user_id']));
+    $check_student = $statement->fetch();
+
     //get valid application
     if(isset($applicationid) && !empty($applicationid)){
-        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id");
-        $result = $statement->execute(array('id' => $applicationid));
+        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id and student_id = :student_id");
+        $result = $statement->execute(array('id' => $applicationid, 'student_id'=>$check_student['student_id']));
         $application = $statement->fetch();
     }
 

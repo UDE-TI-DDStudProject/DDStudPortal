@@ -84,6 +84,14 @@ footer .mini-footer p a {
 footer .mini-footer p a:hover {
 	color: #34bfa3;
 }
+
+footer .container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+}
 /* end footer */
 
 .card {
@@ -366,6 +374,10 @@ form label {
 	.stepper-item.disabled .stepper-label,
 	.stepper-item.complete .stepper-label {
 		display: none;
+	}
+
+	footer .container {
+		flex-direction: column;
 	}
 }
 

@@ -45,7 +45,7 @@
         <!-- get all exchange data -->
         <?php 
             if(isset($studentid) && !empty($studentid)){
-                $statement = $pdo->prepare("SELECT ep.exchange_semester, ep.semester_begin, ep.semester_end, ex.exchange_id, ap.exchange_period_id, ex.foreign_uni_id    
+                $statement = $pdo->prepare("SELECT ap.applied_degree_id, ep.exchange_semester, ep.semester_begin, ep.semester_end, ex.exchange_id, ap.exchange_period_id, ex.foreign_uni_id    
                                             FROM exchange ex 
                                             LEFT JOIN $applicationDB ap on ap.application_id = ex.application_id  
                                             LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
@@ -123,9 +123,10 @@
                                                             FROM exchange_checklist ec
                                                             LEFT JOIN exchange_checklist_deadline ecd on ecd.step_id = ec.step_id 
                                                             WHERE ecd.exchange_period_id = :exchange_period_id and (ec.foreign_uni_id = 1 or ec.foreign_uni_id = :foreign_uni_id ) AND
-                                                            ec.step_id not in (SELECT step_id FROM exchange_checklist_student WHERE exchange_id = :exchange_id)
+                                                            ec.step_id not in (SELECT step_id FROM exchange_checklist_student WHERE exchange_id = :exchange_id) AND
+                                                            (ec.degree_id = 0 or ec.degree_id = :degree_id)
                                                             ORDER BY ecd.deadline ASC LIMIT 1");
-                                $result = $statement->execute(array(":exchange_id"=>$exchangedata['exchange_id'], ":exchange_period_id"=>$exchangedata['exchange_period_id'], ":foreign_uni_id"=>$exchangedata['foreign_uni_id']));
+                                $result = $statement->execute(array(":exchange_id"=>$exchangedata['exchange_id'], ":exchange_period_id"=>$exchangedata['exchange_period_id'], ":foreign_uni_id"=>$exchangedata['foreign_uni_id'], ":degree_id"=>$exchangedata['applied_degree_id']));
                                 $nextstep = $statement->fetch();
 
                                 ?>

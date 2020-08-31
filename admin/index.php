@@ -87,7 +87,7 @@
                 <h5 class="card-title">Exchange-Checklist bearbeiten</h5>
                 <p class="card-text">Funktioniert noch nicht.</p>
                 <p class="card-text">Checklist zum Austausch erstellen und bearbeiten.</p>
-                <!-- <a href="edit_auslandssemester.php" class="btn btn-primary">Klick hier</a> -->
+                <a href="edit_exchange_checklist.php" class="btn btn-primary">Klick hier</a>
             </div>
 
             <!-- Forum -->

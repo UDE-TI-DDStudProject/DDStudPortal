@@ -18,7 +18,7 @@
     }
 
     if(isset($_GET['submitsuccess'])){
-        $success_msg = "Bewerbung abgeschickt!";
+        $info_msg = "Bewerbung ist abgeschickt. Bitte zunächst die <a href=\"facherwahl.php?id='.$applicationid.'\">Fächerwahlliste</a> ausfüllen.";
     }else if(isset($_GET['editsuccess'])){
         $success_msg = "Bewerbung gespeichert!";
     }else if(isset($_GET['editabort'])){
@@ -32,10 +32,15 @@
     $lastname = $user["lastname"];
     $email = $user["email"];
 
-    //check if application exists
+    //get user's student id
+    $statement = $pdo->prepare("SELECT * FROM student WHERE user_id = :id ");
+    $result = $statement->execute(array('id' => $user_id));
+    $check_student = $statement->fetch();
+
+    //check if application exists for the student
     if(isset($applicationid)){
-        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id");
-        $result = $statement->execute(array('id' => $applicationid));
+        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id and student_id = :student_id");
+        $result = $statement->execute(array('id' => $applicationid, 'student_id'=>$check_student['student_id']));
         $application = $statement->fetch();
 
         if(!isset($application) || empty($application['application_id'])){
@@ -302,6 +307,12 @@
             Eine Änderung der Matrikelnummer oder der Uni-Prioritäten ist nicht mehr möglich. Bitte lösche hierfür die aktuelle Bewerbung und schicke eine neue Bewerbung ab.        
         </div>
 
+        <?php if(isset($application_completed) && $application_completed ==false): ?>
+            <div class="alert alert-warning">
+                Bewerbung ist nicht vollständig. Bitte die Fächerwahlliste für alle Prioritäten fertig ausfüllen!
+            </div>
+        <?php endif; ?>
+
         <!-- show message -->
         <?php 
         if(isset($success_msg) && !empty($success_msg)):
@@ -309,6 +320,17 @@
         <div class="alert alert-success">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <?php echo $success_msg; ?>
+        </div>
+        <?php 
+        endif;
+        ?>
+
+        <?php 
+        if(isset($info_msg) && !empty($info_msg)):
+        ?>
+        <div class="alert alert-warning">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <?php echo $info_msg; ?>
         </div>
         <?php 
         endif;
@@ -466,6 +488,25 @@
                         </tr>
                     </tbody>
                 </table>
+
+                <!-- show if student has a good chance by checking erfolgsfaktor -->
+                <?php 
+                    $statement = $pdo->prepare("SELECT min_success_factor FROM exchange_period WHERE period_id = :id");
+                    $result = $statement->execute(array('id' => $starting_semester));
+                    $row_sf = $statement->fetch();
+                    $min_success_factor = $row_sf['min_success_factor'];
+
+                    if($application['success_factor']>=$min_success_factor){
+                        $msg = "good chance";
+                    }else{
+                        $msg = "bad chance";
+                    }
+                ?>
+                
+                <div class="alert alert-info">
+                    <?php if(isset($msg)) echo $msg; ?>
+                </div>
+
                 <div class="text-right">
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $applicationid; ?>" method="post">
                     <!-- <button type="submit" class="btn btn-primary btn-sm" name="exchange" >Add to Exchange</button> -->

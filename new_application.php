@@ -299,9 +299,7 @@
         $statement10->execute();
   
         $pdo->commit();
-        
-        /*Alert successful message after transaction committed */
-        $success_msg = 'Bewerbung abgeschickt';
+    
     
       }catch (PDOException $e){
         $pdo->rollback();

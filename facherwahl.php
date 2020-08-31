@@ -30,6 +30,11 @@
     $lastname = $user["lastname"];
     $email = $user["email"];
 
+    //get user's student id
+    $statement = $pdo->prepare("SELECT * FROM student WHERE user_id = :id ");
+    $result = $statement->execute(array('id' => $user['user_id']));
+    $check_student = $statement->fetch();
+
     //set database table variables
     $studentDB = "student";
     $applicationDB = "application";
@@ -37,12 +42,19 @@
     $homestudyDB = "study_home";
     $priorityDB = "priority";
 
-    //get valid application
-    if(isset($applicationid) && !empty($applicationid)){
-        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id");
-        $result = $statement->execute(array('id' => $applicationid));
+    //check if application exist for the student
+    if(isset($applicationid)){
+        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id and student_id = :student_id");
+        $result = $statement->execute(array('id' => $applicationid, 'student_id'=>$check_student['student_id']));
         $application = $statement->fetch();
-    }
+
+        if(!isset($application) || empty($application['application_id'])){
+            $error_msg = "Application does not exist!";
+            $showForm = false;
+        }else{
+            $showForm = true;
+        }
+    } 
 
     //get home uni
     if(isset($application)){
@@ -302,6 +314,8 @@ if(isset($_POST['save'])) {
             </li>
         </ul>
 
+        <?php if(isset($showForm) && $showForm==true): ?>
+
         <form action="<?php echo $_SERVER['PHP_SELF'];?>?id=<?php echo $applicationid;?>"
                     method="post">
 
@@ -353,6 +367,7 @@ if(isset($_POST['save'])) {
                                 <tr style="background-color: #003D76; color: white;">
                                     <th scope="col" width="8%" align="center">Auswahl</th>
                                     <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
+                                    <th scope="col" width="15%" align="center">Professor</th>
                                     <th scope="col" width="11%" align="center">Credits Heim-Uni</th>
                                     <th scope="col" width="25%" align="center">Kurs Heim-Uni</th>
                                     <th scope="col" width="11%" align="center">Credits Partner-Uni</th>
@@ -379,11 +394,12 @@ if(isset($_POST['save'])) {
 
 		                    //get all equivalence
                             $statement = $pdo->prepare("SELECT CASE WHEN es.equivalence_id in (SELECT equivalence_id FROM applied_equivalence WHERE application_id = $applicationid) THEN 1 else 0 END AS selected,  
-                            es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status,
+                            es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status, prof.prof_title, prof.prof_surname, 
                             s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
                             ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
                             FROM equivalent_subjects es
                             LEFT JOIN subject s1 ON s1.subject_id = es.home_subject_id
+                            LEFT JOIN professor prof on prof.professor_id = s1.prof_id 
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
                             WHERE s1.university_id = $home_university AND s2.university_id = $first_uni_id and es.valid_degree_id <> 0 
@@ -444,6 +460,7 @@ if(isset($_POST['save'])) {
                                     }
                                 ?>
                                     <td align="center" valign="middle"><?php echo $row['home_subject_code'] ?></td>
+                                    <td align="center"><?php echo $row['prof_title']." ".$row['prof_surname'] ?></td>
                                     <td align="center"><?php echo $row['home_subject_credits'] ?></td>
                                     <td align="center"><?php echo $row['home_subject_title'] ?></td>
                                     <td align="center"><?php echo $row['foreign_subject_credits'] ?></td>
@@ -814,6 +831,7 @@ if(isset($_POST['save'])) {
             <button type="submit" class="btn btn-primary" name="save">Speichern</button>
         </div> -->
         </form>
+        <?php endif; ?>
     </div>
 </main>
 

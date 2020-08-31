@@ -19,20 +19,33 @@
 
     $exchangeid = $_GET['id'];
 
-    //get exchange data
-    if(isset($exchangeid) && !empty($exchangeid)){
+    //get user's student id
+    $statement = $pdo->prepare("SELECT * FROM student WHERE user_id = :id ");
+    $result = $statement->execute(array('id' => $user_id));
+    $check_student = $statement->fetch();
+
+    //check if application exist for the student
+    if(isset($applicationid)){
+        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id and student_id = :student_id");
+        $result = $statement->execute(array('id' => $applicationid, 'student_id'=>$check_student['student_id']));
+        $application = $statement->fetch();
+    } 
+
+    //get exchange data for the student
+    if(isset($check_student)){
         $statement = $pdo->prepare("SELECT ep.exchange_semester, ep.semester_begin, ep.semester_end, ex.exchange_id, ap.exchange_period_id, ex.foreign_uni_id , uni.name as uni_name    
                                     FROM exchange ex 
                                     LEFT JOIN application ap on ap.application_id = ex.application_id  
                                     LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
                                     LEFT JOIN university uni on uni.university_id = ex.foreign_uni_id
-                                    WHERE ex.exchange_id = $exchangeid");
-        $result = $statement->execute();
+                                    WHERE ex.exchange_id = $exchangeid and ap.student_id = :student_id");
+        $result = $statement->execute(array('student_id'=>$check_student['student_id']));
         $exchangedata = $statement->fetch();
     }
 
-    //get checklist of this exchange
+    
     if(isset($exchangedata)){
+        //get checklist of this exchange
         $statement = $pdo->prepare("SELECT ec.step_id, ec.step_name, ecd.beginn, ecd.deadline     
                                     FROM exchange_checklist ec 
                                     LEFT JOIN exchange_checklist_deadline ecd on ecd.step_id = ec.step_id
@@ -43,19 +56,24 @@
         while($row = $statement->fetch()){ 
             array_push($checklist, $row);
         }
-    }
 
-    //get completed checklist item
-    if(isset($exchangeid)){
+        //get completed checklist item
         $statement = $pdo->prepare("SELECT ecs.step_id    
-                                    FROM exchange_checklist_student ecs 
-                                    WHERE ecs.exchange_id = :exchange_id");
+        FROM exchange_checklist_student ecs 
+        WHERE ecs.exchange_id = :exchange_id");
         $result = $statement->execute(array(":exchange_id"=>$exchangeid));
         $completeditems = array();
         while($row = $statement->fetch()){ 
             array_push($completeditems, $row['step_id']);
         }
+
+        $showForm = true;
+    }else{
+        $showForm = false;
+        $error_msg = "Kein Auslandssemester vorhanden.";
     }
+
+
 ?>
 
 <?php 
@@ -143,6 +161,8 @@
         endif;
         ?>
 
+        <?php if(isset($showForm) && $showForm == true): ?>
+
         <!-- display exchange semester data -->
         <div class="table-responsive">
                 <table class="table table-borderless table-hover table-sm" id="application" style="font-size:18px">
@@ -213,6 +233,7 @@
         </div>
 
         </form>
+        <?php endif; ?>
     </div>
 </main>
 

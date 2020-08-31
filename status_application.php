@@ -140,15 +140,39 @@
                 </thead>
                 <tbody>
                     <?php 
-                            foreach($applications as $application){?>
+                            foreach($applications as $application){
+                                
+                                //for each application, check if user has already submit facherwahlliste
+                                $statement = $pdo->prepare("SELECT count(distinct(sj.university_id)) as submmited_count FROM applied_equivalence ae 
+                                                            LEFT JOIN equivalent_subjects es on es.equivalence_id = ae.equivalence_id
+                                                            LEFT JOIN subject sj on sj.subject_id = es.foreign_subject_id 
+                                                            WHERE ae.application_id = :id");
+                                $result = $statement->execute(array('id' => $application['application_id']));
+                                $submitted = $statement->fetch();
+                                $submittedCount = $submitted['submmited_count'];
+                            
+                                $statement = $pdo->prepare("SELECT CASE WHEN second_uni_id IS NULL AND third_uni_id IS NULL THEN 1 
+                                                            WHEN third_uni_id IS NULL THEN 2 
+                                                            ELSE 3 END AS prior_count 
+                                                            FROM priority WHERE application_id = :id");
+                                $result = $statement->execute(array('id' => $application['application_id']));
+                                $priority = $statement->fetch();
+                                $priorityCount = $priority['prior_count'];
+                            
+                                if($submittedCount==$priorityCount){
+                                    $application_completed = true;
+                                }else{
+                                    $application_completed = false;
+                                }
+                    ?>
 
                     <tr
-                        class="<?php if($application['application_status_id']==1) echo "table-primary"; else if($application['application_status_id']==2) echo"table-success"; else if($application['application_status_id']==3) echo"table-danger"; ?>">
+                        class="<?php if($application['application_status_id']==1) echo "table-primary"; else if($application['application_status_id']==2) echo"table-success"; else if($application['application_status_id']==3) echo"table-danger";else if($application_completed==false) echo "table-warning"; ?>">
                         <td><?php echo $application['exchange_semester'] ?></td>
                         <td><?php echo $application['created_at'] ?></td>
                         <td><?php echo $application['updated_at'] ?></td>
-                        <td><?php echo $application['application_status'] ?></td>
-                        <td><?php echo $application['comment'] ?><?php if($application['application_status_id']==2):?> Zur <a href="exchange_checklist.php?id=<?php echo $application['exchange_id']; ?>">Auslandssemester</a><?php endif ?></td>
+                        <td><?php if($application_completed==false) echo "incomplete";else echo $application['application_status'] ?></td>
+                        <td><?php echo $application['comment'] ?><?php if($application['application_status_id']==2):?> Zum <a href="exchange_checklist.php?id=<?php echo $application['exchange_id']; ?>">Auslandssemester</a><?php endif ?></td>
                         <td><a href="view_application.php?id=<?php echo $application['application_id']; ?>">Bewerbung
                                 öffnen</a></td>
                     </tr>

@@ -22,10 +22,15 @@
     $lastname = $user["lastname"];
     $email = $user["email"];
 
+    //get user's student id
+    $statement = $pdo->prepare("SELECT * FROM student WHERE user_id = :id ");
+    $result = $statement->execute(array('id' => $user['user_id']));
+    $check_student = $statement->fetch();
+
     //check if application exists
     if(isset($applicationid)){
-        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id");
-        $result = $statement->execute(array('id' => $applicationid));
+        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id and student_id = :student_id");
+        $result = $statement->execute(array('id' => $applicationid, 'student_id'=>$check_student['student_id']));
         $application = $statement->fetch();
 
         if(!isset($application) || empty($application['application_id'])){
