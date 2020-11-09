@@ -378,15 +378,25 @@
         <!-- application-table-form -->
         <?php if(isset($show_table)&& $show_table==true): ?>
         <form id="applications-table-form" action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post">
-            
+
+       <div class="form-group row">
+            <label for="search" class="col-auto col-form-label col-form-label-sm">Bewerbung suchen</label>
+            <div class="col-sm-5">
+                <input type="search" name="searchKey" class="form-control form-control-sm"
+                   id="inputSearch" placeholder="Name oder Matrikelnummer" value="<?php if(isset($search)) echo $search?>">
+            </div>
+            </div>
+
         <div class="table-responsive">
                 <table class="table table-hover table-sm" id="application-table" style="text-align:center;font-size:16px;">
                     <thead>
-                        <tr style="background-color: #003D76; color: white;">
+                        <tr id="columnHeader" style="background-color: #003D76; color: white;">
                             <th scope="col" width="5%" align="center">Annehmen</th>
                             <th scope="col" width="5%" align="center">Ablehnen</th>
                             <th scope="col" width="30%" align="center">Kommentar</th>
                             <th scope="col" width="5%" align="center">Bewerbung vollständig</th>
+                            <th scope="col" width="10%" align="center">Name</th>
+                            <th scope="col" width="10%" align="center">Vorname</th>
                             <th scope="col" width="10%" align="center">Mat.-Nr.</th>
                             <th scope="col" width="15%" align="center">Studiengang</th>
                             <th scope="col" width="5%" align="center">Fachsemester</th>
@@ -419,7 +429,8 @@
                     //get all completed applications where user still has a valid accounts
                     $statement = $pdo->prepare("SELECT us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ROUND(ap.success_factor,3) as success_factor, 
                                                 uni1.abbreviation as uni1, uni2.abbreviation as uni2, uni3.abbreviation as uni3 , ra.comment, 
-                                                ROUND(sh.home_cgpa,1) as home_cgpa, ROUND(sh.home_credits) as home_credits, ep.period_id, dg.name as applied_degree , uni1.name as firstuni , ap.completed 
+                                                ROUND(sh.home_cgpa,1) as home_cgpa, ROUND(sh.home_credits) as home_credits, ep.period_id, dg.name as applied_degree , uni1.name as firstuni , ap.completed,
+                                                us.firstname, us.lastname 
                                                 FROM application ap 
                                                 LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
                                                 LEFT JOIN reviewed_application ra on ra.application_id = ap.application_id 
@@ -485,7 +496,7 @@
                         ?>
                     
 
-                        <tr class="<?php if(!empty($reviewed) && $reviewed['application_status_id'] == 2) echo "table-success"; else if(!empty($reviewed) && $reviewed['application_status_id'] == 3) echo "table-danger";else if($row['completed']==0) echo "table-secondary"; else if($suggested) echo "table-info"; else echo "table-warning"?>">
+                        <tr id="childrenRows" class="<?php if(!empty($reviewed) && $reviewed['application_status_id'] == 2) echo "table-success"; else if(!empty($reviewed) && $reviewed['application_status_id'] == 3) echo "table-danger";else if($row['completed']==0) echo "table-secondary"; else if($suggested) echo "table-info"; else echo "table-warning"?>">
 
                             <td align="center">
                                 <div class="form-check form-check-inline">
@@ -499,7 +510,9 @@
                             </td>
                             <td align="center"><textarea class="form-control form-control-sm" cols="30" rows="2" name="comment[<?php echo $row['application_id']?>]" id="comment" ><?php if(isset($row['comment'])) echo $row['comment'];?></textarea></td>
                             <td align="center"><?php if($row['completed']==1) echo "Ja"; else echo "Nein"; ?></td>
-                            <td align="center"><?php echo $row['home_matno'] ?></td>
+                            <td align="center" id="lastname"><?php echo $row['lastname'] ?></td>
+                            <td align="center" id="firstname"><?php echo $row['firstname'] ?></td>
+                            <td align="center" id="matno"><?php echo $row['home_matno'] ?></td>
                             <td align="center"><?php echo $row['home_course'] ?></td>
                             <td align="center"><?php echo $row['home_semester'] ?></td>
                             <td align="center"><?php echo $row['success_factor'] ?></td>
@@ -553,6 +566,36 @@ $(document).ready(function(){
             $(parent_tr).removeClass(); //clear class
             $(parent_tr).addClass("table-danger"); //change row color
         }
+    });
+});
+</script>
+
+<!-- search keyword change-->
+<script>
+$(document).ready(function(){
+
+    $("#inputSearch").on('input',function(){
+
+        if($(this).val()){
+            var keyword  = $(this).val().toLowerCase();
+
+            $('#application-table #childrenRows').each(function() { 
+                var firstname = $(this).find('#firstname').text().toLowerCase();
+                var lastname = $(this).find('#lastname').text().toLowerCase();
+                var matno = $(this).find('#matno').text().toLowerCase();
+
+                if(firstname.indexOf(keyword) >= 0 || lastname.indexOf(keyword) >= 0|| matno.indexOf(keyword) >= 0){
+                    $(this).show();
+                }else{
+
+                    $(this).hide();
+                }
+            });
+
+        }else{
+            $('#application-table #childrenRows').show();
+        }
+
     });
 });
 </script>

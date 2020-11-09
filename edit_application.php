@@ -812,14 +812,6 @@
                                     <?php if(isset($starting_semester) and $starting_semester == $row['period_id']) echo "selected"; ?>>
                                     <?php echo ($row['exchange_semester']);?></option>
                                 <?php } ?>
-                                <?php 
-				              				$statement = $pdo->prepare("SELECT * FROM exchange_period  WHERE now() not between application_begin and application_end ");
-				              				$result = $statement->execute();
-				              				while($row = $statement->fetch()) { ?>
-                                <option value="<?php echo ($row['period_id']);?>"
-                                    <?php if(isset($starting_semester) and $starting_semester == $row['period_id']) echo "selected"; ?>
-                                    disabled><?php echo ($row['exchange_semester']);?></option>
-                                <?php } ?>
                             </select>
                         </div>
                         <div id="periodFeedback" class="invalid-feedback"></div>

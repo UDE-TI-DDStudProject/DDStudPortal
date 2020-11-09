@@ -32,11 +32,19 @@
     <?php } 
 ?> 
 
-        
-        <!-- add new equivalence to the foreign_uni -->
-        <form id="add-equivalence-form" action="<?php echo $_SERVER['REQUEST_URI'] ;?>" method="post" style="font-size: 16px">
-
-           <!-- select equivalence abschluss row -->
+<!--Pop up Modal to edit valid course list for equivalence -->
+<div class="modal fade" id="new-equivalence" tabindex="-1" role="dialog" aria-labelledby="new-equivalence" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Neue Äquivalenz eintragen</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post">
+        <div class="modal-body">
+             <!-- select equivalence abschluss row -->
            <div class="form-row">
                 <!-- select valid_degree -->
                 <div class="form-group col-md-6">
@@ -201,12 +209,17 @@
                 </div>
             </div>
 
-            <!-- save -->
-            <div class="text-right">
-                <button type="submit" class="btn btn-success" name="add_equivalence" value="add_equivalence" >Äquivalenz hinzufügen</button>
-            </div>
 
-        </form>
+        </div>
+      <div class="modal-footer">
+        <button type="button" name="cancel" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+        <button type="submit" class="btn btn-success btn-sm" name="add_equivalence">Speichern</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 
         <!-- change row color upon checked -->
         <script>
@@ -218,6 +231,8 @@
                     if($(this).prop("checked") == true){
                         //disable home subject select
                         $('select[name="home_subject_id"]').attr('disabled', 'disabled');
+                        $('select[name="home_subject_id"]').val('');
+                        // $('select[name="home_subject_id"]').find("option:selected").removeAttr("selected");
                         //enable new subject input
                         $('input[name="courseNo_home"]').prop("disabled", false);
                         $('input[name="course_name_home"]').prop("disabled", false);
@@ -231,12 +246,23 @@
                         $('input[name="course_name_home"]').prop("disabled", 'disabled');
                         $('input[name="credit_home"]').prop("disabled", 'disabled');
                         $('select[name="degree_home"]').attr("disabled", 'disabled');
+
+                        //clear input values
+                        $('input[name="courseNo_home"]').val('');
+                        $('input[name="course_name_home"]').val('');
+                        $('input[name="credit_home"]').val('');
+                        $('select[name="degree_home"]').val('');
+
+                        // $('select[name="degree_home"]').find("option:selected").removeAttr("selected");
                     }
 
                 }else if(value == "foreign"){
                     if($(this).prop("checked") == true){
                         //disable home subject select
                         $('select[name="foreign_subject_id"]').attr('disabled', 'disabled');
+                        $('select[name="foreign_subject_id"]').val('');
+                        // $('select[name="foreign_subject_id"]').find("option:selected").removeAttr("selected");
+
                         //enable new subject input
                         $('input[name="courseNo_foreign"]').prop("disabled", false);
                         $('input[name="course_name_foreign"]').prop("disabled", false);
@@ -250,6 +276,14 @@
                         $('input[name="course_name_foreign"]').prop("disabled", 'disabled');
                         $('input[name="credit_foreign"]').prop("disabled", 'disabled');
                         $('select[name="degree_foreign"]').attr("disabled", 'disabled');
+
+                        //clear input fields
+                        $('input[name="courseNo_foreign"]').val('');
+                        $('input[name="course_name_foreign"]').val('');
+                        $('input[name="credit_foreign"]').val('');
+                        $('select[name="degree_foreign"]').val('');
+
+                        // $('select[name="degree_foreign"]').find("option:selected").removeAttr("selected");
                     }
                 }
             });

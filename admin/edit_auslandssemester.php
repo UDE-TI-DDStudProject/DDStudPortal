@@ -68,6 +68,8 @@
 
                 $success_msg = "Semester ist erfolgreich hinzugefügt.";
 
+                $pdo->commit();
+
             }catch (PDOException $e){
                 $pdo->rollback();
                 $insert_error = true;
@@ -175,7 +177,7 @@
             <!-- save -->
             <div class="text-right">
                 <button type="button" class="btn btn-success"  data-toggle="modal" data-target="#add-new-semester">Neues Semester hinzufügen</button>
-                <button type="submit" class="btn btn-primary" name="save_quota" value="quotachanged" >Speichern</button>
+                <!-- <button type="submit" class="btn btn-primary" name="save_quota" value="quotachanged" >Speichern</button> -->
             </div>
         </form>
 

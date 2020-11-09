@@ -202,7 +202,11 @@
                 <table class="table table-hover table-sm" id="equivalence_list" style="text-align:center;font-size:14px;">
                     <thead>
                         <tr style="background-color: #003D76; color: white;">
-                            <th scope="col" width="8%" align="center">Siehe Bewerbungen</th>
+                            <th scope="col" width="8%" align="center">Siehe Bewerbungen                                    
+                                <a id="expandAll" class="expand-btn"  href="#expandAll" role="button" >
+                                    <i class="fa fa-minus-circle" style="color:#ffffff;"></i>
+                                </a>
+                            </th>
                             <th scope="col" width="8%" align="center">Anzahl Kursplätzen</th>
                             <th scope="col" width="8%" align="center">Anzahl Bewerbungen</th>
                             <th scope="col" width="15%" align="center">Kurs-Nr. Heim-Uni</th>
@@ -469,8 +473,21 @@ $(document).ready(function(){
 <script>
 $(document).ready(function(){
 
-    $(".expand-btn").click(function() {
+    $("td .expand-btn").click(function() {
          $(this).children(":first").toggleClass("fa-plus-circle fa-minus-circle");
+    });
+
+    $("#expandAll").click(function() {
+
+        if($(this).children(":first").hasClass("fa-plus-circle")){
+            $(this).children(":first").toggleClass("fa-plus-circle fa-minus-circle");
+            $("#equivalence_list").find(".collapse").addClass("show");
+            $("#equivalence_list").find(".fa-plus-circle").toggleClass("fa-plus-circle fa-minus-circle");
+        }else{
+            $(this).children(":first").toggleClass("fa-plus-circle fa-minus-circle");
+            $("#equivalence_list").find(".collapse").removeClass("show");
+            $("#equivalence_list").find(".fa-minus-circle").toggleClass("fa-plus-circle fa-minus-circle");
+        }
     });
 });
 </script>

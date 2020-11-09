@@ -1,4 +1,4 @@
-<?php 
+<?php
     session_start();
     require_once("../inc/config.inc.php");
     require_once("../inc/functions.inc.php");
@@ -13,8 +13,8 @@
 
 ?>
 
-<?php     
-    include("templates/headerlogin.inc.php");  
+<?php
+    include("templates/headerlogin.inc.php");
 ?>
 
 <main class="container-fluid flex-fill">
@@ -77,7 +77,6 @@
             <!-- edit exchange semester -->
             <div class="dashboard-flex-item">
                 <h5 class="card-title">Auslandssemester bearbeiten</h5>
-                <p class="card-text">Funktioniert noch nicht.</p>
                 <p class="card-text">Neues Auslandssemester hinzufügen, Frist von Bewerbungsphase ändern, Status von Auslandssemester bearbeiten.</p>
                 <a href="edit_auslandssemester.php" class="btn btn-primary">Klick hier</a>
             </div>
@@ -85,9 +84,16 @@
             <!-- edit exchange checklist -->
             <div class="dashboard-flex-item">
                 <h5 class="card-title">Exchange-Checklist bearbeiten</h5>
-                <p class="card-text">Funktioniert noch nicht.</p>
                 <p class="card-text">Checklist zum Austausch erstellen und bearbeiten.</p>
                 <a href="edit_exchange_checklist.php" class="btn btn-primary">Klick hier</a>
+            </div>
+
+            <!-- edit subject list -->
+            <div class="dashboard-flex-item">
+                <h5 class="card-title">Verantstaltungen bearbeiten</h5>
+                <p class="card-text">Funktioniert noch nicht.</p>
+                <p class="card-text"></p>
+                <a href="edit_subject_list.php" class="btn btn-primary">Klick hier</a>
             </div>
 
             <!-- Forum -->
@@ -97,7 +103,7 @@
                 <p class="card-text"></p>
                 <!-- <a href="edit_auslandssemester.php" class="btn btn-primary">Klick hier</a> -->
             </div>
-        
+
         </div>
     </div>
 
@@ -106,6 +112,6 @@
 
 
 
-<?php 
+<?php
     include("templates/footer.inc.php");
 ?>

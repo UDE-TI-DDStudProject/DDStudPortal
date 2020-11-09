@@ -24,48 +24,22 @@
     $result = $statement->execute(array('id' => $user_id));
     $check_student = $statement->fetch();
 
-    //check if application exist for the student
-    if(isset($applicationid)){
-        $statement = $pdo->prepare("SELECT * FROM application WHERE application_id = :id and student_id = :student_id");
-        $result = $statement->execute(array('id' => $applicationid, 'student_id'=>$check_student['student_id']));
-        $application = $statement->fetch();
-    } 
-
     //get exchange data for the student
     if(isset($check_student)){
-        $statement = $pdo->prepare("SELECT ep.exchange_semester, ep.semester_begin, ep.semester_end, ex.exchange_id, ap.exchange_period_id, ex.foreign_uni_id , uni.name as uni_name    
+        $statement = $pdo->prepare("SELECT ep.exchange_semester, ep.semester_begin, ep.semester_end, ex.exchange_id, ap.exchange_period_id, ex.foreign_uni_id , uni.name as uni_name , ap.applied_degree_id  
                                     FROM exchange ex 
                                     LEFT JOIN application ap on ap.application_id = ex.application_id  
                                     LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
                                     LEFT JOIN university uni on uni.university_id = ex.foreign_uni_id
-                                    WHERE ex.exchange_id = $exchangeid and ap.student_id = :student_id");
-        $result = $statement->execute(array('student_id'=>$check_student['student_id']));
+                                    WHERE ex.exchange_id = $exchangeid");
+        $result = $statement->execute();
         $exchangedata = $statement->fetch();
+    }else{
+        $error_msg = "Student is not found.";
     }
 
     
-    if(isset($exchangedata)){
-        //get checklist of this exchange
-        $statement = $pdo->prepare("SELECT ec.step_id, ec.step_name, ecd.beginn, ecd.deadline     
-                                    FROM exchange_checklist ec 
-                                    LEFT JOIN exchange_checklist_deadline ecd on ecd.step_id = ec.step_id
-                                    WHERE ecd.exchange_period_id = :exchange_period_id 
-                                    ORDER BY ecd.deadline ASC");
-        $result = $statement->execute(array(":exchange_period_id"=>$exchangedata['exchange_period_id']));
-        $checklist = array();
-        while($row = $statement->fetch()){ 
-            array_push($checklist, $row);
-        }
-
-        //get completed checklist item
-        $statement = $pdo->prepare("SELECT ecs.step_id    
-        FROM exchange_checklist_student ecs 
-        WHERE ecs.exchange_id = :exchange_id");
-        $result = $statement->execute(array(":exchange_id"=>$exchangeid));
-        $completeditems = array();
-        while($row = $statement->fetch()){ 
-            array_push($completeditems, $row['step_id']);
-        }
+    if(isset($exchangedata)){        
 
         $showForm = true;
     }else{
@@ -189,7 +163,6 @@
 
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $exchangeid;?>" method="post">
 
-        <?php if(isset($checklist) && count($checklist) > 0) { ?>
         <div class="table-responsive">
             <table class="table table-hover table-sm" style="font-size: 18px; text-align:center;">
                 <thead>
@@ -202,9 +175,26 @@
                 </thead>
                 <tbody>
                     <?php 
+
+                    //get completed checklist item
+                    $statement = $pdo->prepare("SELECT ecs.step_id    
+                    FROM exchange_checklist_student ecs 
+                    WHERE ecs.exchange_id = :exchange_id");
+                    $result = $statement->execute(array(":exchange_id"=>$exchangeid));
+                    $completeditems = array();
+                    while($row = $statement->fetch()){ 
+                        array_push($completeditems, $row['step_id']);
+                    }
                     
+                    //get checklist of this exchange
+                    $statement = $pdo->prepare("SELECT ec.step_id, ec.step_name, ecd.beginn, ecd.deadline, ecd.information  
+                    FROM exchange_checklist_deadline ecd
+                    LEFT JOIN exchange_checklist ec on ec.step_id = ecd.step_id 
+                    WHERE ecd.exchange_period_id = :exchange_period_id and ec.foreign_uni_id in (1 ,:foreign_uni_id ) AND ec.degree_id in (0,:degree_id)
+                    ORDER BY ecd.deadline ASC");
+                    $result = $statement->execute(array(":exchange_period_id"=>$exchangedata['exchange_period_id'], ":foreign_uni_id"=>$exchangedata['foreign_uni_id'], "degree_id"=>$exchangedata['applied_degree_id']));
                     $count = 0;
-                    foreach($checklist as $checklistitem){
+                    while($checklistitem = $statement->fetch()){
                         $count += 1;
                     ?>
 
@@ -213,7 +203,7 @@
                         <td><a class="btn btn-link" data-toggle="collapse" href="#step<?php echo $checklistitem['step_id'];?>" role="button" aria-expanded="false" aria-controls="step<?php echo $checklistitem['step_id'];?>"><?php echo $checklistitem['step_name'] ?></a>
                         <div class="collapse" id="step<?php echo $checklistitem['step_id'];?>">
                           <div class="card card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                            <?php echo $checklistitem['information']; ?>
                           </div>
                         </div>
                         </td>
@@ -226,7 +216,6 @@
                 </tbody>
             </table>
         </div>
-        <?php } ?>
 
         <div class="text-right">
             <button type="submit" class="btn btn-success" name="save">Speichern</button>

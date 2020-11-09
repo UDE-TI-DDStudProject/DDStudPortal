@@ -36,11 +36,11 @@
       }
 
       //check email domain
-      if(!valid_email_domain($email))
-      {
-        $error_message =  'Deine E-Mail-Adresse muss @stud.uni-due.de enthalten!';
-        $error = true;
-      }
+    //   if(!valid_email_domain($email))
+    //   {
+    //     $error_message =  'Deine E-Mail-Adresse muss @stud.uni-due.de enthalten!';
+    //     $error = true;
+    //   }
 
       //check password strength (defined in functions.inc.php)
       if(!$error && !password_strength($passwort)) {

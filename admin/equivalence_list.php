@@ -33,67 +33,7 @@
         }
     }
 
-    //upon remove equivalence
-    if(isset($_POST['remove_equivalence'])){
-        $remove_equivalence_id = $_POST['remove_equivalence'];
 
-        	/*Begin transaction*/
-			try {
-
-				$pdo->beginTransaction();
-
-                $statement = $pdo->prepare("DELETE FROM equivalent_subjects WHERE equivalence_id =:id ");
-                $result = $statement->execute(array('id'=>$remove_equivalence_id));
-                
-				$pdo->commit();
-				$success_msg = 'Äquivalenz ist gelöscht.';
-
-			}catch (Exception $e){
-				$pdo->rollback();
-                throw $e;
-                $error = true;
-				$error_msg = $e->get_message();
-			}
-    }
-
-    //upon save list
-    if(isset($_POST['save_list'])){
-        $error = false;
-        $home_university = $_GET['homeuni'];
-        $foreignuni = $_GET['foreignuni'];
-        $abschluss = $_GET['abschluss'];
-
-        if( empty($foreignuni) || empty($home_university) ){
-            $error = true;
-            $error_msg = "Bitte Universitäten auswählen!";
-        }
-
-        if(!empty($_POST['status']) && !$error) {
-			/*Begin transaction*/
-			try {
-
-				$pdo->beginTransaction();
-
-				foreach ($_POST['status'] as $equivalence_id => $status_id){
-
-                    if(isset($status_id)){
-
-                        $statement = $pdo->prepare("UPDATE equivalent_subjects SET status_id = $status_id WHERE equivalence_id =:id");
-                        $result = $statement->execute(array('id'=>$equivalence_id));
-                    }
-                }
-                
-				$pdo->commit();
-				$success_msg = 'Liste gespeichert';
-
-			}catch (Exception $e){
-				$pdo->rollback();
-                throw $e;
-                $error = true;
-				$error_msg = $e->get_message();
-			}
-        }
-    }
 
 ?>
 
@@ -103,18 +43,40 @@
         //get equivalence_id
         $equivalence_id = $_POST['save_course'];
 
+        //get equivalence
+        $statementE = $pdo->prepare("SELECT FROM equivalent_subjects WHERE equivalence_id = :id");
+        $resultE = $statementE->execute(array('id' => $equivalence_id));
+        $to_save_equivalence = $statementE->fetch();
+
+        $home_credits = $_POST['homecredits'][$equivalence_id];
+        $foreign_credits = $_POST['foreigncredits'][$equivalence_id];
+        $edit_status = $_POST['status'][$equivalence_id];
+        $edit_degree = $_POST['abschluss'][$equivalence_id];
+
+        //update equivalence status and valid degree id
+        $statementE = $pdo->prepare("UPDATE equivalent_subjects SET status_id = :status_id, valid_degree_id = :degree_id WHERE equivalence_id = :id");
+        $resultE = $statementE->execute(array('status_id' => $edit_status, 'id' => $equivalence_id, 'degree_id'=>$edit_degree));
+
+        //update subject credits
+        $statementE = $pdo->prepare("UPDATE subject SET subject_credits = :credits WHERE subject_id = :id");
+        $resultE = $statementE->execute(array('id' => $to_save_equivalence['home_subject_id'], 'credits'=>$home_credits));
+
+        $statementE = $pdo->prepare("UPDATE subject SET subject_credits = :credits WHERE subject_id = :id");
+        $resultE = $statementE->execute(array('id' => $to_save_equivalence['foreign_subject_id'], 'credits'=>$foreign_credits));
+
         //remove all valid course of this equivalence in database
         $statementD = $pdo->prepare("DELETE FROM equivalence_course WHERE equivalence_id = :id");
         $resultD = $statementD->execute(array('id' => $equivalence_id)); 
 
         foreach($_POST['equivalence_course'][$equivalence_id] as $course => $course_id){
-
             //add valid course into database 
             $statementS = $pdo->prepare("INSERT INTO equivalence_course(equivalence_id, course_id) VALUES(:eid, :cid)");
             $resultS = $statementS->execute(array('eid' => $equivalence_id, "cid"=>$course_id));     
         }
     }
 ?>
+
+
 
 <!-- add new equivalence -->
 <?php 
@@ -348,23 +310,26 @@
         <!-- equivalence-table-form -->
         <?php if(isset($show_table)&& $show_table==true): ?>
 
-        <?php require("component/add_new_equivalence.php"); ?>
 
-        <div class="list-filter">
-            <!-- checkbox button -->
-            <!-- <div class="form-check form-check-inline">
-                <input name="degree" class="form-check-input" type="checkbox" id="degree" value="degree"
-                    checked>
+        <div class="text-right">
+            <button type="button" class="btn btn-success btn-sm"  data-toggle="modal" data-target="#new-equivalence">Neue Äquivalenz hinzufügen</button>
+        </div>
+
+        <?php require("component/modal_new_equivalence.php"); ?>
+        <?php //require("component/add_new_equivalence.php"); ?>
+
+        <!-- <div class="list-filter">
+            <div class="form-check form-check-inline">
+                <input name="degree" class="form-check-input" type="checkbox" id="degree" value="degree" 
+                <?php //if(isset($abschluss) && ($abschluss == 1 || $abschluss=="alle")) echo " checked"; ?>>
                 <label class="form-check-label" for="inlineCheckbox1">Bachelor</label>
             </div>
             <div class="form-check form-check-inline">
-                <input name="master" class="form-check-input" type="checkbox" id="master" value="master"
-                    checked>
+                <input name="master" class="form-check-input" type="checkbox" id="master" value="master" 
+                <?php //if(isset($abschluss) && ($abschluss == 2 || $abschluss=="alle")) echo " checked"; ?>>
                 <label class="form-check-label" for="inlineCheckbox2">Master</label>
-            </div> -->
-        </div>
-
-        <form action="<?php echo $_SERVER['REQUEST_URI'];?>" method="post" id="equivalence-form">
+            </div>
+        </div> -->
             
         <div class="table-responsive">
                 <table class="table table-hover table-sm" id="equivalence_list" style="text-align:center;font-size:14px;">
@@ -372,6 +337,7 @@
                         <tr style="background-color: #003D76; color: white;">
                             <th scope="col" width="5%" align="center"></th>
                             <th scope="col" width="5%" align="center">Kurs-Nr. Heim-Uni</th>
+                            <th scope="col" width="5%" align="center">Professor</th>
                             <th scope="col" width="5%" align="center">Credits Heim-Uni</th>
                             <th scope="col" width="20%" align="center">Kurs Heim-Uni</th>
                             <th scope="col" width="5%" align="center">Credits Partner-Uni</th>
@@ -386,9 +352,14 @@
                     <tbody>
 
                     <?php
+                            if(isset($abschluss) && $abschluss!="alle"){
+                                $abschluss_filter = " AND es.valid_degree_id = ".$abschluss;
+                            }else{
+                                $abschluss_filter = " ";
+                            }
 
                             //get all equivalence of this partner-uni
-                            $statement = $pdo->prepare("SELECT es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status, dg.name as degree, 
+                            $statement = $pdo->prepare("SELECT prof.prof_surname, es.valid_degree_id, es.equivalence_id as equivalence_id, es.status_id as status_id , st.name as status, dg.name as degree, 
                             s1.subject_code as home_subject_code, ROUND(s1.subject_credits, 1) as home_subject_credits, s1.subject_title as home_subject_title ,
                             ROUND(s2.subject_credits, 1) as foreign_subject_credits, s2.subject_title as foreign_subject_title, case when es.updated_at = '0000-00-00' then '-' else DATE_FORMAT(es.updated_at,'%d/%m/%Y') end as updated_at 
                             FROM equivalent_subjects es
@@ -396,7 +367,8 @@
                             LEFT JOIN subject s2 ON s2.subject_id = es.foreign_subject_id
                             LEFT JOIN status st ON st.status_id = es.status_id
                             LEFT JOIN degree dg on dg.degree_id = es.valid_degree_id 
-                            WHERE s1.university_id = $home_university AND s2.university_id = $foreignuni 
+                            LEFT JOIN professor prof on prof.professor_id = s1.prof_id 
+                            WHERE s1.university_id = $home_university AND s2.university_id = $foreignuni  $abschluss_filter
                             ORDER BY  st.name ASC, s1.subject_title ASC");
                         
                             $result = $statement->execute();
@@ -426,12 +398,15 @@
 
 
                         ?>
-                    
+
                             <tr id="<?php echo $equivalence['valid_degree_id']?>">
-                                <td align="center">
-                                <button type="submit" class="btn btn-outline-warning btn-sm" name="remove_equivalence" value="<?php echo $equivalence['equivalence_id']?>"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#edit-valid-courses-<?php echo $equivalence['equivalence_id']?>">
+                                       edit
+                                    </button>  
                                 </td>
                                 <td align="center"><?php echo $equivalence['home_subject_code'] ?></td>
+                                <td align="center"><?php echo $equivalence['prof_surname'] ?></td>
                                 <td align="center"><?php echo $equivalence['home_subject_credits'] ?></td>
                                 <td align="center"><?php echo $equivalence['home_subject_title'] ?></td>
                                 <td align="center"><?php echo $equivalence['foreign_subject_credits'] ?></td>
@@ -439,40 +414,18 @@
                                 <td align="center"><?php echo $equivalence['degree'] ?></td>
                                 <td align="center">
                                 <?php if($forAll) echo "alle"; else if(isset($validcoursesnames_string)) echo $validcoursesnames_string; ?>
-                                <!-- <span><i class="fa fa-pencil" aria-hidden="true"></i></span> -->
-                                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#edit-valid-courses-<?php echo $equivalence['equivalence_id']?>">
-                                   edit
-                                </button>
-                                <?php require("component/edit_valid_course.php") ?>
                                 </td>
-                                <td align="center">
-                                    <select class="form-control form-control-sm"  name="status[<?php echo $equivalence['equivalence_id']?>]">
-                                    <?php 
-			                        		$statement2 = $pdo->prepare("SELECT * FROM status");
-	    	                        		$result2 = $statement2->execute();
-	    	                        		while($row = $statement2->fetch()) { ?>
-                                          <option value="<?php echo ($row['status_id']);?>"
-                                          <?php if(isset($equivalence['status_id']) && $equivalence['status_id'] == $row['status_id']) echo "selected" ?>>
-                                          <?php echo ($row['name']);?></option>
-                                      <?php } ?>
-                                    </select>
-                                </td>
+                                <td align="center"><?php echo $equivalence['status'] ?></td>
                                 <td align="center"><?php echo $equivalence['updated_at'] ?></td>
                             </tr>
-
+                            <?php require("component/edit_valid_course.php") ?>  
                         <?php
                     }?>
                     </tbody>
                 </table>
             </div>
 
-            <!-- save -->
-            <div class="text-right">
-                <button type="submit" class="btn btn-primary" name="save_list" value="save_list" >Speichern</button>
-            </div>
-        </form>
         <?php endif; ?>
-
     </div>
 </main>
 
@@ -502,7 +455,7 @@ $(document).ready(function(){
 });
 </script>
 
-<!-- ask for confirmation upon deleting equivalence -->
+<!-- ask for confirmation upon deleting equivalence
 <script>
 $(document).ready(function(){
     $("#equivalence-form").submit(function(e){
@@ -517,7 +470,9 @@ $(document).ready(function(){
 
     });
 });
-</script>
+</script> -->
+
+
 
 <?php 
     include("templates/footer.inc.php");

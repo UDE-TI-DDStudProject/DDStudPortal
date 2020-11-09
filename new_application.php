@@ -307,12 +307,12 @@
         $error_msg = $e->getMessage();
       }
 
-      // check PDOException first before upload files to server
+       //check PDOException first before upload files to server
 		if(!$error){
 			//get student data
-			$statement = $pdo->prepare("SELECT university.name FROM $priorityDB 
-			LEFT JOIN university on university.university_id = $priorityDB.first_uni_id 
-			WHERE application_id = $applicationid ");
+			$statement = $pdo->prepare("SELECT uni.name FROM $priorityDB prio
+			LEFT JOIN university uni on uni.university_id = prio.first_uni_id 
+			WHERE prio.application_id = $applicationid ");
 			$result = $statement->execute();
 			$priority = $statement->fetch();
 
@@ -383,6 +383,7 @@
 			}
         }
         
+
         if(!$error){
             header("location: view_application.php?submitsuccess=1&id=".$applicationid);
             exit;

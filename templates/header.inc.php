@@ -50,49 +50,6 @@
                 </button>
                 <!-- Collapsible navbar at mobile size -->
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <!-- Menu on the left -->
-                    <ul class="navbar-nav">
-                        <!-- <li class="nav-item active">
-          <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
-        </li> -->
-                        <!-- Dropdown menu Information-->
-                        <!-- <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-alt"></i> Informationen
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <h6 class="dropdown-header">Application</h6>
-                                <a class="dropdown-item" href="#">Before apply</a>
-                                <a class="dropdown-item" href="#">During application</a>
-                                <a class="dropdown-item" href="#">Successful application</a>
-                                <div class="dropdown-divider"></div>
-                                <h6 class="dropdown-header">Exchange</h6>
-                                <a class="dropdown-item" href="#">Before departure</a>
-                                <a class="dropdown-item" href="#">Upon Arrival</a>
-                                <a class="dropdown-item" href="#">During Exchange</a>
-                                <a class="dropdown-item" href="#">After Exchange</a>
-                            </div>
-                        </li> -->
-                        <!-- Application Information-->
-                        <!-- <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-alt"></i> Application Process
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <h6 class="dropdown-header">Application</h6>
-                                <a class="dropdown-item" href="#">Exchange application</a>
-                                <a class="dropdown-item" href="#">Select courses</a>
-                                <div class="dropdown-divider"></div>
-                                <h6 class="dropdown-header">Exchange</h6>
-                                <a class="dropdown-item" href="#">Visa application</a>
-                            </div>
-                        </li> -->
-                        <!-- <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-pen-square"></i> Apply now</a>
-        </li> -->
-                    </ul>
                     <ul class="navbar-nav ml-auto">
                         <!-- Dropdown Login -->
                         <li class="nav-item dropdown">

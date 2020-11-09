@@ -17,8 +17,10 @@
         exit;
     }
 
+    $applicationid = $_GET['id'];
+
     if(isset($_GET['submitsuccess'])){
-        $info_msg = "Bewerbung ist abgeschickt. Bitte zunächst die <a href=\"facherwahl.php?id='.$applicationid.'\">Fächerwahlliste</a> ausfüllen.";
+        $info_msg = "Bewerbung ist abgeschickt. Bitte zunächst die <a href=\"facherwahl.php?id=$applicationid\">Fächerwahlliste</a> ausfüllen.";
     }else if(isset($_GET['editsuccess'])){
         $success_msg = "Bewerbung gespeichert!";
     }else if(isset($_GET['editabort'])){
@@ -26,7 +28,7 @@
         // $error_msg = "Application cannot be edited after deadline!";
     }
 
-    $applicationid = $_GET['id'];
+
     $salutationid = $user["salutation_id"];
     $firstname = $user["firstname"];
     $lastname = $user["lastname"];
@@ -102,7 +104,7 @@
     $nationality = $student['country'];
     $birthday = $student['birthdate'];
 
-    $statement = $pdo->prepare("SELECT ap.*, ap.created_at as submitted, it.name as intention, ep.exchange_semester, dg.name as degree 
+    $statement = $pdo->prepare("SELECT ap.*, ap.created_at as submitted, it.name as intention, ep.exchange_semester, dg.name as degree, ap.success_factor, ep.period_id 
                                 FROM application ap
                                 LEFT JOIN intention it on it.intention_id = ap.intention_id 
                                 LEFT JOIN exchange_period ep on ep.period_id = ap.exchange_period_id 
@@ -492,20 +494,37 @@
                 <!-- show if student has a good chance by checking erfolgsfaktor -->
                 <?php 
                     $statement = $pdo->prepare("SELECT min_success_factor FROM exchange_period WHERE period_id = :id");
-                    $result = $statement->execute(array('id' => $starting_semester));
+                    $result = $statement->execute(array('id' => $application['period_id']));
                     $row_sf = $statement->fetch();
                     $min_success_factor = $row_sf['min_success_factor'];
 
                     if($application['success_factor']>=$min_success_factor){
-                        $msg = "good chance";
+                        $good_msg = "Your profile meets the minimum requirement, therefore you stand a very good change at getting accepted!";
                     }else{
-                        $msg = "bad chance";
+                        $bad_msg = "Unfortunately, your profile does not meet the prerequisite but you still stand a chance at getting accepted!";
                     }
                 ?>
                 
-                <div class="alert alert-info">
-                    <?php if(isset($msg)) echo $msg; ?>
+                <!-- show message -->
+                <?php 
+                if(isset($good_msg) && !empty($good_msg)):
+                ?>
+                <div class="alert alert-success">
+                    <?php echo $good_msg; ?>
                 </div>
+                <?php 
+                endif;
+                ?>
+        
+                <?php 
+                if(isset($bad_msg) && !empty($bad_msg)):
+                ?>
+                <div class="alert alert-warning">
+                    <?php echo $bad_msg; ?>
+                </div>
+                <?php 
+                endif;
+                ?>
 
                 <div class="text-right">
                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>?id=<?php echo $applicationid; ?>" method="post">
