@@ -391,6 +391,10 @@
                 <table class="table table-hover table-sm" id="application-table" style="text-align:center;font-size:16px;">
                     <thead>
                         <tr id="columnHeader" style="background-color: #003D76; color: white;">
+                            <th scope="col" width="5%" align="center">
+                                Send Email
+                                <br><input type="checkbox" name="all_emails">
+                            </th>
                             <th scope="col" width="5%" align="center">Annehmen</th>
                             <th scope="col" width="5%" align="center">Ablehnen</th>
                             <th scope="col" width="30%" align="center">Kommentar</th>
@@ -427,7 +431,7 @@
                     }
 
                     //get all completed applications where user still has a valid accounts
-                    $statement = $pdo->prepare("SELECT us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ROUND(ap.success_factor,3) as success_factor, 
+                    $statement = $pdo->prepare("SELECT us.email, us.firstname,us.lastname, ap.application_id, sh.home_matno, cr.name as home_course, sh.home_semester, ROUND(ap.success_factor,3) as success_factor, 
                                                 uni1.abbreviation as uni1, uni2.abbreviation as uni2, uni3.abbreviation as uni3 , ra.comment, 
                                                 ROUND(sh.home_cgpa,1) as home_cgpa, ROUND(sh.home_credits) as home_credits, ep.period_id, dg.name as applied_degree , uni1.name as firstuni , ap.completed,
                                                 us.firstname, us.lastname 
@@ -497,7 +501,9 @@
                     
 
                         <tr id="childrenRows" class="<?php if(!empty($reviewed) && $reviewed['application_status_id'] == 2) echo "table-success"; else if(!empty($reviewed) && $reviewed['application_status_id'] == 3) echo "table-danger";else if($row['completed']==0) echo "table-secondary"; else if($suggested) echo "table-info"; else echo "table-warning"?>">
-
+                            <td align="center">
+                                <input type="checkbox" name="email" value="<?php echo $row['email'] ?>">
+                            </td>
                             <td align="center">
                                 <div class="form-check form-check-inline">
                                   <input class="form-check-input" type="radio" name="reviewed[<?php echo $row['application_id'] ?>]" id="2" value="2" <?php if(!empty($reviewed) && $reviewed['application_status_id'] == 2) echo "checked" ?>>
@@ -536,6 +542,8 @@
                 </table>
             </div>
 
+            <button type="button" class="btn btn-primary" name="send_group_email" id="send_group_email">Send Email</button>
+
             <!-- save -->
             <div class="text-right">
                 <button type="submit" class="btn btn-primary" name="subtmitbtn" value="save_list" >Zwischenstand speichern</button>
@@ -548,6 +556,43 @@
 </main>
 
 
+<!-- send group email -->
+<script>
+$(document).ready(function(){
+    $('#send_group_email').click(function(){
+
+        var emailArr = [];
+
+        //get all selected email
+        $('input:checkbox').each(function () {
+
+            var selected = $(this).prop('checked'); 
+
+            if(($(this).attr('name') != 'all_emails') && (selected==true)){
+                emailArr.push($(this).val());
+            }
+        });
+
+        var email = emailArr.join(";");
+
+        //var email = 'linshet4@gmail.com';
+        var subject = 'Jquery With Example';
+        var emailBody = 'Hi Nirbhay';
+        var bcc = 'linshet4@gmail.com; test@gmail.com';
+        window.location = 'mailto:' + email + '?bcc=' + bcc + '&subject=' + subject + '&body=' + emailBody;
+    });
+});
+</script>
+
+<!-- select all emails -->
+<script>
+$(document).ready(function(){
+    $('input[name="all_emails"]').click(function(){
+
+        $('input:checkbox').prop('checked', this.checked);
+    });
+});
+</script>
 
 <!-- change row color upon checked -->
 <script>

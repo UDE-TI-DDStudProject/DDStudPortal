@@ -38,6 +38,14 @@
 
         <!-- dashboard -->
         <div class="admin-dashboard">
+        
+            <!-- edit subject list -->
+            <div class="dashboard-flex-item">
+                <h5 class="card-title">Search Student</h5>
+                <p class="card-text">Search student by simple data or advanced fields</p>
+                <p class="card-text"></p>
+                <a href="student_search.php" class="btn btn-primary">Klick hier</a>
+            </div>
 
             <!-- edit facherwahlliste quota -->
             <div class="dashboard-flex-item">

@@ -408,3 +408,8 @@ form label {
 	color: #fff;
 	background-color: #1f63a3;
 }
+
+.form_subtitle{
+	color:  #1f63a3;
+	font-weight: 300;
+}
